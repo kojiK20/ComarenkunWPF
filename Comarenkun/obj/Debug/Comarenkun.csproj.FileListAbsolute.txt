@@ -13,8 +13,6 @@ C:\Users\Koji\Documents\Visual Studio 2015\Projects\Comarenkun\Comarenkun\obj\De
 C:\Users\Koji\Documents\Visual Studio 2015\Projects\Comarenkun\Comarenkun\obj\Debug\Comarenkun.exe
 C:\Users\Koji\Documents\Visual Studio 2015\Projects\Comarenkun\Comarenkun\obj\Debug\Comarenkun.pdb
 C:\Users\Koji\Documents\Visual Studio 2015\Projects\Comarenkun\Comarenkun\obj\Debug\App.baml
-C:\Users\Koji\Documents\Visual Studio 2015\Projects\Comarenkun\Comarenkun\bin\Debug\Matching.dll
-C:\Users\Koji\Documents\Visual Studio 2015\Projects\Comarenkun\Comarenkun\bin\Debug\Matching.pdb
 C:\Users\Koji\Documents\Visual Studio 2015\Projects\Comarenkun\Comarenkun\obj\Debug\GeneratedInternalTypeHelper.g.cs
 C:\Users\Koji\Documents\Visual Studio 2015\Projects\Comarenkun\Comarenkun\bin\Debug\Microsoft.Expression.Interactions.dll
 C:\Users\Koji\Documents\Visual Studio 2015\Projects\Comarenkun\Comarenkun\bin\Debug\System.Windows.Interactivity.dll

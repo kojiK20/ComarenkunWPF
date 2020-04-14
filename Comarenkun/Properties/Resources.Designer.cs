@@ -63,6 +63,16 @@ namespace Comarenkun.Properties {
         /// <summary>
         ///   型 System.Byte[] のローカライズされたリソースを検索します。
         /// </summary>
+        internal static byte[] _851Gkktt_005 {
+            get {
+                object obj = ResourceManager.GetObject("_851Gkktt_005", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Byte[] のローカライズされたリソースを検索します。
+        /// </summary>
         internal static byte[] _851letrogo {
             get {
                 object obj = ResourceManager.GetObject("_851letrogo", resourceCulture);
@@ -77,6 +87,16 @@ namespace Comarenkun.Properties {
             get {
                 object obj = ResourceManager.GetObject("comarenkun", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Byte[] のローカライズされたリソースを検索します。
+        /// </summary>
+        internal static byte[] Kosugi_Regular {
+            get {
+                object obj = ResourceManager.GetObject("Kosugi_Regular", resourceCulture);
+                return ((byte[])(obj));
             }
         }
     }

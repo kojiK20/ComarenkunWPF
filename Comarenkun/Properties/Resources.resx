@@ -124,4 +124,10 @@
   <data name="_851letrogo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Fonts\851letrogo.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="Kosugi_Regular" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\fonts\kosugi-regular.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="_851Gkktt_005" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\fonts\851gkktt_005.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>

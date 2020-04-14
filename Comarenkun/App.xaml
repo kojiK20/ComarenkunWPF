@@ -108,6 +108,11 @@
                 </Setter.Value>
             </Setter>        
         </Style>-->
+        <ControlTemplate x:Key="ComarenkunButton" TargetType="Button">
+            <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Margin="690,480,0,0" Height="240" Width="300">
+                <local:OpaqueClickableImage x:Name="comarenkunImage" Source="./Images/comarenkun.png" Stretch="Fill" />
+            </Grid>
+        </ControlTemplate>
         <ControlTemplate x:Key="MemberButton" TargetType="Button">
             <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Margin="30,112.4,0,0">
                 <Polygon Points="0,360 0,0 360,-19.2 390,370.4" Fill="{TemplateBinding Background}"/>
@@ -120,13 +125,46 @@
                 <ContentPresenter/>
             </Grid>
         </ControlTemplate>
-        <ControlTemplate x:Key="ComarenkunButton" TargetType="Button">
-            <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Margin="690,480,0,0" Height="240" Width="300">
-                <local:OpaqueClickableImage x:Name="comarenkunImage" Source="./Images/comarenkun.png" Stretch="Fill" />
+        <ControlTemplate x:Key="ToMenuButton" TargetType="Button">
+            <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,0,0" >
+                <Polygon Points="0,576 0,0 90,0 150,576" Fill="{TemplateBinding Background}" />
+                <ContentPresenter/>
+            </Grid>
+        </ControlTemplate>
+
+        <!--<ControlTemplate x:Key="GroupButtons" TargetType="ListBox">
+            <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,0,0">
+                <ContentPresenter/>
+            </Grid>
+        </ControlTemplate>-->
+        <!--リストボックスのマウスオーバー時の演出をなくすためのスタイルテンプレート-->
+        <Style x:Key="ContainerStyle" TargetType="ListBoxItem" >
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ContentControl}">
+                        <Border BorderThickness="5" Background="{TemplateBinding Background}" IsHitTestVisible="false">
+                            <ContentPresenter />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="Transparent" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <ControlTemplate x:Key="GroupButton" TargetType="Button">
+            <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,0,0">
+                <Polygon Points="0,100 0,0 500,0 500,100" Fill="{TemplateBinding Background}" />
+                <ContentPresenter/>
             </Grid>
         </ControlTemplate>
         
+
+        <FontFamily x:Key="851ゴクチカ">/Comarenkun;component/Fonts/#851Gkktt</FontFamily>
         <FontFamily x:Key="851レトロゴ">/Comarenkun;component/Fonts/#851Letrogo</FontFamily>
+        <FontFamily x:Key="Kosugi">/Comarenkun;component/Fonts/#MotoyaLCedar W3 mono</FontFamily>
         <Image x:Key="コマ練くん" Source="./Images/comarenkun.png"/>
     </Application.Resources>
 </Application>

@@ -65,8 +65,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MatchingLogic.cs" />
     <Compile Include="MainViewModel.cs" />
     <Compile Include="MainWindow.xaml.cs" />
+    <Compile Include="ObjectGenerator.cs" />
+    <Compile Include="PointsGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -86,6 +89,8 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <Resource Include="Fonts\851letrogo.ttf" />
+    <Resource Include="Fonts\Kosugi-Regular.ttf" />
+    <Resource Include="Fonts\851Gkktt_005.ttf" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -99,16 +104,16 @@
     <Resource Include="Images\comarenkun.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Matching\Matching.csproj">
-      <Project>{34b01b1f-79d3-4512-a350-63ca9d1bdb8b}</Project>
-      <Name>Matching</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Texts\members.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Texts\foreigners.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
