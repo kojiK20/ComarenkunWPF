@@ -1,0 +1,195 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using System.Windows.Media.Animation;
+using System.ComponentModel;
+using System.Collections.ObjectModel;
+using System.Runtime.CompilerServices;
+using Microsoft.VisualBasic;
+
+
+namespace Comarenkun
+{
+    public class Group : INotifyPropertyChanged
+    {//所属名のクラス,INotifyPropertyChangedインタフェースを継承することでプロパティの変更を通知する
+
+        private string _Name;
+        public string Name
+        {
+            get { return _Name; }
+            set
+            {
+                _Name = value;
+                OnPropertyChanged("Name");
+            }
+        }
+        private double _FontSize;
+        public double FontSize
+        {
+            get { return _FontSize; }
+            set
+            {
+                _FontSize = value;
+                OnPropertyChanged("FontSize");
+            }
+        }
+        private SolidColorBrush _Color;
+        public SolidColorBrush Color
+        {
+            get { return _Color; }
+            set
+            {
+                _Color = value;
+                OnPropertyChanged("Color");
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged(string propertyName)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    public class GroupList
+    {//Groupのコレクションをプロパティにもつクラス
+
+        public ObservableCollection<Group> List { get; set; }
+        public GroupList()
+        {//コンストラクタ
+            List = new ObservableCollection<Group>();
+        }
+        public void Add(Group g)
+        {
+            List.Add(g);
+        }
+        public void Remove(Group g)
+        {
+            List.Remove(g);
+        }
+        public void Clear()
+        {
+            List.Clear();
+        }
+    }
+
+    public class Member : INotifyPropertyChanged
+    {//メンバーのクラス
+        private string _Rank;
+        public string Rank
+        {
+            get { return _Rank; }
+            set
+            {
+                _Rank = value;
+                OnPropertyChanged("Rank");
+            }
+        }
+        private string _Name;
+        public string Name
+        {
+            get { return _Name; }
+            set
+            {
+                _Name = value;
+                OnPropertyChanged("Name");
+            }
+        }
+        private string _Group;
+        public string Group
+        {
+            get { return _Group; }
+            set
+            {
+                _Group = value;
+                OnPropertyChanged("Group");
+            }
+        }
+        private double _RankFontSize;
+        public double RankFontSize
+        {
+            get { return _RankFontSize; }
+            set
+            {
+                _RankFontSize = value;
+                OnPropertyChanged("RankFontSize");
+            }
+        }
+        private double _NameFontSize;
+        public double NameFontSize
+        {
+            get { return _NameFontSize; }
+            set
+            {
+                _NameFontSize = value;
+                OnPropertyChanged("NameFontSize");
+            }
+        }
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged(string propertyName)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+    public class MemberList
+    {//メンバーのObservableCollectionをもつクラス
+        public ObservableCollection<Member> List { set; get; }
+        public MemberList()
+        {
+            List = new ObservableCollection<Member>();
+        }
+        public void Add(Member m)
+        {
+            List.Add(m);
+        }
+        public void Remove(Member m)
+        {
+            List.Remove(m);
+        }
+        public void Clear()
+        {
+            List.Clear();
+        }
+    }
+
+    public class OpaqueClickableImage : Image//コマ練くん用，マウスオーバー判定をカスタムしたImageクラス
+    {
+        //Image.HitTestCoreメソッドの上書き
+        protected override HitTestResult HitTestCore(PointHitTestParameters hitTestParameters)
+        {
+            var source = (BitmapSource)Source;
+
+            //get the pixel of the source that was hit
+            var x = (int)(hitTestParameters.HitPoint.X / ActualWidth * source.PixelWidth);
+            var y = (int)(hitTestParameters.HitPoint.Y / ActualHeight * source.PixelHeight);
+
+
+
+            //copy the single pixel in to a new byte array representing RGBA
+            var pixel = new byte[4];
+            source.CopyPixels(new Int32Rect(x, y, 1, 1), pixel, 4, 0);
+
+            //check the alpha (transparency) of the pixel
+            //- threshold can be adjusted from 0 to 255
+            if (pixel[0] == 0)
+            {
+                //MessageBox.Show(pixel[0].ToString());//test
+                return null;
+            }
+            //不透明な場合のみマウスが上にありますよと返す
+            return new PointHitTestResult(this, hitTestParameters.HitPoint);
+
+        }
+    }
+}

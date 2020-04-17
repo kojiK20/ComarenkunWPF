@@ -14,6 +14,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Media.Animation;
 using System.ComponentModel;
+using System.Collections.ObjectModel;
+using System.Runtime.CompilerServices;
 
 //オブジェクトのイベントに関係なく，オブジェクトのテンプレートやスタイルを設定するメソッドはここにおく
 namespace Comarenkun
@@ -84,7 +86,7 @@ namespace Comarenkun
             FrameworkElementFactory con = new FrameworkElementFactory(typeof(ContentPresenter));
             FrameworkElementFactory conShadow = new FrameworkElementFactory(typeof(ContentPresenter));
 
-            if (name == "Header")//多角形ラベル
+            if (name == "Header" || name == "RankNameLabel")//多角形ラベル
             {
                 pol = new FrameworkElementFactory(typeof(Polygon));
                 TemplateBindingExtension b = new TemplateBindingExtension(Label.BackgroundProperty);
@@ -100,7 +102,7 @@ namespace Comarenkun
                 cir.SetValue(Ellipse.HeightProperty, columnSize * p[3]);
             }
 
-            if (name == "Header")//文字(コンテンツ)を持つラベル
+            if (name == "Header" || name == "RankNameLabel")//文字(コンテンツ)を持つラベル
             {
                 con = new FrameworkElementFactory(typeof(ContentPresenter));
                 con.SetValue(TextBlock.FontSizeProperty, columnSize * p[3] * 0.7);//フォントサイズ＝ヘッダの縦幅の70%
@@ -112,7 +114,10 @@ namespace Comarenkun
 
                 conShadow.SetValue(ContentPresenter.MarginProperty, MarginLeftCenterS(p));//マージンにより左端中央に配置 
             }
+            else if(true){
 
+            }
+            
             //Grid構築
             if (name == "Header")
             {
@@ -120,9 +125,10 @@ namespace Comarenkun
                 gri.AppendChild(conShadow);
                 gri.AppendChild(con);
             }
-            else if (false)
+            else if (name == "RankNameLabel")
             {
                 gri.AppendChild(pol);
+                gri.AppendChild(con);
             }
             else if (false)
             {
@@ -164,7 +170,23 @@ namespace Comarenkun
                 }
             }
             */
-            label.FontSize = rowSize * p[2] / label.Content.ToString().Length;
+            if (name == "talkLabel")
+            {
+                if(rowSize * p[2] / 16 < columnSize * p[3] / 2 - 5)
+                {
+                    label.FontSize = rowSize * p[2] / 16;//セリフによらず一定の割合の大きさの方がよい？
+                }
+                else
+                {
+                    label.FontSize = columnSize * p[3] / 2 - 5;//セリフによらず一定の割合の大きさの方がよい？
+                }
+                
+            }
+            else
+            {
+                label.FontSize = rowSize * p[2] / label.Content.ToString().Length;
+            }
+            
             //label.FontSize = columnSize * p[3] / label.Content.ToString().Length;
 
             label.Width = rowSize * p[2];
@@ -175,8 +197,8 @@ namespace Comarenkun
         {
             //this.header.Content = windowWidth.ToString(format);//小数第二位まで テスト用
             double contentSize = 1;
-            if (name != "GroupButton")
-            {
+            if (button != null)
+            {//ListBoxのItems(nullを渡している)のフォントサイズはこのメソッドでは指定しない
                 contentSize = button.Content.ToString().Replace("\n", "").Length;
             }
 
@@ -208,19 +230,49 @@ namespace Comarenkun
             pol.SetValue(Polygon.FillProperty, b);//pol要素のFillプロパティをbindingでバインドしますの意
             pol.SetValue(Polygon.PointsProperty, PolygonPoints(p));
             pol.SetValue(Polygon.CursorProperty, Cursors.Hand);
+            if (name == "MemberNameButton")
+            {//ランクボタンの横に配置するため
+                pol.SetValue(ContentPresenter.MarginProperty, new Thickness(rowSize * p[0], 0, 0, 0));
+            }
             //pol.SetValue(Polygon.NameProperty, "memberPolygon");//何故かセットされない
+            if (button == null || name == "GroupAddButton" || name == "GroupDeleteButton" || name == "MemberAddButton")
+            {//ボタンの枠線表示する
+                pol.SetValue(Polygon.StrokeProperty, Brushes.Black);
+                //pol.SetValue(Polygon.StrokeThicknessProperty, Shape.StrokeThickness(1));
+            }
 
             FrameworkElementFactory con = new FrameworkElementFactory(typeof(ContentPresenter));
             FrameworkElementFactory conShadow = new FrameworkElementFactory(typeof(ContentPresenter));
-            if (name == "GroupButton")
-            {//マージンを設定しない
+            if (button == null)
+            {//影を表示しない
+                con.SetValue(ContentPresenter.IsHitTestVisibleProperty, false);//テキストにはマウス判定を持たせない
+                con.SetValue(ContentPresenter.VerticalAlignmentProperty, VerticalAlignment.Center);
+                if(name == "MemberNameButton")
+                {//ランクボタンの横に配置するため
+                    con.SetValue(ContentPresenter.MarginProperty, new Thickness(rowSize * (1 + p[0]), 0, 0, 0));
+                }
+                else if(name == "MemberRankButton")
+                {
+                    con.SetValue(ContentPresenter.MarginProperty, new Thickness(rowSize * 0.5, 0, 0, 0));
+                }
+                else
+                {
+                    con.SetValue(ContentPresenter.MarginProperty, new Thickness(rowSize * 1, 0, 0, 0));
+                }
+                gri.AppendChild(pol);
+                gri.AppendChild(con);
+            }else if(name == "GroupAddButton" || name == "GroupDeleteButton" || name == "MemberAddButton")
+            {   //縦書きなので別処理,かつ，影をもたせない
+                con.SetValue(ContentPresenter.MarginProperty, PortrateMarginCenter(p, contentSize, name));//マージンにより左端中央に配置
                 con.SetValue(ContentPresenter.RenderTransformProperty, rotateTransform1);
                 con.SetValue(ContentPresenter.IsHitTestVisibleProperty, false);//テキストにはマウス判定を持たせない
+                gri.AppendChild(pol);
+                gri.AppendChild(con);
             }
             else if (name == "ToMenuButton")
             {
                 //縦書きなので別処理
-                con.SetValue(ContentPresenter.MarginProperty, PortrateMarginCenter(p, contentSize));//マージンにより左端中央に配置
+                con.SetValue(ContentPresenter.MarginProperty, PortrateMarginCenter(p, contentSize, name));//マージンにより左端中央に配置
                 con.SetValue(ContentPresenter.RenderTransformProperty, rotateTransform1);
                 con.SetValue(ContentPresenter.IsHitTestVisibleProperty, false);//テキストにはマウス判定を持たせない
 
@@ -228,6 +280,9 @@ namespace Comarenkun
                 conShadow.SetValue(ContentPresenter.MarginProperty, PortrateMarginCenterS(p, contentSize));//マージンにより左端中央に配置
                 conShadow.SetValue(ContentPresenter.RenderTransformProperty, rotateTransform1);
                 conShadow.SetValue(ContentPresenter.IsHitTestVisibleProperty, false);//テキストにはマウス判定を持たせない
+                gri.AppendChild(pol);
+                gri.AppendChild(conShadow);
+                gri.AppendChild(con);
             }
             else
             {
@@ -239,11 +294,10 @@ namespace Comarenkun
                 conShadow.SetValue(ContentPresenter.MarginProperty, MarginCenterS(p, contentSize, name));//マージンにより左端中央に配置
                 conShadow.SetValue(ContentPresenter.RenderTransformProperty, rotateTransform1);
                 conShadow.SetValue(ContentPresenter.IsHitTestVisibleProperty, false);//テキストにはマウス判定を持たせない
+                gri.AppendChild(pol);
+                gri.AppendChild(conShadow);
+                gri.AppendChild(con);
             }      
-
-            gri.AppendChild(pol);
-            gri.AppendChild(conShadow);
-            gri.AppendChild(con);
 
             //pol.Name = "buttonPolygon";//この方法だとセットされる
             buttonTemplate.VisualTree = gri;
@@ -252,12 +306,17 @@ namespace Comarenkun
             //buttonStyle.Setters.Add(buttonTemplateSetter);
 
             App.Current.Resources[name] = buttonTemplate;//コントロールテンプレート更新
-            if(name != "GroupButton")
-            {//GroupButtonsに関してはマージンもフォントサイズも各自で設定する
+            if(button != null)
+            {//ListBoxのItemsに関してはマージン(は親のリストボックス自体に設定)もフォントサイズも各自で設定する(全てのItemが同じテンプレートを参照するため)
+                //が，MemberButtonsのNameボタンに関してはRankボタンの横に配置するためにマージンを設定する
                 button.Margin = new Thickness(rowSize * p[0], columnSize * p[1], 0, 0);
-                if (name == "ToMenuButton")
-                {
+                if (name == "ToMenuButton")// || name == "GroupAddButton" || name == "GroupDeleteButton" || name == "MemberAddButton")
+                {//縦書き
                     button.FontSize = columnSize * p[3] * 1.0 / contentSize * 0.3;//フォントサイズ＝80% * ボタンの縦幅/文字数
+                }
+                else if (name == "GroupDeleteButton" || name == "GroupAddButton" || name == "MemberAddButton")
+                {//縦書き(文字数の関係でボタンによって比率を変える)
+                    button.FontSize = columnSize * p[3] * 1.0 / contentSize * 0.4;//フォントサイズ＝80% * ボタンの縦幅/文字数
                 }
                 else
                 {
@@ -267,10 +326,81 @@ namespace Comarenkun
         }
         public void EllipseButtonSet(string name, Button button, double[] p)//Button要素のコントロールテンプレートおよびプロパティ更新メソッド
         {
+            //this.header.Content = windowWidth.ToString(format);//小数第二位まで テスト用
+            double contentSize = 1;
+            contentSize = button.Content.ToString().Replace("\n", "").Length;
+
+            ControlTemplate buttonTemplate = new ControlTemplate(typeof(Button));
+
+            FrameworkElementFactory gri = new FrameworkElementFactory(typeof(Grid));
+
+            FrameworkElementFactory el = new FrameworkElementFactory(typeof(Ellipse));
+            TemplateBindingExtension b = new TemplateBindingExtension(Button.BackgroundProperty);
+            el.SetValue(Ellipse.FillProperty, b);//pol要素のFillプロパティをbindingでバインドしますの意
+            if (name == "GroupNameChangeButton" || name == "GroupOpenButton")
+            {//真円
+                el.SetValue(Ellipse.StrokeProperty, Brushes.Black);
+                if(rowSize > columnSize)
+                {
+                    el.SetValue(Ellipse.WidthProperty, columnSize * p[2]);
+                    el.SetValue(Ellipse.HeightProperty, columnSize * p[3]);
+                }
+                else
+                {
+                    el.SetValue(Ellipse.WidthProperty, rowSize * p[2]);
+                    el.SetValue(Ellipse.HeightProperty, rowSize * p[3]);
+                }
+                
+            }
+            else
+            {
+                el.SetValue(Ellipse.WidthProperty, rowSize * p[2]);
+                el.SetValue(Ellipse.HeightProperty, columnSize * p[3]);
+            }        
+            el.SetValue(Ellipse.HorizontalAlignmentProperty, HorizontalAlignment.Left);
+            el.SetValue(Ellipse.VerticalAlignmentProperty, VerticalAlignment.Top);
+            el.SetValue(Ellipse.CursorProperty, Cursors.Hand);
+            //pol.SetValue(Polygon.NameProperty, "memberPolygon");//何故かセットされない
+
+            FrameworkElementFactory con = new FrameworkElementFactory(typeof(ContentPresenter));
+            FrameworkElementFactory conShadow = new FrameworkElementFactory(typeof(ContentPresenter));
+            con.SetValue(ContentPresenter.IsHitTestVisibleProperty, false);//テキストにはマウス判定を持たせない
+            if(name == "GroupNameChangeButton" || name == "GroupOpenButton")
+            {
+                con.SetValue(ContentPresenter.MarginProperty, CircleMarginCenter(p, contentSize, name));
+            }
+            else
+            {
+                con.SetValue(ContentPresenter.MarginProperty, MarginCenter(p, contentSize, name));
+            }            
+
+            gri.AppendChild(el);
+            gri.AppendChild(con);
+
+            //pol.Name = "buttonPolygon";//この方法だとセットされる
+            buttonTemplate.VisualTree = gri;
+
+            App.Current.Resources[name] = buttonTemplate;//コントロールテンプレート更新
+            button.Margin = new Thickness(rowSize * p[0], columnSize * p[1], 0, 0);
+            if(name == "GroupNameChangeButton" || name == "GroupOpenButton")
+            {
+                if(rowSize > columnSize)
+                {
+                    button.FontSize = columnSize * p[2] * 1.0 / contentSize * 0.8;//フォントサイズ＝80% * ボタンの縦幅/文字数
+                }
+                else
+                {
+                    button.FontSize = rowSize * p[2] * 1.0 / contentSize * 0.8;//フォントサイズ＝80% * ボタンの横幅/文字数
+                }
+            }
+            else
+            {
+                button.FontSize = rowSize * p[2] * 1.0 / contentSize * 0.8;//フォントサイズ＝80% * ボタンの横幅/文字数
+            }
             
         }
         public void ListBoxSet(string name, ListBox lb, double[] p)
-        {
+        {//長方形ですよね
             lb.Width = rowSize * p[2];
             lb.Height = columnSize * p[3];
             lb.Margin=new Thickness(rowSize * p[0], columnSize * p[1], 0, 0);
@@ -350,6 +480,113 @@ namespace Comarenkun
                 s1.Stop();
             }
         }
+        public void GroupsSetToListBox()
+        {//グループリストの更新
+            groupList.Clear();
+            foreach (string name in groups)
+            {
+                double contentSize = name.Replace("\n", "").Length;
+                double fontSize = GroupFontSize(name,"Group");
+                SolidColorBrush color;
+                if (name == "部内")
+                {
+                    color = Brushes.LightBlue;
+                }
+                else if (name == "所属ナシ")
+                {
+                    color = Brushes.Pink;
+                }
+                else
+                {
+                    color = Brushes.LightGreen;
+                }
+                //MarginCenter(groupButtonParams, contentSize, "GroupButton");
+                Group n = new Group { Name = name, FontSize = fontSize, Color = color };
+                groupList.Add(n);
+            }
+        }
+        public void GroupFontSizeSet()
+        {//グループリストのフォントサイズのみを更新　WindowSizeChanged用
+            for (int i = 0; i < groupList.List.Count; i++)
+            {
+                string n = "";
+                Group g = groupList.List[i];
+                try
+                {
+                    n = preSelectedGroup.Content.ToString();
+                }
+                catch
+                {//何も選択されていない場合に例外が返るので
+                }
+                if (groupList.List[i].Name == n)
+                {//このメソッドはWindowSizeChange時に行うが，選択しているグループの色は白色になっているのでこのタイミングでリストに反映しておく
+                    groupList.List[i].Color = Brushes.White;
+                }
+                groupList.List[i].FontSize = GroupFontSize(g.Name,"Group");
+            }
+        }
+        public double GroupFontSize(string name,string obj)
+        {//GroupというかリストボックスItemのフォントサイズを返す
+            double[] para = { };
+            double contentSize = name.Replace("\n", "").Length;
+            if(obj == "Group")
+            {
+                para = groupButtonParams;
+            }else if(obj == "MemberName")
+            {
+                para = memberNameButtonParams;
+            }else if(obj == "MemberRank")
+            {
+                para = memberRankButtonParams;
+            }
+            double result;
+            if (rowSize * para[2] * 1.0 / contentSize * 0.8 < columnSize * para[3])
+            {
+                result = rowSize * para[2] * 1.0 / contentSize * 0.8;
+            }
+            else
+            {
+                result = columnSize * para[3];
+            }
+            return result;
+        }
+
+        public void MembersSetToListBox(string groupName)
+        {//選んだグループに属するメンバーのリストの更新
+            memberList.Clear();
+            currentMemberNamesToShow = mlogic.MembersOfGroup(groupName);
+            foreach (string[] member in currentMemberNamesToShow)
+            {
+                double contentSize = member[1].Replace("\n", "").Length;//名前の文字数
+                double nameFontSize = GroupFontSize(member[1],"MemberName");//Groupのものを再利用
+                double rankFontSize = GroupFontSize(member[0],"MemberRank");//Groupのものを再利用
+                Member n = new Member { Rank = member[0], Name = member[1], NameFontSize = nameFontSize, RankFontSize = rankFontSize };
+                memberList.Add(n);
+            }
+        }
+        public void MemberFontSizeSet()
+        {//Itemsのフォントサイズのみを更新　WindowSizeChanged用
+            for (int i = 0; i < memberList.List.Count; i++)
+            {
+                //string n = "";
+                Member m = memberList.List[i];
+                //try
+                //{
+                //   n = preSelectedGroup.Content.ToString();
+                //}
+                //catch
+                //{//何も選択されていない場合に例外が返るので
+                //}
+                //if (groupList.List[i].Name == n)
+                //{//このメソッドはWindowSizeChange時に行うが，選択しているグループの色は白色になっているのでこのタイミングでリストに反映しておく
+                //    groupList.List[i].Color = Brushes.White;
+                //}
+                memberList.List[i].RankFontSize = GroupFontSize(m.Rank,"MemberRank");
+                memberList.List[i].NameFontSize = GroupFontSize(m.Name, "MemberName");
+            }
+        }
+
+
     }
 }
 

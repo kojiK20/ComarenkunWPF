@@ -16,6 +16,7 @@ using System.Windows.Media.Animation;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
+using Microsoft.VisualBasic;
 
 namespace Comarenkun
 {
@@ -27,8 +28,10 @@ namespace Comarenkun
         MatchingLogic mlogic;//ロジック部を実行してくれる人
         List<string[]> members;
         List<string> memberNames;
+        List<string[]> currentMemberNamesToShow;
         List<string> groups;
         public GroupList groupList;
+        public MemberList memberList;
 
         int gridRow = 30;//疑似グリッド．列数
         int gridColumn = 30;//疑似グリッド．行数
@@ -63,9 +66,19 @@ namespace Comarenkun
         double[] memberButtonParams = { 1, 4.75 - 1.0 / 15.0, 12, 15, 0, 0, 0, -4.0 / 5.0, 1, 13.0 / 30.0 };
         double[] matchingButtonParams = { 14, 4.75 - 15.0 / 15.0, 14, 15.0 + 19.0 / 15.0, 1, 1.0 / 30.0, 0, -1, 0, 7.0 / 15.0 };//フッタの傾き1/30
         double[] toMenuButtonParams = { 0, 0, 5, 24, 0, 0, -2, 0, 0, 0 };
-        double[] groupButtonsParams = { 11, 3, 17, 19 };
-        double[] groupButtonParams = { 0, 0, 14, 4, 1, 0, 0, 0, 1, 0 };//メンバ画面で所属を選択するボタン
-        //double[] shozokuLabelParams = { 4, 4, 6, 10 };//左上
+        double[] groupAddButtonParams = { 25.5, 1.5, 4.5, 20, 1, 0, 0, 0, 0, 0 };//groupNameChangeButtonの表示に合わせてパラメータを変える
+        double[] groupAddButtonParams2 = { 26, 11.5, 4.5, 10, 0.5, 0, 0, 0, 0, 0 };//groupNameChangeButtonが表示されてるとき用
+        double[] groupAddButtonParamsCopy = { 25.5, 1.5, 4.5, 20, 1, 0, 0, 0, 0, 0 };//↑から戻すとき用
+        double[] groupNameChangeButtonParams = { 5.1, 13.5, 6.5, 6.5 };
+        double[] groupDeleteButtonParams = { 25.5, 1.5, 4.5, 10, 0.5, 0, 0, 0, 0, 0 };
+        double[] groupOpenButtonParams = { 4.2, 4, 7.5, 7.5 };
+        double[] groupButtonsParams = { 11, 3.1, 14.5, 19 };
+        double[] groupButtonParams = { 0, 0, 13, 3, 1, 0, 0, 0, 0, 0 };//メンバ画面で所属を選択するボタン
+        double[] memberAddButtonParams = { 25.5, 1.5, 4.5, 20, 1, 0, 0, 0, 0, 0 };
+        double[] memberButtonsParams = { 8, 6, 16.5, 16};//所属選択後にメンバ編集するためのボタン
+        double[] memberRankButtonParams = { 0, 0, 2.2, 2, 0, 0, 0, 0, -0.2, 0 };
+        double[] memberNameButtonParams = { 2.3, 0, 12.7, 2, -0.2, 0, 0, 0, 0, 0 };
+        double[] rankNameLabelParams = { 8, 4.5, 16.5, 1.5, 0, 0, 0, 0, 0, 0 };//「Rank/Name」
         double[] talkLabelParams = { 0, 23, 24, 7, 0, 0, 0, 0, 0, 0 };
 
         int clickNumber = 0;//クリックのエフェクトに使用
@@ -78,6 +91,8 @@ namespace Comarenkun
 
         string menu = "Menu";
         bool nowMenu = false;
+        string group = "Group";
+        bool nowGroup = false;
         string member = "Member";
         bool nowMember = false;
         string matching = "Matching";
@@ -89,17 +104,22 @@ namespace Comarenkun
             SetMode(menu);
             mlogic = new MatchingLogic(this);//ロジック部を実行してくれる人
             members = mlogic.ReadMemberFile();
-            memberNames = mlogic.AllMemberNames(members);
-            groups = mlogic.AllGroups(members);
+            memberNames = mlogic.AllMemberNames();
+            groups = mlogic.AllGroups();
 
             //XAMLからこのクラスのメンバ変数を参照可能にする
             this.DataContext = this;
             this.toMenuButton.Visibility = Visibility.Hidden;
             this.toMenuButton.Content = "モ\nド\nル";//行替えエスケープがxamlコードからは利用できない
+            this.groupAddButton.Content = "追\n加\n＋";
+            this.groupDeleteButton.Content = "削\n除";
+            this.memberAddButton.Content = "追\n加\n＋";
             this.talkLabel.Content = "Hello,Comarenkun";
 
             groupList = new GroupList();
             this.groupButtons.DataContext = groupList.List;
+            memberList = new MemberList();
+            this.memberButtons.DataContext = memberList.List;
         }
         public void Window_Loaded(object sender, RoutedEventArgs e)
         {//このタイミングでバインディングする必要がある
@@ -111,20 +131,30 @@ namespace Comarenkun
             if (mode == "Menu")
             {
                 nowMenu = true;
-                nowMember = false;
+                nowGroup = false;
                 nowMatching = false;
+                nowMember = false;
             }
-            else if (mode == "Member")
+            else if (mode == "Group")
             {
                 nowMenu = false;
-                nowMember = true;
+                nowGroup = true;
                 nowMatching = false;
+                nowMember = false;
             }
             else if (mode == "Matching")
             {
                 nowMenu = false;
-                nowMember = false;
+                nowGroup = false;
                 nowMatching = true;
+                nowMember = false;
+            }
+            else if(mode == "Member")
+            {
+                nowMenu = false;
+                nowGroup = false;
+                nowMatching = false;
+                nowMember = true;
             }
             else
             {
@@ -141,6 +171,7 @@ namespace Comarenkun
                 PolygonSet("InitialBackObject1", this.initialBackObject1, initialBackObjectParams1);
                 PolygonSet("InitialBackObject2", this.initialBackObject2, initialBackObjectParams2);
             }
+            //モードで場合分けするならば，「2階層(2モード)以上離れたコントロールのテンプレートは更新しない」例：MatchingモードではGroupモードのコントロールは更新しない．
 
             PolygonSet("BackObject1", this.backObject1, backObjectParams1);
             PolygonSet("BackObject2", this.backObject2, backObjectParams2);
@@ -164,13 +195,27 @@ namespace Comarenkun
             //{
             PolygonButtonSet("MemberButton", this.memberButton, memberButtonParams);
             PolygonButtonSet("MatchingButton", this.matchingButton, matchingButtonParams);
+
             //}
-            //else if (nowMember)
+            //else if (nowGroup)
             //{
-            PolygonButtonSet("ToMenuButton", this.toMenuButton, toMenuButtonParams);
             TransParentLabelSet("talkLabel", this.talkLabel, talkLabelParams);
+            PolygonButtonSet("ToMenuButton", this.toMenuButton, toMenuButtonParams);
+            PolygonButtonSet("GroupAddButton", this.groupAddButton, groupAddButtonParams);    
+            PolygonButtonSet("GroupDeleteButton", this.groupDeleteButton, groupDeleteButtonParams);
+            EllipseButtonSet("GroupNameChangeButton", this.groupNameChangeButton, groupNameChangeButtonParams);
+            EllipseButtonSet("GroupOpenButton", this.groupOpenButton, groupOpenButtonParams);
             ListBoxSet("GroupButtons", this.groupButtons, groupButtonsParams);
             PolygonButtonSet("GroupButton", null, groupButtonParams);
+            GroupFontSizeSet();
+
+            PolygonButtonSet("MemberAddButton", this.memberAddButton, memberAddButtonParams);
+            ListBoxSet("MemberButtons", this.memberButtons, memberButtonsParams);
+            PolygonButtonSet("MemberRankButton", null, memberRankButtonParams);
+            PolygonButtonSet("MemberNameButton", null, memberNameButtonParams);
+            MemberFontSizeSet();
+            LabelSet("RankNameLabel", this.rankNameLabel, rankNameLabelParams);
+
             //GroupButtonsSet("GroupButton", groupButtonParams);
             //PolygonButtonSet("GroupButton", this.sampleGroup, groupButtonParams);
             //}
@@ -221,42 +266,258 @@ namespace Comarenkun
 
         private void memberButton_Click(object sender, RoutedEventArgs e)
         {
-
+            SetMode(group);//Groupモードへ
             memberButtonPush = true;
             Storyboard enter = (Storyboard)this.FindResource("MemberButtonMouseEnter");
             enter.Stop();
             Storyboard click = (Storyboard)this.FindResource("MemberButtonClick");
             click.Begin();
             PolygonButtonSet("ToMenuButton", this.toMenuButton, toMenuButtonParams);
-            this.toMenuButton.Visibility = Visibility.Visible;
 
-            //groupList.Clear();//newするとバインドが外れる
+            MakeButtonsVisible();
+            GroupsSetToListBox();
 
-            this.talkLabel.Content = "所属を選択するコマああああああああああああ";
+            this.talkLabel.Content = "所属を選択するコマ";
             TransParentLabelSet("talkLabel", this.talkLabel, talkLabelParams);
-            this.groupButtons.Visibility = Visibility.Visible;
-            foreach (string name in groups)
-            {
-
-                double contentSize = name.Replace("\n", "").Length;
-                double fontSize = rowSize * groupButtonParams[2] * 1.0 / contentSize * 0.8;
-                //MarginCenter(groupButtonParams, contentSize, "GroupButton");
-                //GroupName n = new GroupName(name, fontSize);
-                //groupNames.Add(n);
-            }
-            Group a = new Group();
-            a.Name = " aaaa";
-            a.FontSize = 30;
-            a.Color = Brushes.LightGreen;
-            a.IsHit = true;
-            groupList.Add(a);
         }
         private void memberButtonClickCompleted(object sender, EventArgs e)
         {   //MemberButtonClidkストーリーボードが終了したときに発生するイベント
             memberButtonPush = false;
             //ストーリーボード実行中にウィンドウサイズが変わった時にはまだサイズ変更を反映するのでストーリーボード終了時にSetModeする
-            SetMode(member);
-            //ストーリーボード実行中にウィンドウサイズが変わった時，出てきたメニューボタンのサイズが反映できないので一度再描写しておく
+            
+            //ストーリーボード実行中にウィンドウサイズが変わった時，出てきたメニューボタンのサイズが反映できないので一度再描写しておく←隣接モードのコントロールの更新はし続けることで解決？
+        }
+
+        bool isGroupSelected = false;
+        Button preSelectedGroup = new Button();//選択済みのボタン(1つのみ保持)
+        private void Group_Click(object sender, RoutedEventArgs e)
+        {
+            //senderに押されたボタンが格納される
+            Button button = (Button)sender;
+            //var o = (string)((Button)sender).Content;
+            //MessageBox.Show(o);
+
+            this.groupDeleteButton.Visibility = Visibility.Visible;
+            this.groupOpenButton.Visibility = Visibility.Visible;
+            this.groupAddButton.Content = "追\n加";
+            groupAddButtonParams = groupAddButtonParams2;
+            PolygonButtonSet("GroupAddButton", this.groupAddButton, groupAddButtonParams);//形が変わるのでテンプレート更新
+            this.groupNameChangeButton.Visibility = Visibility.Visible;//3つのGroup操作ボタンを出現させる
+            if (!isGroupSelected)
+            {//どのボタンも押していない
+                isGroupSelected = true;
+                //ButtonDarken(button);
+                button.Background = Brushes.White;
+                //button.Foreground = Brushes.Black;
+                preSelectedGroup = button;
+                //this.groupDeleteButton.Visibility = Visibility.Visible;
+                //this.groupOpenButton.Visibility = Visibility.Visible;
+            }
+            else
+            {//いずれかのボタンを既に選択している
+                string name = preSelectedGroup.Content.ToString();
+                if (name == "部内")
+                {
+                    preSelectedGroup.Background = Brushes.LightBlue;
+                }
+                else if (name == "所属ナシ")
+                {
+                    preSelectedGroup.Background = Brushes.Pink;
+                }
+                else
+                {
+                    preSelectedGroup.Background = Brushes.LightGreen;
+                }
+                //ButtonDarken(button);//同じボタンを選択した際は打ち消される
+                button.Background = Brushes.White;
+                //preSelectedGroup.Foreground = new SolidColorBrush(Color.FromRgb(96, 96, 96));
+                //button.Foreground = Brushes.Black;  
+                preSelectedGroup = button;
+            }
+        }
+        private void Group_MouseEnter(object sender, RoutedEventArgs e)
+        {
+            Button button = (Button)sender;
+            if(button != preSelectedGroup)
+            {//選択していないボタンの場合
+                ButtonBrighten(button);
+            }
+        }
+        private void Group_MouseLeave(object sender, RoutedEventArgs e)
+        {//選択されていなければボタンの色を戻す
+            Button button = (Button)sender;
+            if(button != preSelectedGroup)
+            {
+                string name = button.Content.ToString();
+                if (name == "部内")
+                {
+                    button.Background = Brushes.LightBlue;
+                }
+                else if (name == "所属ナシ")
+                {
+                    button.Background = Brushes.Pink;
+                }
+                else
+                {
+                    button.Background = Brushes.LightGreen;
+                }
+            }
+        }
+        
+        private void GroupAdd_Click(object sender, RoutedEventArgs e)
+        {
+            if (groups.Count >= 100)
+            {
+                MessageBox.Show("所属が多すぎます．");
+            }
+            else
+            {
+                string name = Interaction.InputBox("新しく作成する所属の名前を入力して下さい．");
+                name = name.Replace(":", "");//:はファイル処理に使用しているので消す
+                if (name.Length > 30)
+                {
+                    name = name.Substring(0, 30);//文字数は上限30とする 知らんけど
+                }
+                if (name != "")
+                {
+                    if (groups.IndexOf(name) == -1)
+                    {//ユニークな所属名
+                        mlogic.AddGroup(name);
+                        groups = mlogic.AllGroups();
+                        GroupsSetToListBox();
+                    }
+                    else
+                    {//既に同盟の所属がある
+                        for (int i = 2; true; i++)
+                        {
+                            if (groups.IndexOf(name + i.ToString()) == -1)
+                            {//既に存在する所属名のときは連番にする
+                                mlogic.AddGroup(name + i.ToString());
+                                groups = mlogic.AllGroups();
+                                GroupsSetToListBox();
+                                break;
+                            }
+                            if (i > 30)
+                            {//連番は30まで　知らんけど
+                                MessageBox.Show("同名の所属が多すぎます.");
+                                break;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("空文字は設定できません．");
+                }
+            }
+        }
+        private void GroupNameChange_Click(object sender, RoutedEventArgs e)
+        {
+            string pre = preSelectedGroup.Content.ToString();
+            bool cont = true;
+            if (pre == "部内" || pre.ToString() == "所属ナシ")
+            {
+                MessageBox.Show("その所属の名前は変更できません．");
+                cont = false;
+            }
+            if (cont)
+            {
+                string name = Interaction.InputBox("変更後の所属の名前を入力して下さい．", "Comarenkun", pre);
+                name = name.Replace(":", "");//:はファイル処理に使用しているので消す
+                if (name.Length > 30)
+                {
+                    name = name.Substring(0, 30);//文字数は上限30とする 知らんけど
+                }
+                if (name != "")
+                {
+                    if (groups.IndexOf(name) == -1)
+                    {//ユニークな所属名
+                        mlogic.ChangeGroup(pre, name);
+                        groups = mlogic.AllGroups();
+                        GroupsSetToListBox();
+                    }
+                    else
+                    {//既に同盟の所属がある
+                        for (int i = 2; true; i++)
+                        {
+                            if (groups.IndexOf(name + i.ToString()) == -1)
+                            {//既に存在する所属名のときは連番にする
+                                mlogic.ChangeGroup(pre, name + i.ToString());
+                                groups = mlogic.AllGroups();
+                                GroupsSetToListBox();
+                                break;
+                            }
+                            if (i > 30)
+                            {//連番は30まで　知らんけど
+                                MessageBox.Show("同名の所属が多すぎます.");
+                                break;
+                            }
+                        }
+                    }
+                }
+                //else if(name != null)
+                //{
+                //    MessageBox.Show("空文字は入力できません");
+                //}
+            } 
+        }
+
+        private void GroupDelete_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult dr = MessageBox.Show("この所属を消しますか?\n(メンバーは所属ナシに移動します．)", "確認", MessageBoxButton.YesNo);
+
+            if (dr == MessageBoxResult.Yes)
+            {
+                mlogic.DeleteGroup((string)preSelectedGroup.Content);
+                groups = mlogic.AllGroups();
+                GroupsSetToListBox();
+            }
+            else if (dr == MessageBoxResult.No)
+            {}
+            else
+            {}
+        }
+
+        private void GroupOpen_Click(object sender, RoutedEventArgs e)
+        {
+            SetMode(member);//Memberモードへ
+            this.groupAddButton.Visibility = Visibility.Hidden;
+            this.groupNameChangeButton.Visibility = Visibility.Hidden;
+            this.groupDeleteButton.Visibility = Visibility.Hidden;
+            this.groupButtons.Visibility = Visibility.Hidden;
+            this.groupOpenButton.Visibility = Visibility.Hidden;//この辺はストーリーボードで後々
+            this.groupAddButton.Content = "追\n加\n＋";
+            groupAddButtonParams = groupAddButtonParamsCopy;
+            PolygonButtonSet("GroupAddButton", this.groupAddButton, groupAddButtonParams);//形を戻しておく
+            string name = preSelectedGroup.Content.ToString();
+            if (name == "部内")
+            {
+                preSelectedGroup.Background = Brushes.LightBlue;
+            }
+            else if (name == "所属ナシ")
+            {
+                preSelectedGroup.Background = Brushes.Pink;
+            }
+            else
+            {
+                preSelectedGroup.Background = Brushes.LightGreen;
+            }
+
+            MakeButtonsVisible();
+            MembersSetToListBox(preSelectedGroup.Content.ToString());
+
+            this.talkLabel.Content = "変更したい部分を押せば編集\nできるコマ";
+            TransParentLabelSet("talkLabel", this.talkLabel, talkLabelParams);
+            //this.memberButtons.Visibility = Visibility.Visible;
+            //選択されているボタンの所属名を渡してその所属に属するメンバー集合をmemberListに格納等諸々する
+            
+            //this.rankNameLabel.Visibility = Visibility.Visible;
+
+        }
+
+        private void MemberAdd_Click(object sender, RoutedEventArgs e)
+        {
+
         }
 
         private void matchingButton_MouseEnter(object sender, RoutedEventArgs e)
@@ -286,6 +547,7 @@ namespace Comarenkun
         }
         private void matchingButton_Click(object sender, RoutedEventArgs e)
         {
+            SetMode(matching);
             matchingButtonPush = true;
             Storyboard enter = (Storyboard)this.FindResource("MatchingButtonMouseEnter");
             enter.Stop();
@@ -300,7 +562,6 @@ namespace Comarenkun
         private void matchingButtonClickCompleted(object sender, EventArgs e)
         {   //MatchingButtonClidkストーリーボードが終了したときに発生するイベント
             matchingButtonPush = false;
-            SetMode(matching);
         }
 
         private void toMenuButton_MouseEnter(object sender, RoutedEventArgs e)
@@ -328,141 +589,77 @@ namespace Comarenkun
             }
         }
         private void toMenuButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.groupButtons.Visibility = Visibility.Hidden;
+        {//1階層モードを戻る
+            if (nowGroup || nowMatching)
+            {
+                SetMode(menu);
+                this.groupAddButton.Visibility = Visibility.Hidden;
+                this.groupNameChangeButton.Visibility = Visibility.Hidden;
+                this.groupDeleteButton.Visibility = Visibility.Hidden;
+                this.groupOpenButton.Visibility = Visibility.Hidden;
+                this.groupButtons.Visibility = Visibility.Hidden;//この辺はストーリーボードで後々
+                groupAddButtonParams = groupAddButtonParamsCopy;
+                PolygonButtonSet("GroupAddButton", this.groupAddButton, groupAddButtonParams);//形を戻しておく
 
-            toMenuButtonPush = true;
-            memberButtonPush = false;
-            matchingButtonPush = false;
-            Storyboard enter = (Storyboard)this.FindResource("ToMenuButtonMouseEnter");
-            enter.Stop();
+                MakeButtonsVisible();
 
-            Storyboard click = (Storyboard)this.FindResource("ToMenuButtonClick");
-            click.Begin();
-            this.talkLabel.Content = "Hello,Comarenkun";
-            TransParentLabelSet("talkLabel", this.talkLabel, talkLabelParams);
+                toMenuButtonPush = true;
+                memberButtonPush = false;
+                matchingButtonPush = false;
+                Storyboard enter = (Storyboard)this.FindResource("ToMenuButtonMouseEnter");
+                enter.Stop();
+
+                Storyboard click = (Storyboard)this.FindResource("ToMenuButtonClick");
+                click.Begin();
+                this.talkLabel.Content = "Hello,Comarenkun";
+                TransParentLabelSet("talkLabel", this.talkLabel, talkLabelParams);
+            }else if (nowMember)
+            {
+                SetMode(group);
+                MakeButtonsVisible();
+                this.memberAddButton.Visibility = Visibility.Hidden;
+                this.memberButtons.Visibility = Visibility.Hidden;
+                this.rankNameLabel.Visibility = Visibility.Hidden;
+                preSelectedGroup = null;
+                isGroupSelected = false;
+                //this.groupOpenButton.Visibility = Visibility.Hidden;
+                //this.groupButtons.Visibility = Visibility.Hidden;//この辺はストーリーボードで後々
+            }
+
         }
         private void toMenuButtonCompleted(object sender, EventArgs e)
         {   //ToMenuButtonClidkストーリーボードが終了したときに発生するイベント
-            SetMode(menu);
             toMenuButtonPush = false;
         }
 
-        
-    }
 
-    /*public class GroupName : INotifyPropertyChanged
-    {//Nameプロパティに所属名を保持するクラス
-        public string name { set; get; }
-        public double fontSize { set; get; }
+        public void MakeButtonsVisible()
+        {//現在のモードに合わせて，そのモードに表示されるボタンをまとめて表示するメソッド
+            //非表示にする分はストーリーボードに任す．
+            if (nowMenu)
+            {//Menuモードに必要なコントロールをVisibleにする
+                this.memberButton.Visibility = Visibility.Visible;
+                this.matchingButton.Visibility = Visibility.Visible;
+            }else if (nowGroup)
+            {//Groupモード(の初期状態)ひ必要なコントロールをVisibleにする
+                this.groupButtons.Visibility = Visibility.Visible;
+                this.groupAddButton.Visibility = Visibility.Visible;
+                this.toMenuButton.Visibility = Visibility.Visible;
+            }else if (nowMember)
+            {
+                this.memberAddButton.Visibility = Visibility.Visible;
+                this.memberButtons.Visibility = Visibility.Visible;
+                this.rankNameLabel.Visibility = Visibility.Visible;
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        // This method is called by the Set accessor of each property.
-        // The CallerMemberName attribute that is applied to the optional propertyName
-        // parameter causes the property name of the caller to be substituted as an argument.
-        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
-        {
-            if(PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-
-        public GroupName(string Name, double FontSize)
-        {
-            this.name = Name;
-            this.fontSize = FontSize;
-        }
-        public string Name
-        {
-            get
-            {
-                return this.name;
-            }
-            set
-            {
-                if(value != this.name)
-                {
-                    this.name = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-        public double FontSize
-        {
-            get
-            {
-                return this.fontSize;
-            }
-            set
-            {
-                if(value != this.fontSize)
-                {
-                    this.fontSize = value;
-                    NotifyPropertyChanged();
-                }
+                this.toMenuButton.Visibility = Visibility.Visible;
+                
             }
         }
         
-    }*/
-    public class Group
-    {
-        public string Name { get; set; }
-        public double FontSize { get; set; }
-        public SolidColorBrush Color { get; set; }
-        public bool IsHit { get; set; }
     }
-    public class GroupList
-    {
-        public ObservableCollection<Group> List { get; set; }
-        public GroupList()
-        {
-            List = new ObservableCollection<Group>
-            {
-                new Group {Name=" 部内", FontSize=50.0,Color=Brushes.LightBlue, IsHit = false },
-                new Group {Name=" あああああああああ", FontSize=50.0,Color=Brushes.LightGreen, IsHit = true }
-            };
-        }
-        public void Add(Group g)
-        {
-            List.Add(g);
-        }
-    }
-
-    public class OpaqueClickableImage : Image
-    {
-        //Image.HitTestCoreメソッドの上書き
-        protected override HitTestResult HitTestCore(PointHitTestParameters hitTestParameters)
-        {
-            var source = (BitmapSource)Source;
-
-            //get the pixel of the source that was hit
-            var x = (int)(hitTestParameters.HitPoint.X / ActualWidth * source.PixelWidth);
-            var y = (int)(hitTestParameters.HitPoint.Y / ActualHeight * source.PixelHeight);
-
-            
-
-            //copy the single pixel in to a new byte array representing RGBA
-            var pixel = new byte[4];
-            source.CopyPixels(new Int32Rect(x, y, 1, 1), pixel, 4, 0);
-
-            //check the alpha (transparency) of the pixel
-            //- threshold can be adjusted from 0 to 255
-            if(pixel[0] == 0)
-            {
-                //MessageBox.Show(pixel[0].ToString());//test
-                return null;
-            }
-            //不透明な場合のみマウスが上にありますよと返す
-            return new PointHitTestResult(this, hitTestParameters.HitPoint);
-
-        } 
-    }
-
    // public event DependencyPropertyChangedEventHandler PropertyChanged = null;
    // protected void OnPropertyChanged(string info)
         //{
             //this.PropertyChanged?.Invoke(this, new DependencyPropertyChangedEventArgs(info));
         //}
-    
 }

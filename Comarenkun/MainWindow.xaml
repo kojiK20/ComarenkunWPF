@@ -645,6 +645,49 @@
             </Button.RenderTransform>
         </Button>
 
+        <Button x:Name="groupAddButton" Template="{DynamicResource GroupAddButton}" FontFamily="{StaticResource 851ゴクチカ}" Content="+" Foreground="#FFF" Background="#0A0" Visibility="Hidden" Click="GroupAdd_Click"/>
+        <Button x:Name="groupDeleteButton" Template="{DynamicResource GroupDeleteButton}" FontFamily="{StaticResource 851ゴクチカ}" Content="削除" Foreground="#FFF" Background="#F00" Visibility="Hidden" Click="GroupDelete_Click"/>
+        <Button x:Name="groupOpenButton" Template="{DynamicResource GroupOpenButton}" FontFamily="{StaticResource 851ゴクチカ}" Content="開ク" Foreground="#FFF" Background="#55A" Visibility="Hidden" Click="GroupOpen_Click"/>
+        <Button x:Name="groupNameChangeButton" Template="{DynamicResource GroupNameChangeButton}" FontFamily="{StaticResource 851ゴクチカ}" Content="ナマエ" Foreground="#FFF" Background="#A0A" Visibility="Hidden" Click="GroupNameChange_Click"/>
+
+        <ListBox Name="groupButtons" Visibility="Hidden" ItemContainerStyle="{StaticResource ContainerStyle}" BorderBrush="Transparent" ItemsSource="{Binding}" Background="Transparent" Height="500" Width="300" FontFamily="{StaticResource 851ゴクチカ}" FontSize="50" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="300,0,0,0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Button Template="{DynamicResource GroupButton}" Content="{Binding Path=Name}" FontSize="{Binding Path=FontSize}" Background="{Binding Path=Color}"  Foreground="#666" Cursor="Hand" Margin="0,0,0,10" Click="Group_Click" MouseEnter="Group_MouseEnter" MouseLeave="Group_MouseLeave"/>
+                    <!--<TextBlock Text="{Binding Path=Name}" FontSize="{Binding Path=FontSize}" Background="{Binding Path=Color}"  Foreground="#FFFFFF" Cursor="Hand" Margin="0,0,0,10"/>-->
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+            <!--<ListBox.Resources>
+                    <Style TargetType="ScrollBar">
+                        <Setter Property="Background" Value="#AA005500"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                    </Style>
+
+                </ListBox.Resources>-->
+        </ListBox>
+
+        <Button x:Name="memberAddButton" Visibility="Hidden" Template="{DynamicResource MemberAddButton}" FontFamily="{StaticResource 851ゴクチカ}" Content="+" Foreground="#FFF" Background="#0A0" Click="MemberAdd_Click"/>
+        
+        <ListBox Name="memberButtons" Visibility="Hidden" ItemContainerStyle="{StaticResource ContainerStyle}" ItemsSource="{Binding}" BorderBrush="Transparent" Background="Transparent" Height="500" Width="300" FontFamily="{StaticResource 851ゴクチカ}" FontSize="50" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="300,0,0,0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Button Template="{DynamicResource MemberRankButton}" Content="{Binding Path=Rank}" FontSize="{Binding Path=RankFontSize}" Background="#FF8822" Foreground="#FFF" Cursor="Hand" Margin="0,0,0,10"/><!-- Click="MemberRank_Click" MouseEnter="MemberRank_MouseEnter" MouseLeave="MemberRank_MouseLeave"/>-->
+                        <Button Template="{DynamicResource MemberNameButton}" Content="{Binding Path=Name}" FontSize="{Binding Path=NameFontSize}" Background="#FF8822" Foreground="#FFF" Cursor="Hand" Margin="0,0,0,10"/><!-- Click="MemberName_Click" MouseEnter="MemberName_MouseEnter" MouseLeave="MemberName_MouseLeave"/>-->
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <Label x:Name="rankNameLabel" Template="{DynamicResource RankNameLabel}" FontFamily="{StaticResource 851ゴクチカ}" Content="Ranks&amp;Names" Foreground="#000" Background="Transparent" Visibility="Hidden" />
+        <!-- Click="GroupNameChange_Click"/>-->
+        <!--<ListBox Name="memberGroupButtons" Visibility="Hidden" ItemsSource="{Binding}" Background="Transparent" Height="500" Width="300" FontFamily="{StaticResource 851ゴクチカ}" FontSize="50" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="300,0,0,0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Button Template="{DynamicResource MemberGroupButton}" Content="{Binding}" FontSize="{Binding}" Background="{Binding}" Foreground="#FFF" Cursor="Hand" Margin="0,0,0,10" Click="MemberGroup_Click" MouseEnter="MemberGroup_MouseEnter" MouseLeave="MemberGroup_MouseLeave"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>-->
+
         <Button x:Name="toMenuButton" Visibility="Visible" Template="{DynamicResource ToMenuButton}" Foreground="#FFFFFF" Background="#FF2D5182" FontFamily="{StaticResource 851ゴクチカ}" FontSize="70" Content="モドル" HorizontalAlignment="Left" VerticalAlignment="Top" MouseEnter="toMenuButton_MouseEnter" MouseLeave="toMenuButton_MouseLeave" Click="toMenuButton_Click" RenderTransformOrigin="0.5,0.5" >
             <Button.RenderTransform>
                 <TransformGroup>
@@ -655,18 +698,6 @@
                 </TransformGroup>
             </Button.RenderTransform>
         </Button>
-        
-        <ListBox Name="groupButtons" Visibility="Hidden" ItemContainerStyle="{StaticResource ContainerStyle}" BorderBrush="Transparent" ItemsSource="{Binding}" Background="Transparent" Height="500" Width="300" FontFamily="{StaticResource 851ゴクチカ}" FontSize="50" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="300,0,0,0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Grid>
-                        <StackPanel>
-                            <Button Template="{DynamicResource GroupButton}" Content="{Binding Path=Name}" FontSize="{Binding Path=FontSize}" Background="{Binding Path=Color}"  Foreground="#FFFFFF" IsHitTestVisible="{Binding Path=IsHit}" Cursor="Hand" />
-                        </StackPanel>
-                    </Grid>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
 
         <Polygon x:Name="headerAccent" Style= "{DynamicResource HeaderAccent}" IsHitTestVisible="True"  >
             <Polygon.Fill>

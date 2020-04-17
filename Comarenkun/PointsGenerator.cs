@@ -136,10 +136,36 @@ namespace Comarenkun
             Thickness result = new Thickness(left, top, right, bottom);
             return result;
         }
-        public Thickness PortrateMarginCenter(double[] p, double contentSize)
+        public Thickness CircleMarginCenter(double[] p, double contentSize, string name)
+        {//真円用
+            Thickness result = new Thickness();
+            if (rowSize > columnSize)
+            {
+                double fontSize = columnSize * p[2] * 1.0 / contentSize * 0.8;
+                result = new Thickness(columnSize * p[2] / 2 - fontSize * contentSize / 2, columnSize * p[2] / 2 - fontSize * 1 / 2, 0, 0);
+            }
+            else
+            {
+                double fontSize = rowSize * p[2] * 1.0 / contentSize * 0.8; 
+                result = new Thickness(rowSize * p[2] / 2 - fontSize * contentSize / 2, rowSize * p[2] / 2 - fontSize * 1 / 2, 0, 0);
+            }
+            
+        
+            return result;
+        }
+        public Thickness PortrateMarginCenter(double[] p, double contentSize, string name)
         {//コンテンツが縦書きの場合
          //縦方向のマージンに文字数contentSizeが必要
-            double fontSize = columnSize * p[3] * 1.0 / contentSize * 0.3;
+            double fontSize = 1;
+            if (name == "GroupNameChangeButton" || name == "GroupAddButton" || name == "MemberAddButton")
+            {
+                fontSize = columnSize * p[3] * 1.0 / contentSize * 0.4;
+            }
+            else
+            {
+                fontSize = columnSize * p[3] * 1.0 / contentSize * 0.3;
+            }
+            
             //原点を左上として，ラベルなどの座標をマージンで指定する.
             //VerticalAlignment=Center,HorizontalAlignment=Center　のかわり(Gridを使用していないため)
 
@@ -249,6 +275,36 @@ namespace Comarenkun
             }
             return Color.FromRgb(Convert.ToByte(r), Convert.ToByte(g), Convert.ToByte(b));
         }
+        public Color Darken(Color input)//カラーをすこし暗くする(Brighten2回分の真逆)
+        {
+            int[] rgb = { input.R, input.G, input.B };
+            int r, g, b;
+            if (rgb[0] < 16 * 6)
+            {
+                r = 0;
+            }
+            else
+            {
+                r = rgb[0] - 16 * 6;
+            }
+            if (rgb[1] < 16 * 4)
+            {
+                g = 0;
+            }
+            else
+            {
+                g = rgb[1] - 16 * 4;
+            }
+            if (rgb[2] > 255 - 16 * 2)
+            {
+                b = 255;
+            }
+            else
+            {
+                b = rgb[2] + 16 * 2;
+            }
+            return Color.FromRgb(Convert.ToByte(r), Convert.ToByte(g), Convert.ToByte(b));
+        }
         public void ButtonBrighten(Button b)
         {//渡されたボタンの色を↑の関数に通した値に変える
             Color currentColor = ((SolidColorBrush)b.Background).Color;
@@ -259,6 +315,12 @@ namespace Comarenkun
         {//渡されたボタンの色を↑の関数に通した値に変える
             Color currentColor = ((SolidColorBrush)b.Background).Color;
             b.Background = new SolidColorBrush(BlueBrighten(currentColor));
+        }
+
+        public void ButtonDarken(Button b)
+        {//渡されたボタンの色を暗くする
+            Color currentColor = ((SolidColorBrush)b.Background).Color;
+            b.Background = new SolidColorBrush(Darken(currentColor));
         }
     }
 }
