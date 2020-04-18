@@ -528,7 +528,6 @@ namespace Comarenkun
                 {
                     rank = Interaction.InputBox("新しく作成するメンバーのランクを入力して下さい．");
                 }
-                string name = Interaction.InputBox("新しく作成するメンバーの名前を入力して下さい．");
                 int rankNum;
                 if (!int.TryParse(rank, out rankNum))
                 {//ランクが整数値ではない
@@ -536,6 +535,7 @@ namespace Comarenkun
                 }
                 else
                 {//ランクが整数値なら進める
+                    string name = Interaction.InputBox("新しく作成するメンバーの名前を入力して下さい．");
                     name = name.Replace(":", "");//:はファイル処理に使用しているので消す
                     if (name.Length > 30)
                     {
@@ -578,20 +578,28 @@ namespace Comarenkun
             {
                 rank = preRank;
             }
-            name = name.Replace(":", "");//:はファイル処理に使用しているので消す
-            if (name.Length > 30)
-            {
-                name = name.Substring(0, 30);//文字数は上限30とする 知らんけど
+            int rankNum;
+            if (!int.TryParse(rank, out rankNum))
+            {//ランクが整数値ではない
+                MessageBox.Show("ランクは整数値にして下さい．");
             }
-            name = mlogic.NameDuplicateCheck(memberNames, name);//重複しているなら連番にする
-            if (name == "")
+            else
             {
-                name = preName;
-            }
+                name = name.Replace(":", "");//:はファイル処理に使用しているので消す
+                if (name.Length > 30)
+                {
+                    name = name.Substring(0, 30);//文字数は上限30とする 知らんけど
+                }
+                name = mlogic.NameDuplicateCheck(memberNames, name);//重複しているなら連番にする
+                if (name == "")
+                {
+                    name = preName;
+                }
 
-            mlogic.ChangeMember(rank, preName, name, preSelectedGroup.Content.ToString());
-            memberNames = mlogic.AllGroups();
-            MembersSetToListBox(preSelectedGroup.Content.ToString());
+                mlogic.ChangeMember(rank, preName, name, preSelectedGroup.Content.ToString());
+                memberNames = mlogic.AllGroups();
+                MembersSetToListBox(preSelectedGroup.Content.ToString());
+            } 
 
         }
         private void MemberDelete_Click(object sender, RoutedEventArgs e)
