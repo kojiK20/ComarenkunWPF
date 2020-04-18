@@ -136,6 +136,16 @@ namespace Comarenkun
                 OnPropertyChanged("NameFontSize");
             }
         }
+        private double _DeleteFontSize;
+        public double DeleteFontSize
+        {
+            get { return _DeleteFontSize; }
+            set
+            {
+                _DeleteFontSize = value;
+                OnPropertyChanged("DeleteFontSize");
+            }
+        }
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string propertyName)
         {
@@ -149,6 +159,17 @@ namespace Comarenkun
         {
             List = new ObservableCollection<Member>();
         }
+        public string Rank(string name)
+        {
+            foreach(Member m in List)
+            {
+                if(m.Name == name)
+                {
+                    return m.Rank;
+                }
+            }
+            return null;
+        }
         public void Add(Member m)
         {
             List.Add(m);
@@ -160,6 +181,20 @@ namespace Comarenkun
         public void Clear()
         {
             List.Clear();
+        }
+        public void Sort()
+        {//ランクで昇順ソート．いったんListに移してソートしてObservableCollectionに戻す.計算量<=2n + n^2　=O(n^2)やからええやろ
+            List<Member> pre = new List<Member>();
+            foreach(Member m in List)
+            {
+                pre.Add(m);
+            }
+            pre.Sort((a, b) => int.Parse(a.Rank) - int.Parse(b.Rank));//ランクで昇順ソート(たぶんn^2以下)
+            List.Clear();
+            foreach(Member m in pre)
+            {
+                List.Add(m);
+            }
         }
     }
 

@@ -667,18 +667,19 @@
         </ListBox>
 
         <Button x:Name="memberAddButton" Visibility="Hidden" Template="{DynamicResource MemberAddButton}" FontFamily="{StaticResource 851ゴクチカ}" Content="+" Foreground="#FFF" Background="#0A0" Click="MemberAdd_Click"/>
-        
+        <Label x:Name="memberGroupLabel" Visibility="Hidden" Template="{DynamicResource MemberGroupLabel}"  FontFamily="{StaticResource 851ゴクチカ}" Content="groupName" Foreground="#000" Background="Transparent"/>
         <ListBox Name="memberButtons" Visibility="Hidden" ItemContainerStyle="{StaticResource ContainerStyle}" ItemsSource="{Binding}" BorderBrush="Transparent" Background="Transparent" Height="500" Width="300" FontFamily="{StaticResource 851ゴクチカ}" FontSize="50" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="300,0,0,0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid>
-                        <Button Template="{DynamicResource MemberRankButton}" Content="{Binding Path=Rank}" FontSize="{Binding Path=RankFontSize}" Background="#FF8822" Foreground="#FFF" Cursor="Hand" Margin="0,0,0,10"/><!-- Click="MemberRank_Click" MouseEnter="MemberRank_MouseEnter" MouseLeave="MemberRank_MouseLeave"/>-->
-                        <Button Template="{DynamicResource MemberNameButton}" Content="{Binding Path=Name}" FontSize="{Binding Path=NameFontSize}" Background="#FF8822" Foreground="#FFF" Cursor="Hand" Margin="0,0,0,10"/><!-- Click="MemberName_Click" MouseEnter="MemberName_MouseEnter" MouseLeave="MemberName_MouseLeave"/>-->
+                        <Button Template="{DynamicResource MemberRankButton}" Tag="{Binding Path=Name}" Content="{Binding Path=Rank}" FontSize="{Binding Path=RankFontSize}" Background="#FF8822" Foreground="#FFF" Cursor="Hand" Margin="0,0,0,10" Click="MemberRank_Click" MouseRightButtonDown="MemberRank_RightClick" MouseEnter="Member_MouseEnter" MouseLeave="Member_MouseLeave"/><!-- Click="MemberRank_Click" MouseEnter="MemberRank_MouseEnter" MouseLeave="MemberRank_MouseLeave"/>-->
+                        <Button Template="{DynamicResource MemberNameButton}" Content="{Binding Path=Name}" FontSize="{Binding Path=NameFontSize}" Background="#FF8822" Foreground="#FFF" Cursor="Hand" Margin="0,0,0,10" Click="MemberName_Click" MouseEnter="Member_MouseEnter" MouseLeave="Member_MouseLeave"/><!-- Click="MemberName_Click" MouseEnter="MemberName_MouseEnter" MouseLeave="MemberName_MouseLeave"/>-->
+                        <Button Template="{DynamicResource MemberDeleteButton}" Tag="{Binding Path=Name}" Content="削除" FontSize="{Binding Path=DeleteFontSize}" Background="#F00" Foreground="#FFF" Cursor="Hand" Margin="0,0,0,10" Click="MemberDelete_Click" MouseEnter="Member_MouseEnter" MouseLeave="Member_MouseLeave"/>
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <Label x:Name="rankNameLabel" Template="{DynamicResource RankNameLabel}" FontFamily="{StaticResource 851ゴクチカ}" Content="Ranks&amp;Names" Foreground="#000" Background="Transparent" Visibility="Hidden" />
+        <Label x:Name="rankNameLabel" Template="{DynamicResource RankNameLabel}" FontFamily="{StaticResource 851ゴクチカ}" Content="Ranks &amp; Names" Foreground="#000" Background="Transparent" Visibility="Hidden" />
         <!-- Click="GroupNameChange_Click"/>-->
         <!--<ListBox Name="memberGroupButtons" Visibility="Hidden" ItemsSource="{Binding}" Background="Transparent" Height="500" Width="300" FontFamily="{StaticResource 851ゴクチカ}" FontSize="50" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="300,0,0,0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
             <ListBox.ItemTemplate>

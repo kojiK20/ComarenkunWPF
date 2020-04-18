@@ -28,7 +28,7 @@ namespace Comarenkun
         MatchingLogic mlogic;//ロジック部を実行してくれる人
         List<string[]> members;
         List<string> memberNames;
-        List<string[]> currentMemberNamesToShow;
+        List<string[]> currentMembersToShow;
         List<string> groups;
         public GroupList groupList;
         public MemberList memberList;
@@ -75,10 +75,12 @@ namespace Comarenkun
         double[] groupButtonsParams = { 11, 3.1, 14.5, 19 };
         double[] groupButtonParams = { 0, 0, 13, 3, 1, 0, 0, 0, 0, 0 };//メンバ画面で所属を選択するボタン
         double[] memberAddButtonParams = { 25.5, 1.5, 4.5, 20, 1, 0, 0, 0, 0, 0 };
-        double[] memberButtonsParams = { 8, 6, 16.5, 16};//所属選択後にメンバ編集するためのボタン
+        double[] memberGroupLabelParams = { 5, 3.75, 3, 17.25, 0, 0, 0, 0, 0, 0 };//メンバ画面で所属名を表示
+        double[] memberButtonsParams = { 8, 5, 16.5, 16};//所属選択後にメンバ編集するためのボタン
         double[] memberRankButtonParams = { 0, 0, 2.2, 2, 0, 0, 0, 0, -0.2, 0 };
-        double[] memberNameButtonParams = { 2.3, 0, 12.7, 2, -0.2, 0, 0, 0, 0, 0 };
-        double[] rankNameLabelParams = { 8, 4.5, 16.5, 1.5, 0, 0, 0, 0, 0, 0 };//「Rank/Name」
+        double[] memberNameButtonParams = { 2.3, 0, 9.6, 2, -0.2, 0, 0, 0, 0, 0 };
+        double[] memberDeleteButtonParams = { 12, 0, 2, 2, 0, 0, 0, 0, 0, 0 };
+        double[] rankNameLabelParams = { 8, 3.5, 16.5, 1.5, 0, 0, 0, 0, 0, 0 };//「Rank/Name」
         double[] talkLabelParams = { 0, 23, 24, 7, 0, 0, 0, 0, 0, 0 };
 
         int clickNumber = 0;//クリックのエフェクトに使用
@@ -210,9 +212,11 @@ namespace Comarenkun
             GroupFontSizeSet();
 
             PolygonButtonSet("MemberAddButton", this.memberAddButton, memberAddButtonParams);
+            LabelSet("MemberGroupLabel", this.memberGroupLabel, memberGroupLabelParams);
             ListBoxSet("MemberButtons", this.memberButtons, memberButtonsParams);
             PolygonButtonSet("MemberRankButton", null, memberRankButtonParams);
             PolygonButtonSet("MemberNameButton", null, memberNameButtonParams);
+            PolygonButtonSet("MemberDeleteButton", null, memberDeleteButtonParams);
             MemberFontSizeSet();
             LabelSet("RankNameLabel", this.rankNameLabel, rankNameLabelParams);
 
@@ -378,36 +382,12 @@ namespace Comarenkun
                 {
                     name = name.Substring(0, 30);//文字数は上限30とする 知らんけど
                 }
+                name = mlogic.NameDuplicateCheck(groups, name);//重複してるなら連番に
                 if (name != "")
                 {
-                    if (groups.IndexOf(name) == -1)
-                    {//ユニークな所属名
-                        mlogic.AddGroup(name);
-                        groups = mlogic.AllGroups();
-                        GroupsSetToListBox();
-                    }
-                    else
-                    {//既に同盟の所属がある
-                        for (int i = 2; true; i++)
-                        {
-                            if (groups.IndexOf(name + i.ToString()) == -1)
-                            {//既に存在する所属名のときは連番にする
-                                mlogic.AddGroup(name + i.ToString());
-                                groups = mlogic.AllGroups();
-                                GroupsSetToListBox();
-                                break;
-                            }
-                            if (i > 30)
-                            {//連番は30まで　知らんけど
-                                MessageBox.Show("同名の所属が多すぎます.");
-                                break;
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("空文字は設定できません．");
+                    mlogic.AddGroup(name);
+                    groups = mlogic.AllGroups();
+                    GroupsSetToListBox();
                 }
             }
         }
@@ -464,18 +444,26 @@ namespace Comarenkun
 
         private void GroupDelete_Click(object sender, RoutedEventArgs e)
         {
-            MessageBoxResult dr = MessageBox.Show("この所属を消しますか?\n(メンバーは所属ナシに移動します．)", "確認", MessageBoxButton.YesNo);
-
-            if (dr == MessageBoxResult.Yes)
+            if(preSelectedGroup.Content.ToString() == "部内" || preSelectedGroup.Content.ToString() == "所属ナシ")
             {
-                mlogic.DeleteGroup((string)preSelectedGroup.Content);
-                groups = mlogic.AllGroups();
-                GroupsSetToListBox();
+                MessageBox.Show("その所属は削除できません．");
             }
-            else if (dr == MessageBoxResult.No)
-            {}
             else
-            {}
+            {
+                MessageBoxResult dr = MessageBox.Show("この所属を削除しますか?\n(メンバーは所属ナシに移動します．)", "確認", MessageBoxButton.YesNo);
+
+                if (dr == MessageBoxResult.Yes)
+                {
+                    mlogic.DeleteGroup((string)preSelectedGroup.Content);
+                    groups = mlogic.AllGroups();
+                    GroupsSetToListBox();
+                }
+                else if (dr == MessageBoxResult.No)
+                { }
+                else
+                { }
+            }
+            
         }
 
         private void GroupOpen_Click(object sender, RoutedEventArgs e)
@@ -504,6 +492,18 @@ namespace Comarenkun
             }
 
             MakeButtonsVisible();
+            string label = "";
+            foreach(char c in preSelectedGroup.Content.ToString())
+            {
+                string cc = c.ToString();
+                if(c == 'ー' || c == '-')
+                {
+                    cc = " |";
+                }
+                label = label + cc + "\n";
+            }
+            this.memberGroupLabel.Content = label;//選択している所属名の縦書き
+            LabelSet("MemberGroupLabel", this.memberGroupLabel, memberGroupLabelParams);
             MembersSetToListBox(preSelectedGroup.Content.ToString());
 
             this.talkLabel.Content = "変更したい部分を押せば編集\nできるコマ";
@@ -517,9 +517,124 @@ namespace Comarenkun
 
         private void MemberAdd_Click(object sender, RoutedEventArgs e)
         {
-
+            if (members.Count >= 10000)
+            {
+                MessageBox.Show("メンバーが多すぎます．");
+            }
+            else
+            {
+                string rank = "";
+                if (preSelectedGroup.Content.ToString() == "部内")
+                {
+                    rank = Interaction.InputBox("新しく作成するメンバーのランクを入力して下さい．");
+                }
+                string name = Interaction.InputBox("新しく作成するメンバーの名前を入力して下さい．");
+                int rankNum;
+                if (!int.TryParse(rank, out rankNum))
+                {//ランクが整数値ではない
+                    MessageBox.Show("ランクは整数値にして下さい．");
+                }
+                else
+                {//ランクが整数値なら進める
+                    name = name.Replace(":", "");//:はファイル処理に使用しているので消す
+                    if (name.Length > 30)
+                    {
+                        name = name.Substring(0, 30);//文字数は上限30とする 知らんけど
+                    }
+                    name = mlogic.NameDuplicateCheck(memberNames, name);//重複しているなら連番にする
+                    if (name != "")
+                    {
+                        mlogic.AddMember(rank, name, preSelectedGroup.Content.ToString());//members.txtファイル更新
+                        memberNames = mlogic.AllMemberNames();//更新
+                        MembersSetToListBox(preSelectedGroup.Content.ToString());//members.txtファイル読んで指定のグループ名のメンバーをリストボックスにセット
+                    }
+                }   
+            }
         }
 
+        private void MemberRank_Click(object sender, RoutedEventArgs e)
+        {
+            string name = ((Button)sender).Tag.ToString();
+            //ランクを上げる
+            mlogic.MinusRank(name, preSelectedGroup.Content.ToString());
+            memberNames = mlogic.AllGroups();
+            MembersSetToListBox(preSelectedGroup.Content.ToString());
+        }
+        private void MemberRank_RightClick(object sender, RoutedEventArgs e)
+        {
+            string name = ((Button)sender).Tag.ToString();
+            //ランクを下げる
+            mlogic.PlusRank(name, preSelectedGroup.Content.ToString());
+            memberNames = mlogic.AllGroups();
+            MembersSetToListBox(preSelectedGroup.Content.ToString());
+        }
+        private void MemberName_Click(object sender, RoutedEventArgs e)
+        {
+            string preName = ((Button)sender).Content.ToString();
+            string preRank = memberList.Rank(preName);//mamberListにはcurrentMembresToShowがはいってる
+            string name = Interaction.InputBox("変更後のメンバーの名前を入力して下さい．", "Comarenkun", preName);
+            string rank = Interaction.InputBox("変更後のランクを入力して下さい．\nランクの変更が不要なら空文字を入力もしくはキャンセルして下さい．", "Comarenkun", preRank);
+            if (rank == "")
+            {
+                rank = preRank;
+            }
+            name = name.Replace(":", "");//:はファイル処理に使用しているので消す
+            if (name.Length > 30)
+            {
+                name = name.Substring(0, 30);//文字数は上限30とする 知らんけど
+            }
+            name = mlogic.NameDuplicateCheck(memberNames, name);//重複しているなら連番にする
+            if (name == "")
+            {
+                name = preName;
+            }
+
+            mlogic.ChangeMember(rank, preName, name, preSelectedGroup.Content.ToString());
+            memberNames = mlogic.AllGroups();
+            MembersSetToListBox(preSelectedGroup.Content.ToString());
+
+        }
+        private void MemberDelete_Click(object sender, RoutedEventArgs e)
+        {
+            if (currentMembersToShow.Count == 1)
+            {
+                MessageBox.Show("メンバーを0名にはできません．");
+            }
+            else
+            {
+                MessageBoxResult dr = MessageBox.Show("このメンバーを削除しますか?", "確認", MessageBoxButton.YesNo);
+
+                if (dr == MessageBoxResult.Yes)
+                {
+                    mlogic.DeleteMember(((Button)sender).Tag.ToString(), preSelectedGroup.Content.ToString());
+                    memberNames = mlogic.AllMemberNames();
+                    MembersSetToListBox(preSelectedGroup.Content.ToString());
+                }
+                else if (dr == MessageBoxResult.No)
+                { }
+                else
+                { }
+            }
+        }
+        private void Member_MouseEnter(object sender, RoutedEventArgs e)
+        {
+            Button button = (Button)sender;
+            ButtonBrighten(button);
+        }
+        private void Member_MouseLeave(object sender, RoutedEventArgs e)
+        {
+            Button button = (Button)sender;
+
+            string name = button.Content.ToString();
+            if (name == "削除")
+            {
+                button.Background = new SolidColorBrush(Color.FromRgb(255,0,0));
+            }
+            else
+            {
+                button.Background = new SolidColorBrush(Color.FromRgb(255, 136, 34));
+            }
+        }
         private void matchingButton_MouseEnter(object sender, RoutedEventArgs e)
         {
             Storyboard enter = (Storyboard)this.FindResource("MatchingButtonMouseEnter");
@@ -598,6 +713,7 @@ namespace Comarenkun
                 this.groupDeleteButton.Visibility = Visibility.Hidden;
                 this.groupOpenButton.Visibility = Visibility.Hidden;
                 this.groupButtons.Visibility = Visibility.Hidden;//この辺はストーリーボードで後々
+                this.groupAddButton.Content = "追\n加\n＋";
                 groupAddButtonParams = groupAddButtonParamsCopy;
                 PolygonButtonSet("GroupAddButton", this.groupAddButton, groupAddButtonParams);//形を戻しておく
 
@@ -618,6 +734,7 @@ namespace Comarenkun
                 SetMode(group);
                 MakeButtonsVisible();
                 this.memberAddButton.Visibility = Visibility.Hidden;
+                this.memberGroupLabel.Visibility = Visibility.Hidden;
                 this.memberButtons.Visibility = Visibility.Hidden;
                 this.rankNameLabel.Visibility = Visibility.Hidden;
                 preSelectedGroup = null;
@@ -648,6 +765,7 @@ namespace Comarenkun
             }else if (nowMember)
             {
                 this.memberAddButton.Visibility = Visibility.Visible;
+                this.memberGroupLabel.Visibility = Visibility.Visible;
                 this.memberButtons.Visibility = Visibility.Visible;
                 this.rankNameLabel.Visibility = Visibility.Visible;
 

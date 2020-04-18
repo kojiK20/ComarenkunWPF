@@ -62,11 +62,16 @@ namespace Comarenkun
             string s2 = "";// sr2.ReadToEnd();
             
             string line;
+            List<string> names = new List<string>();
             while ((line = sr1.ReadLine()) != null)
             {
                 if(line != "")
                 {
                     string[] c = line.Split(':');
+                    //名前が重複しているなら連番にする
+                    c[1] = NameDuplicateCheck(names, c[1]);
+                    names.Add(c[1]);
+
                     int i;
                     if (int.TryParse(c[0], out i) == false)
                     {//ランクが整数値以外の場合0に置き換え,名前や所属が置き換えられてはいけないので1行ずつやる
@@ -76,14 +81,21 @@ namespace Comarenkun
                     {
                         s1 = s1 + c[0] + ":" + c[1] + ":" + c[2] + "\n";
                     }
+                    
                 }
             }
             sr1.Close();
+            names = new List<string>();
             while((line = sr2.ReadLine()) != null)
             {//ランクが↑↓空以外の場合空に置き換え
                 if(line != "")
                 {
                     string[] c = line.Split(':');
+
+                    //名前が重複しているなら連番にする
+                    c[1] = NameDuplicateCheck(names, c[1], 2);
+                    names.Add(c[1]);
+
                     if (c[0] != "↑" && c[0] != "↓" && c[0] != "")
                     {
                         s2 = s2 + ":" + c[1] + ":" + c[2] + "\n";
@@ -102,6 +114,28 @@ namespace Comarenkun
             sw2.Write(s2);
             sw1.Close();
             sw2.Close();
+        }
+        public string NameDuplicateCheck(List<string> names, string name)
+        {//名前が重複してたら連番にした名前を返す
+            if(names.IndexOf(name) == -1)
+            {//重複していない
+                return name;
+            }
+            else
+            {//重複している時，連番を1増やした文字で再帰チェック
+                return NameDuplicateCheck(names, name + 2, 2 + 1);
+            }
+        }
+        public string NameDuplicateCheck(List<string> names, string name, int i)
+        {//名前が重複してたら連番にした名前を返す
+            if (names.IndexOf(name) == -1)
+            {//重複していない
+                return name;
+            }
+            else
+            {//重複している時，連番を1増やした文字で再帰チェック
+                return NameDuplicateCheck(names, name + i.ToString(), i + 1);
+            }
         }
 
         public List<string[]> ReadMemberFile()
@@ -176,7 +210,7 @@ namespace Comarenkun
                             foreignerNames[2] = "所属ナシ";
                         }
                         else if (foreignerNames[2] == "部内")
-                        {
+                        {//外部所属に「部内」を作れないように
                             foreignerNames[2] = "部内2";
                         }
                         result.Add(foreignerNames);
@@ -243,6 +277,269 @@ namespace Comarenkun
             }
             return result;
         }
+        public void AddMember(string rank, string name, string group)
+        {
+            if(group == "部内")
+            {//所属が部内ならmembers.txtに書く(所属は""に)
+                sw1 = new StreamWriter(memberFilePath, true, Encoding.GetEncoding("Shift_JIS"));
+                try
+                {
+                    sw1.WriteLine("\n" + rank + ":" + name + ":" + group + "\n");
+                }
+                finally
+                {
+                    sw1.Close();
+                }
+            }
+            else
+            {//foreigners.txtに書く
+                sw2 = new StreamWriter(foreignerFilePath, true, Encoding.GetEncoding("Shift_JIS"));
+                try
+                {
+                    sw2.WriteLine("\n" + rank + ":" + name + ":" + group + "\n");
+                }
+                finally
+                {
+                    sw2.Close();
+                }
+            }
+        }
+        public void DeleteMember(string name, string group)
+        {//nameはmembername
+            if(group == "部内")
+            {//mmebers.txt
+                sr1 = new StreamReader(memberFilePath, Encoding.GetEncoding("Shift_JIS"));
+                string s = "";
+                string line;
+                while ((line = sr1.ReadLine()) != null)
+                {
+                    if (line != "")
+                    {
+                        string[] c = line.Split(':');
+                        if (c[1] == name)
+                        {//こいつの行を削除,ランクや所属が置き換えられてはいけないので1行ずつやる
+                        }
+                        else
+                        {
+                            s = s + c[0] + ":" + c[1] + ":" + c[2] + "\n";
+                        }
+                    }
+                }
+                sr1.Close();
+                sw1 = new StreamWriter(memberFilePath, false, Encoding.GetEncoding("Shift_JIS"));
+                //上書き保存
+                sw1.Write(s);
+                sw1.Close();
+            }
+            else
+            {//foreigners.txt
+                sr2 = new StreamReader(foreignerFilePath, Encoding.GetEncoding("Shift_JIS"));
+                string s = "";
+                string line;
+                while ((line = sr2.ReadLine()) != null)
+                {
+                    if (line != "")
+                    {
+                        string[] c = line.Split(':');
+                        if (c[1] == name)
+                        {//こいつの行を削除,ランクや所属が置き換えられてはいけないので1行ずつやる
+                        }
+                        else
+                        {
+                            s = s + c[0] + ":" + c[1] + ":" + c[2] + "\n";
+                        }
+                    }
+                }
+                sr2.Close();
+                sw2 = new StreamWriter(foreignerFilePath, false, Encoding.GetEncoding("Shift_JIS"));
+                //上書き保存
+                sw2.Write(s);
+                sw2.Close();
+            }
+        }
+        public void ChangeMember(string rank, string preName, string name, string group)
+        {
+            if(group == "部内")
+            {//members.txt
+                sr1 = new StreamReader(memberFilePath, Encoding.GetEncoding("Shift_JIS"));
+                string s = "";
+                string line;
+                while ((line = sr1.ReadLine()) != null)
+                {
+                    if (line != "")
+                    {
+                        string[] c = line.Split(':');
+                        if (c[1] == preName)
+                        {//所属名を置き換え,ランクや所属が置き換えられてはいけないので1行ずつやる
+                            s = s + rank + ":" + name + ":" + c[2] + "\n";
+                        }
+                        else
+                        {
+                            s = s + c[0] + ":" + c[1] + ":" + c[2] + "\n";
+                        }
+                    }
+                }
+                sr1.Close();
+                sw1 = new StreamWriter(memberFilePath, false, Encoding.GetEncoding("Shift_JIS"));
+                sw1.Write(s);
+                sw1.Close();
+            }else
+            {//foreigners.txt
+                sr2 = new StreamReader(foreignerFilePath, Encoding.GetEncoding("Shift_JIS"));
+                string s = "";
+                string line;
+                while ((line = sr2.ReadLine()) != null)
+                {
+                    if (line != "")
+                    {
+                        string[] c = line.Split(':');
+                        if (c[2] == preName)
+                        {//所属名を置き換え,ランクや所属が置き換えられてはいけないので1行ずつやる
+                            s = s + rank + ":" + name + ":" + c[2] + "\n";
+                        }
+                        else
+                        {
+                            s = s + c[0] + ":" + c[1] + ":" + c[2] + "\n";
+                        }
+                    }
+                }
+                sr2.Close();
+                sw2 = new StreamWriter(foreignerFilePath, false, Encoding.GetEncoding("Shift_JIS"));
+                sw2.Write(s);
+                sw2.Close();
+            }
+        }
+        public void PlusRank(string name, string group)
+        {
+            if (group == "部内")
+            {//数字を1上げる
+                sr1 = new StreamReader(memberFilePath, Encoding.GetEncoding("Shift_JIS"));
+                string s = "";
+                string line;
+                while ((line = sr1.ReadLine()) != null)
+                {
+                    if (line != "")
+                    {
+                        string[] c = line.Split(':');
+                        if (c[1] == name)
+                        {//ランクを置き換え,1行ずつやる
+                            s = s + (int.Parse(c[0]) + 1).ToString() + ":" + c[1] + ":" + c[2] + "\n";
+                        }
+                        else
+                        {
+                            s = s + c[0] + ":" + c[1] + ":" + c[2] + "\n";
+                        }
+                    }
+                }
+                sr1.Close();
+                sw1 = new StreamWriter(memberFilePath, false, Encoding.GetEncoding("Shift_JIS"));
+                sw1.Write(s);
+                sw1.Close();
+            }
+            else
+            {//↑→""→↓の順
+                sr2 = new StreamReader(foreignerFilePath, Encoding.GetEncoding("Shift_JIS"));
+                string s = "";
+                string line;
+                while ((line = sr2.ReadLine()) != null)
+                {
+                    if (line != "")
+                    {
+                        string[] c = line.Split(':');
+                        if (c[1] == name)
+                        {//ランクを置き換え,1行ずつやる
+                            if(c[0] == "↓")
+                            {
+                                s = s + "↑" + ":" + c[1] + ":" + c[2] + "\n";
+                            }
+                            else if(c[0] == "")
+                            {
+                                s = s + "↓" + ":" + c[1] + ":" + c[2] + "\n";
+                            }
+                            else if(c[0] == "↑")
+                            {
+                                s = s + "" + ":" + c[1] + ":" + c[2] + "\n";
+                            }
+                            
+                        }
+                        else
+                        {
+                            s = s + c[0] + ":" + c[1] + ":" + c[2] + "\n";
+                        }
+                    }
+                }
+                sr2.Close();
+                sw2 = new StreamWriter(foreignerFilePath, false, Encoding.GetEncoding("Shift_JIS"));
+                sw2.Write(s);
+                sw2.Close();
+            }
+        }
+        public void MinusRank(string name, string group)
+        {
+            if (group == "部内")
+            {//数字を1下げる
+                sr1 = new StreamReader(memberFilePath, Encoding.GetEncoding("Shift_JIS"));
+                string s = "";
+                string line;
+                while ((line = sr1.ReadLine()) != null)
+                {
+                    if (line != "")
+                    {
+                        string[] c = line.Split(':');
+                        if (c[1] == name)
+                        {//ランクを置き換え,1行ずつやる
+                            s = s + (int.Parse(c[0]) - 1).ToString() + ":" + c[1] + ":" + c[2] + "\n";
+                        }
+                        else
+                        {
+                            s = s + c[0] + ":" + c[1] + ":" + c[2] + "\n";
+                        }
+                    }
+                }
+                sr1.Close();
+                sw1 = new StreamWriter(memberFilePath, false, Encoding.GetEncoding("Shift_JIS"));
+                sw1.Write(s);
+                sw1.Close();
+            }
+            else
+            {//↓→""→↑の順
+                sr2 = new StreamReader(foreignerFilePath, Encoding.GetEncoding("Shift_JIS"));
+                string s = "";
+                string line;
+                while ((line = sr2.ReadLine()) != null)
+                {
+                    if (line != "")
+                    {
+                        string[] c = line.Split(':');
+                        if (c[1] == name)
+                        {//ランクを置き換え,1行ずつやる
+                            if (c[0] == "↓")
+                            {
+                                s = s + "" + ":" + c[1] + ":" + c[2] + "\n";
+                            }
+                            else if (c[0] == "")
+                            {
+                                s = s + "↑" + ":" + c[1] + ":" + c[2] + "\n";
+                            }
+                            else if (c[0] == "↑")
+                            {
+                                s = s + "↓" + ":" + c[1] + ":" + c[2] + "\n";
+                            }
+
+                        }
+                        else
+                        {
+                            s = s + c[0] + ":" + c[1] + ":" + c[2] + "\n";
+                        }
+                    }
+                }
+                sr2.Close();
+                sw2 = new StreamWriter(foreignerFilePath, false, Encoding.GetEncoding("Shift_JIS"));
+                sw2.Write(s);
+                sw2.Close();
+            }
+        }
+
         public List<string> AllGroups()
         {
             List<string[]> m = ReadMemberFile();
@@ -271,7 +568,6 @@ namespace Comarenkun
                 if(line != "")
                 {
                     string[] c = line.Split(':');
-                    int i;
                     if (c[2] == pre)
                     {//所属名を置き換え,ランクや所属が置き換えられてはいけないので1行ずつやる
                         s = s + c[0] + ":" + c[1] + ":" + name + "\n";
@@ -283,7 +579,7 @@ namespace Comarenkun
                 }             
             }
             sr2.Close();
-            sw2 = sw2 = new StreamWriter(foreignerFilePath, false, Encoding.GetEncoding("Shift_JIS"));
+            sw2 = new StreamWriter(foreignerFilePath, false, Encoding.GetEncoding("Shift_JIS"));
             sw2.Write(s);
             sw2.Close();
         }

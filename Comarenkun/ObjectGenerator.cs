@@ -86,7 +86,7 @@ namespace Comarenkun
             FrameworkElementFactory con = new FrameworkElementFactory(typeof(ContentPresenter));
             FrameworkElementFactory conShadow = new FrameworkElementFactory(typeof(ContentPresenter));
 
-            if (name == "Header" || name == "RankNameLabel")//多角形ラベル
+            if (name == "Header" || name == "RankNameLabel" || name == "MemberGroupLabel")//多角形ラベル
             {
                 pol = new FrameworkElementFactory(typeof(Polygon));
                 TemplateBindingExtension b = new TemplateBindingExtension(Label.BackgroundProperty);
@@ -114,8 +114,19 @@ namespace Comarenkun
 
                 conShadow.SetValue(ContentPresenter.MarginProperty, MarginLeftCenterS(p));//マージンにより左端中央に配置 
             }
-            else if(true){
-
+            else if (name == "MemberGroupLabel")
+            {//縦書き
+                int contentSize = label.Content.ToString().Replace("\n", "").Length;
+                con = new FrameworkElementFactory(typeof(ContentPresenter));
+                double fontSize = rowSize * p[2] * 0.7;//フォントサイズ＝横幅の70%
+                if (fontSize * contentSize > columnSize * p[3])//フォントサイズが縦幅を超えたとき
+                {
+                    fontSize = columnSize * p[3] / contentSize;//フォントサイズ＝縦幅/文字数の70%
+                }
+                con.SetValue(TextBlock.FontSizeProperty, fontSize);//フォントサイズ＝横幅の70%
+                con.SetValue(ContentPresenter.HorizontalAlignmentProperty, HorizontalAlignment.Left);
+                con.SetValue(ContentPresenter.VerticalAlignmentProperty, VerticalAlignment.Top);
+           
             }
             
             //Grid構築
@@ -125,7 +136,7 @@ namespace Comarenkun
                 gri.AppendChild(conShadow);
                 gri.AppendChild(con);
             }
-            else if (name == "RankNameLabel")
+            else if (name == "RankNameLabel" || name == "MemberGroupLabel")
             {
                 gri.AppendChild(pol);
                 gri.AppendChild(con);
@@ -147,29 +158,7 @@ namespace Comarenkun
         }
         public void TransParentLabelSet(string name, Label label, double[] p)
         {
-            /*if(rowSize * p[2] < columnSize * p[3])
-            {
-                if (name == "shozoku")
-                {
-                    label.FontSize = rowSize * p[2] / label.Content.ToString().Length;
-                }
-                else
-                {
-                    label.FontSize = rowSize * p[2] / label.Content.ToString().Length;
-                }
-            }
-            else
-            {
-                if (name == "shozoku")
-                {
-                    label.FontSize = columnSize * p[3] / label.Content.ToString().Length;
-                }
-                else
-                {
-                    label.FontSize = columnSize * p[3] / label.Content.ToString().Length;
-                }
-            }
-            */
+          
             if (name == "talkLabel")
             {
                 if(rowSize * p[2] / 16 < columnSize * p[3] / 2 - 5)
@@ -230,7 +219,7 @@ namespace Comarenkun
             pol.SetValue(Polygon.FillProperty, b);//pol要素のFillプロパティをbindingでバインドしますの意
             pol.SetValue(Polygon.PointsProperty, PolygonPoints(p));
             pol.SetValue(Polygon.CursorProperty, Cursors.Hand);
-            if (name == "MemberNameButton")
+            if (name == "MemberNameButton" || name == "MemberDeleteButton")
             {//ランクボタンの横に配置するため
                 pol.SetValue(ContentPresenter.MarginProperty, new Thickness(rowSize * p[0], 0, 0, 0));
             }
@@ -247,13 +236,13 @@ namespace Comarenkun
             {//影を表示しない
                 con.SetValue(ContentPresenter.IsHitTestVisibleProperty, false);//テキストにはマウス判定を持たせない
                 con.SetValue(ContentPresenter.VerticalAlignmentProperty, VerticalAlignment.Center);
-                if(name == "MemberNameButton")
+                if(name == "MemberNameButton" || name == "MemberDeleteButton")
                 {//ランクボタンの横に配置するため
-                    con.SetValue(ContentPresenter.MarginProperty, new Thickness(rowSize * (1 + p[0]), 0, 0, 0));
+                    con.SetValue(ContentPresenter.MarginProperty, new Thickness(rowSize * (0.2 + p[0]), 0, 0, 0));
                 }
                 else if(name == "MemberRankButton")
                 {
-                    con.SetValue(ContentPresenter.MarginProperty, new Thickness(rowSize * 0.5, 0, 0, 0));
+                    con.SetValue(ContentPresenter.MarginProperty, new Thickness(rowSize * 0.2, 0, 0, 0));
                 }
                 else
                 {
@@ -306,6 +295,7 @@ namespace Comarenkun
             //buttonStyle.Setters.Add(buttonTemplateSetter);
 
             App.Current.Resources[name] = buttonTemplate;//コントロールテンプレート更新
+
             if(button != null)
             {//ListBoxのItemsに関してはマージン(は親のリストボックス自体に設定)もフォントサイズも各自で設定する(全てのItemが同じテンプレートを参照するため)
                 //が，MemberButtonsのNameボタンに関してはRankボタンの横に配置するためにマージンを設定する
@@ -538,6 +528,9 @@ namespace Comarenkun
             }else if(obj == "MemberRank")
             {
                 para = memberRankButtonParams;
+            }else if(obj == "MemberDelete")
+            {
+                para = memberDeleteButtonParams;
             }
             double result;
             if (rowSize * para[2] * 1.0 / contentSize * 0.8 < columnSize * para[3])
@@ -554,14 +547,19 @@ namespace Comarenkun
         public void MembersSetToListBox(string groupName)
         {//選んだグループに属するメンバーのリストの更新
             memberList.Clear();
-            currentMemberNamesToShow = mlogic.MembersOfGroup(groupName);
-            foreach (string[] member in currentMemberNamesToShow)
+            currentMembersToShow = mlogic.MembersOfGroup(groupName);
+            foreach (string[] member in currentMembersToShow)
             {
-                double contentSize = member[1].Replace("\n", "").Length;//名前の文字数
+                //double contentSize = member[1].Replace("\n", "").Length;//名前の文字数
                 double nameFontSize = GroupFontSize(member[1],"MemberName");//Groupのものを再利用
                 double rankFontSize = GroupFontSize(member[0],"MemberRank");//Groupのものを再利用
-                Member n = new Member { Rank = member[0], Name = member[1], NameFontSize = nameFontSize, RankFontSize = rankFontSize };
+                double deleteFontSize = GroupFontSize("削除", "MemberDelete");//Groupのものを再利用
+                Member n = new Member { Rank = member[0], Name = member[1], NameFontSize = nameFontSize, RankFontSize = rankFontSize, DeleteFontSize = deleteFontSize };
                 memberList.Add(n);
+                if(groupName == "部内")
+                {
+                    memberList.Sort();//ランク順ソート
+                }
             }
         }
         public void MemberFontSizeSet()
@@ -583,6 +581,7 @@ namespace Comarenkun
                 //}
                 memberList.List[i].RankFontSize = GroupFontSize(m.Rank,"MemberRank");
                 memberList.List[i].NameFontSize = GroupFontSize(m.Name, "MemberName");
+                memberList.List[i].DeleteFontSize = GroupFontSize("削除", "MemberDelete");
             }
         }
 
