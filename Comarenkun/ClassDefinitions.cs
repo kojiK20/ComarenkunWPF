@@ -198,6 +198,163 @@ namespace Comarenkun
         }
     }
 
+    public class Coma : INotifyPropertyChanged
+    {//所属名のクラス,INotifyPropertyChangedインタフェースを継承することでプロパティの変更を通知する
+
+        private string _Number0;
+        public string Number0
+        {//何コマ目のどのアルゴリズムか
+            get { return _Number0; }
+            set
+            {
+                _Number0 = value;
+                OnPropertyChanged("Number0");
+            }
+        }
+        private string _Number1;
+        public string Number1
+        {//何コマ目のどのアルゴリズムか
+            get { return _Number1; }
+            set
+            {
+                _Number1 = value;
+                OnPropertyChanged("Number1");
+            }
+        }
+        private string _Number2;
+        public string Number2
+        {//何コマ目のどのアルゴリズムか
+            get { return _Number2; }
+            set
+            {
+                _Number2 = value;
+                OnPropertyChanged("Number2");
+            }
+        }
+        private int _Algorithm;
+        public int Algorithm
+        {//0->遠，1->近，2->ランダム
+            get { return _Algorithm; }
+            set
+            {
+                _Algorithm = value;
+                OnPropertyChanged("Algorithm");
+            }
+        }
+        private string _Label;
+        public string Label
+        {
+            get { return _Label; }
+            set
+            {
+                _Label = value;
+                OnPropertyChanged("Label");
+            }
+        }
+        /*private double _CheckFontSize;
+        public double CheckFontSize
+        {
+            get { return _CheckFontSize; }
+            set
+            {
+                _CheckFontSize = value;
+                OnPropertyChanged("CheckFontSize");
+            }
+        }*/
+        private string _Check0;
+        public string Check0
+        {
+            get { return _Check0; }
+            set
+            {
+                _Check0 = value;
+                OnPropertyChanged("Check0");
+            }
+        }
+        private string _Check1;
+        public string Check1
+        {
+            get { return _Check1; }
+            set
+            {
+                _Check1 = value;
+                OnPropertyChanged("Check1");
+            }
+        }
+        private string _Check2;
+        public string Check2
+        {
+            get { return _Check2; }
+            set
+            {
+                _Check2 = value;
+                OnPropertyChanged("Check2");
+            }
+        }
+        public void Check()
+        {
+            if(Algorithm == 0)
+            {
+                Check0 = "★";
+                Check1 = "";
+                Check2 = "";
+            }else if(Algorithm == 1)
+            {
+                Check0 = "";
+                Check1 = "★";
+                Check2 = "";
+            }
+            else
+            {
+                Check0 = "";
+                Check1 = "";
+                Check2 = "★";
+            }
+        }
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged(string propertyName)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    public class ComaList
+    {//Comaのコレクションをプロパティにもつクラス
+
+        public ObservableCollection<Coma> List { get; set; }
+        public ComaList()
+        {//コンストラクタ
+            List = new ObservableCollection<Coma>();
+        }
+        public void Add(Coma c)
+        {
+            List.Add(c);
+        }
+        public void Remove(Coma c)
+        {
+            List.Remove(c);
+        }
+        public void Clear()
+        {
+            List.Clear();
+        }
+        public void Change(string tag)
+        {
+            string[] coma = tag.Split(':');
+
+            foreach(Coma c in List)
+            {
+                string[] comama = c.Number0.Split(':');
+                if(comama[0] == coma[0])//変更するコマ
+                {//変更
+                    c.Algorithm = int.Parse(coma[1]);
+                    c.Check();
+                    break;
+                }
+            }
+        }
+    }
+
     public class OpaqueClickableImage : Image//コマ練くん用，マウスオーバー判定をカスタムしたImageクラス
     {
         //Image.HitTestCoreメソッドの上書き

@@ -73,10 +73,16 @@ namespace Comarenkun
             App.Current.Resources[name] = circleStyle;
             circle.Margin = new Thickness(rowSize * p[0], columnSize * p[1], 0, 0);
         }
-        public void LabelSet(string name, Label label, double[] p)//header要素のコントロールテンプレートおよびプロパティ更新メソッド
+        public void LabelSet(string name, Label label, double[] p, bool sh)//header要素のコントロールテンプレートおよびプロパティ更新メソッド
         {   //文字を持っていたり多角形であったりするラベルのコントロールテンプレートを設定する
             //テンプレートの再利用を考えるとポリゴンのポジションは原点を左上に指定し，テンプレート外からマージンにより全体の原点座標を設定する(テンプレート内で座標を設定するとそのテンプレートを利用する全コントロールが同じ位置になってしまう)
             //this.header.Content = windowWidth.ToString(format);//小数第二位まで テスト用
+            double contentSize = 1;
+
+            if (label != null)
+            {//ListBoxのItems(nullを渡している)のフォントサイズはこのメソッドでは指定しない(形状は同じだが文字数が異なるため)
+                contentSize = label.Content.ToString().Replace("\n", "").Length;
+            }
 
             ControlTemplate labelTemplate = new ControlTemplate(typeof(Label));
 
@@ -86,7 +92,7 @@ namespace Comarenkun
             FrameworkElementFactory con = new FrameworkElementFactory(typeof(ContentPresenter));
             FrameworkElementFactory conShadow = new FrameworkElementFactory(typeof(ContentPresenter));
 
-            if (name == "Header" || name == "RankNameLabel" || name == "MemberGroupLabel")//多角形ラベル
+            if (true)//name == "Header" || name == "RankNameLabel" || name == "MemberGroupLabel")//多角形ラベル
             {
                 pol = new FrameworkElementFactory(typeof(Polygon));
                 TemplateBindingExtension b = new TemplateBindingExtension(Label.BackgroundProperty);
@@ -102,21 +108,36 @@ namespace Comarenkun
                 cir.SetValue(Ellipse.HeightProperty, columnSize * p[3]);
             }
 
-            if (name == "Header" || name == "RankNameLabel")//文字(コンテンツ)を持つラベル
+            if (name != "MemberGroupLabel")//name == "Header" || name == "RankNameLabel" || name == "ComaAlgorithmLabel")//文字(コンテンツ)を持つラベル
             {
                 con = new FrameworkElementFactory(typeof(ContentPresenter));
-                con.SetValue(TextBlock.FontSizeProperty, columnSize * p[3] * 0.7);//フォントサイズ＝ヘッダの縦幅の70%
-                con.SetValue(ContentPresenter.MarginProperty, MarginLeftCenter(p));//マージンにより左端中央に配置
+                con.SetValue(ContentPresenter.MarginProperty, MarginLeftCenter(p, contentSize));//マージンにより左端中央に配置
+                if(label == null)
+                {//ComaAlgorithmLabelのとき
+                    con.SetValue(TextBlock.FontSizeProperty, rowSize * p[2] / 4);//[i][コ][マ][目]
+                }
+                else if(name == "AlgorithmLabel" || name == "AlgorithmLabel0" || name == "AlgorithmLabel1" || name == "AlgorithmLabel2")
+                {
+                    double fontSize = rowSize * p[2] / contentSize * 0.8;
+                    if(fontSize > columnSize * p[3])
+                    {
+                        fontSize = columnSize * p[3];
+                    }
+                    con.SetValue(TextBlock.FontSizeProperty, fontSize);
+                }
+                else
+                {
+                    con.SetValue(TextBlock.FontSizeProperty, columnSize * p[3] * 0.7);//フォントサイズ＝ヘッダの縦幅の70%
+                }
 
                 conShadow = new FrameworkElementFactory(typeof(ContentPresenter));
                 conShadow.SetValue(TextBlock.ForegroundProperty, Brushes.Black);
                 conShadow.SetValue(TextBlock.FontSizeProperty, columnSize * p[3] * 0.7);
 
-                conShadow.SetValue(ContentPresenter.MarginProperty, MarginLeftCenterS(p));//マージンにより左端中央に配置 
+                conShadow.SetValue(ContentPresenter.MarginProperty, MarginLeftCenterS(p, contentSize));//マージンにより左端中央に配置 
             }
             else if (name == "MemberGroupLabel")
             {//縦書き
-                int contentSize = label.Content.ToString().Replace("\n", "").Length;
                 con = new FrameworkElementFactory(typeof(ContentPresenter));
                 double fontSize = rowSize * p[2] * 0.7;//フォントサイズ＝横幅の70%
                 if (fontSize * contentSize > columnSize * p[3])//フォントサイズが縦幅を超えたとき
@@ -130,13 +151,13 @@ namespace Comarenkun
             }
             
             //Grid構築
-            if (name == "Header")
+            if (sh)//name == "Header")
             {
                 gri.AppendChild(pol);
                 gri.AppendChild(conShadow);
                 gri.AppendChild(con);
             }
-            else if (name == "RankNameLabel" || name == "MemberGroupLabel")
+            else if (!sh)//name == "RankNameLabel" || name == "MemberGroupLabel")
             {
                 gri.AppendChild(pol);
                 gri.AppendChild(con);
@@ -152,11 +173,14 @@ namespace Comarenkun
             //コントロールテンプレート更新
             App.Current.Resources[name] = labelTemplate;
 
-            label.IsHitTestVisible = false;//マウス判定を消す
-            label.Margin = new Thickness(rowSize * p[0], columnSize * p[1], -windowWidth + rowSize * (p[0] + p[2]), -windowHeight + columnSize * (p[1] + p[3]));//Ellipseに対しては右と下のマージンを削らなくてよい？
+            if(label != null)
+            {
+                label.IsHitTestVisible = false;//マウス判定を消す
+                label.Margin = new Thickness(rowSize * p[0], columnSize * p[1], -windowWidth + rowSize * (p[0] + p[2]), -windowHeight + columnSize * (p[1] + p[3]));//Ellipseに対しては右と下のマージンを削らなくてよい？
+            }        
 
         }
-        public void TransParentLabelSet(string name, Label label, double[] p)
+        public void TransParentLabelSet(string name, Label label, double[] p, bool sh)
         {
           
             if (name == "talkLabel")
@@ -182,7 +206,7 @@ namespace Comarenkun
             label.Height = columnSize * p[3];
             label.Margin = new Thickness(rowSize * p[0], columnSize * p[1], 0, 0);// -windowWidth + rowSize * (p[0] + p[2]), -windowHeight + columnSize * (p[1] + p[3]));
         }
-        public void PolygonButtonSet(string name, Button button, double[] p)//Button要素のコントロールテンプレートおよびプロパティ更新メソッド
+        public void PolygonButtonSet(string name, Button button, double[] p, bool sh)//Button要素のコントロールテンプレートおよびプロパティ更新メソッド
         {
             //this.header.Content = windowWidth.ToString(format);//小数第二位まで テスト用
             double contentSize = 1;
@@ -219,12 +243,14 @@ namespace Comarenkun
             pol.SetValue(Polygon.FillProperty, b);//pol要素のFillプロパティをbindingでバインドしますの意
             pol.SetValue(Polygon.PointsProperty, PolygonPoints(p));
             pol.SetValue(Polygon.CursorProperty, Cursors.Hand);
-            if (name == "MemberNameButton" || name == "MemberDeleteButton")
-            {//ランクボタンの横に配置するため
+            if (name == "MemberNameButton" || name == "MemberDeleteButton" || name == "ComaAlgorithmButton0" || name == "ComaAlgorithmButton1" || name == "ComaAlgorithmButton2")
+            {//ListBoxでボタンを横に配置するため
                 pol.SetValue(ContentPresenter.MarginProperty, new Thickness(rowSize * p[0], 0, 0, 0));
             }
             //pol.SetValue(Polygon.NameProperty, "memberPolygon");//何故かセットされない
-            if (button == null || name == "GroupAddButton" || name == "GroupDeleteButton" || name == "MemberAddButton")
+            if (button == null || name == "GroupAddButton" || name == "GroupDeleteButton"
+                || name == "MemberAddButton" || name=="TableButton" || name == "ComaButton"
+                || name == "ComaAlgorithm0" || name == "ComaAlgorithm1" || name == "ComaAlgorithm2")//!shadowでも可？
             {//ボタンの枠線表示する
                 pol.SetValue(Polygon.StrokeProperty, Brushes.Black);
                 //pol.SetValue(Polygon.StrokeThicknessProperty, Shape.StrokeThickness(1));
@@ -233,11 +259,11 @@ namespace Comarenkun
             FrameworkElementFactory con = new FrameworkElementFactory(typeof(ContentPresenter));
             FrameworkElementFactory conShadow = new FrameworkElementFactory(typeof(ContentPresenter));
             if (button == null)
-            {//影を表示しない
+            {//ListBoxItems
                 con.SetValue(ContentPresenter.IsHitTestVisibleProperty, false);//テキストにはマウス判定を持たせない
                 con.SetValue(ContentPresenter.VerticalAlignmentProperty, VerticalAlignment.Center);
-                if(name == "MemberNameButton" || name == "MemberDeleteButton")
-                {//ランクボタンの横に配置するため
+                if(name == "MemberNameButton" || name == "MemberDeleteButton" || name == "ComaAlgorithmButton0" || name == "ComaAlgorithmButton1" || name == "ComaAlgorithmButton2")
+                {//ListBoxでボタンを横に配置するため
                     con.SetValue(ContentPresenter.MarginProperty, new Thickness(rowSize * (0.2 + p[0]), 0, 0, 0));
                 }
                 else if(name == "MemberRankButton")
@@ -248,15 +274,11 @@ namespace Comarenkun
                 {
                     con.SetValue(ContentPresenter.MarginProperty, new Thickness(rowSize * 1, 0, 0, 0));
                 }
-                gri.AppendChild(pol);
-                gri.AppendChild(con);
             }else if(name == "GroupAddButton" || name == "GroupDeleteButton" || name == "MemberAddButton")
             {   //縦書きなので別処理,かつ，影をもたせない
                 con.SetValue(ContentPresenter.MarginProperty, PortrateMarginCenter(p, contentSize, name));//マージンにより左端中央に配置
                 con.SetValue(ContentPresenter.RenderTransformProperty, rotateTransform1);
                 con.SetValue(ContentPresenter.IsHitTestVisibleProperty, false);//テキストにはマウス判定を持たせない
-                gri.AppendChild(pol);
-                gri.AppendChild(con);
             }
             else if (name == "ToMenuButton")
             {
@@ -269,24 +291,41 @@ namespace Comarenkun
                 conShadow.SetValue(ContentPresenter.MarginProperty, PortrateMarginCenterS(p, contentSize));//マージンにより左端中央に配置
                 conShadow.SetValue(ContentPresenter.RenderTransformProperty, rotateTransform1);
                 conShadow.SetValue(ContentPresenter.IsHitTestVisibleProperty, false);//テキストにはマウス判定を持たせない
+            }
+            else
+            {
+                Thickness c;
+                Thickness s;
+                if(name == "ConfigButton")
+                {
+                    c = MarginLeftCenter(p, contentSize);
+                    s = MarginLeftCenterS(p, contentSize);
+                }
+                else
+                {
+                    c = MarginCenter(p, contentSize, name);
+                    s = MarginCenterS(p, contentSize, name);
+                }
+                con.SetValue(ContentPresenter.MarginProperty, c);//マージンにより左端中央に配置
+                con.SetValue(ContentPresenter.RenderTransformProperty, rotateTransform1);
+                con.SetValue(ContentPresenter.IsHitTestVisibleProperty, false);//テキストにはマウス判定を持たせない
+
+                conShadow.SetValue(TextBlock.ForegroundProperty, Brushes.Black);
+                conShadow.SetValue(ContentPresenter.MarginProperty, s);//マージンにより左端中央に配置
+                conShadow.SetValue(ContentPresenter.RenderTransformProperty, rotateTransform1);
+                conShadow.SetValue(ContentPresenter.IsHitTestVisibleProperty, false);//テキストにはマウス判定を持たせない
+            }
+            if (sh)
+            {
                 gri.AppendChild(pol);
                 gri.AppendChild(conShadow);
                 gri.AppendChild(con);
             }
             else
             {
-                con.SetValue(ContentPresenter.MarginProperty, MarginCenter(p, contentSize, name));//マージンにより左端中央に配置
-                con.SetValue(ContentPresenter.RenderTransformProperty, rotateTransform1);
-                con.SetValue(ContentPresenter.IsHitTestVisibleProperty, false);//テキストにはマウス判定を持たせない
-
-                conShadow.SetValue(TextBlock.ForegroundProperty, Brushes.Black);
-                conShadow.SetValue(ContentPresenter.MarginProperty, MarginCenterS(p, contentSize, name));//マージンにより左端中央に配置
-                conShadow.SetValue(ContentPresenter.RenderTransformProperty, rotateTransform1);
-                conShadow.SetValue(ContentPresenter.IsHitTestVisibleProperty, false);//テキストにはマウス判定を持たせない
                 gri.AppendChild(pol);
-                gri.AppendChild(conShadow);
                 gri.AppendChild(con);
-            }      
+            }
 
             //pol.Name = "buttonPolygon";//この方法だとセットされる
             buttonTemplate.VisualTree = gri;
@@ -297,7 +336,7 @@ namespace Comarenkun
             App.Current.Resources[name] = buttonTemplate;//コントロールテンプレート更新
 
             if(button != null)
-            {//ListBoxのItemsに関してはマージン(は親のリストボックス自体に設定)もフォントサイズも各自で設定する(全てのItemが同じテンプレートを参照するため)
+            {//ListBoxのItemsに関してはフォントサイズを各自で設定する(全てのItemが同じテンプレートを参照するため)
                 //が，MemberButtonsのNameボタンに関してはRankボタンの横に配置するためにマージンを設定する
                 button.Margin = new Thickness(rowSize * p[0], columnSize * p[1], 0, 0);
                 if (name == "ToMenuButton")// || name == "GroupAddButton" || name == "GroupDeleteButton" || name == "MemberAddButton")
@@ -310,11 +349,16 @@ namespace Comarenkun
                 }
                 else
                 {
-                    button.FontSize = rowSize * p[2] * 1.0 / contentSize * 0.8;//フォントサイズ＝80% * ボタンの横幅/文字数
+                    double fontSize =  rowSize * p[2] * 1.0 / contentSize * 0.8;
+                    if (fontSize > columnSize * p[3] * 0.8)
+                    {//縦幅を超えてしまわないように
+                        fontSize = columnSize * p[3] * 0.8;
+                    }
+                    button.FontSize = fontSize;//フォントサイズ＝80% * ボタンの横幅/文字数
                 }
             }      
         }
-        public void EllipseButtonSet(string name, Button button, double[] p)//Button要素のコントロールテンプレートおよびプロパティ更新メソッド
+        public void EllipseButtonSet(string name, Button button, double[] p, bool sh)//Button要素のコントロールテンプレートおよびプロパティ更新メソッド
         {
             //this.header.Content = windowWidth.ToString(format);//小数第二位まで テスト用
             double contentSize = 1;
@@ -362,10 +406,19 @@ namespace Comarenkun
             else
             {
                 con.SetValue(ContentPresenter.MarginProperty, MarginCenter(p, contentSize, name));
-            }            
+            }
 
-            gri.AppendChild(el);
-            gri.AppendChild(con);
+            if (sh)
+            {
+                gri.AppendChild(el);
+                gri.AppendChild(con);
+            }
+            else
+            {
+                gri.AppendChild(el);
+                gri.AppendChild(con);
+            }
+            
 
             //pol.Name = "buttonPolygon";//この方法だとセットされる
             buttonTemplate.VisualTree = gri;
@@ -394,6 +447,10 @@ namespace Comarenkun
             lb.Width = rowSize * p[2];
             lb.Height = columnSize * p[3];
             lb.Margin=new Thickness(rowSize * p[0], columnSize * p[1], 0, 0);
+            if(name == "ComaListBox")
+            {//文字数が一定なのでフォントサイズを指定する
+                lb.FontSize = columnSize * comaAlgorithmButton0Params[3];
+            }
         }
         public void ComarenkunSet(string name, Button coma, double[] p)
         {
@@ -416,60 +473,7 @@ namespace Comarenkun
             coma.Margin = new Thickness(rowSize * (gridRow + 3 - p[2]), columnSize * (gridColumn - p[3]), 0, 0);
         }
 
-        public void beginClickEffect(MouseButtonEventArgs e)
-        {
-            if (clickNumber == 0)
-            {
-                clickNumber++;
-                s1 = ((Storyboard)this.FindResource("ClickEffect")).Clone();
-                Ellipse e1 = this.effect1;
-                e1.Margin = new Thickness(e.GetPosition(this.grid).X - 10 / 2, e.GetPosition(this.grid).Y - 10 / 2, 0, 0);
-                foreach (var child in s1.Children)
-                {
-                    Storyboard.SetTarget(child, e1);
-                }
-                s1.Begin();
-            }
-            else if (clickNumber == 1)
-            {
-                clickNumber++;
-                s2 = ((Storyboard)this.FindResource("ClickEffect")).Clone();
-                Ellipse e2 = this.effect2;
-                e2.Margin = new Thickness(e.GetPosition(this.grid).X - 10 / 2, e.GetPosition(this.grid).Y - 10 / 2, 0, 0);
-                foreach (var child in s2.Children)
-                {
-                    Storyboard.SetTarget(child, e2);
-                }
-                s2.Begin();
-            }
-            else
-            {
-                clickNumber = 0;
-                s3 = ((Storyboard)this.FindResource("ClickEffect")).Clone();
-                Ellipse e3 = this.effect3;
-                e3.Margin = new Thickness(e.GetPosition(this.grid).X - 10 / 2, e.GetPosition(this.grid).Y - 10 / 2, 0, 0);
-                foreach (var child in s3.Children)
-                {
-                    Storyboard.SetTarget(child, e3);
-                }
-                s3.Begin();
-            }
-        }
-        public void removeClickEffect()
-        {
-            if (clickNumber == 0)
-            {
-                s2.Stop();
-            }
-            else if (clickNumber == 1)
-            {
-                s3.Stop();
-            }
-            else
-            {
-                s1.Stop();
-            }
-        }
+        
         public void GroupsSetToListBox()
         {//グループリストの更新
             groupList.Clear();
@@ -584,8 +588,108 @@ namespace Comarenkun
                 memberList.List[i].DeleteFontSize = GroupFontSize("削除", "MemberDelete");
             }
         }
+        public void ComaSetToListBox()
+        {//ListBoxの更新
+            comaList.Clear();
+            int i = -1;
+            foreach (string config in configs)
+            {
+                if(i < 1){
+                    //台数とコマ数の情報なので無視
+                    i++;
+                }
+                else
+                {
+                    int number = i;//iコマ目
+                    int alg = int.Parse(config);//アルゴリズム
+                    string label = i.ToString() + "コマ目";
 
-
+                    Coma c = new Coma { Number0 = number.ToString() + ":0", Number1 = number.ToString() + ":1", Number2 = number.ToString() + ":2", Algorithm = alg, Label = label };
+                    c.Check();//Algorithmプロパティに合わせて☑する
+                    comaList.Add(c);
+                    i++;
+                }
+                
+            }
+        }
+        public void beginClickEffect(MouseButtonEventArgs e)
+        {
+            if (clickNumber == 0)
+            {
+                clickNumber++;
+                s1 = ((Storyboard)this.FindResource("ClickEffect")).Clone();
+                Ellipse e1 = this.effect1;
+                e1.Margin = new Thickness(e.GetPosition(this.grid).X - 10 / 2, e.GetPosition(this.grid).Y - 10 / 2, 0, 0);
+                foreach (var child in s1.Children)
+                {
+                    Storyboard.SetTarget(child, e1);
+                }
+                s1.Begin();
+            }
+            else if (clickNumber == 1)
+            {
+                clickNumber++;
+                s2 = ((Storyboard)this.FindResource("ClickEffect")).Clone();
+                Ellipse e2 = this.effect2;
+                e2.Margin = new Thickness(e.GetPosition(this.grid).X - 10 / 2, e.GetPosition(this.grid).Y - 10 / 2, 0, 0);
+                foreach (var child in s2.Children)
+                {
+                    Storyboard.SetTarget(child, e2);
+                }
+                s2.Begin();
+            }
+            else if (clickNumber == 2)
+            {
+                clickNumber = 0;
+                s3 = ((Storyboard)this.FindResource("ClickEffect")).Clone();
+                Ellipse e3 = this.effect3;
+                e3.Margin = new Thickness(e.GetPosition(this.grid).X - 10 / 2, e.GetPosition(this.grid).Y - 10 / 2, 0, 0);
+                foreach (var child in s3.Children)
+                {
+                    Storyboard.SetTarget(child, e3);
+                }
+                s3.Begin();
+            }
+            else if (clickNumber == 3)
+            {
+                clickNumber = 0;
+                s4 = ((Storyboard)this.FindResource("ClickEffect")).Clone();
+                Ellipse e4 = this.effect4;
+                e4.Margin = new Thickness(e.GetPosition(this.grid).X - 10 / 2, e.GetPosition(this.grid).Y - 10 / 2, 0, 0);
+                foreach (var child in s4.Children)
+                {
+                    Storyboard.SetTarget(child, e4);
+                }
+                s4.Begin();
+            }
+        }
+        public void removeClickEffect()
+        {
+            if (clickNumber == 0)
+            {
+                s1.Stop();
+                s2.Stop();
+                s3.Stop();
+            }
+            else if (clickNumber == 1)
+            {
+                s2.Stop();
+                s3.Stop();
+                s4.Stop();
+            }
+            else if (clickNumber == 2)
+            {//左クリック中に右クリックしてから離すとここに来る，起動しているのはs1とs2
+                s3.Stop();
+                s4.Stop();
+                s5.Stop();
+            }
+            else
+            {
+                s4.Stop();
+                s5.Stop();
+                s1.Stop();
+            }
+        }
     }
 }
 

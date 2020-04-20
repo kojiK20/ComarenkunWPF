@@ -8,7 +8,7 @@
         mc:Ignorable="d"
         Background="#FFE2D7FF"
         Title="コマ練くん" Height="720" Width="900" MinHeight="450" MinWidth="600" MaxWidth="2200"
-        SizeChanged="WindowSizeChanged" MouseLeftButtonDown="WindowMouseLeftButtonDown" MouseLeftButtonUp="WindowMouseLeftButtonUp" >
+        SizeChanged="WindowSizeChanged" MouseLeftButtonDown="WindowMouseLeftButtonDown" MouseRightButtonDown="WindowMouseLeftButtonDown" MouseLeftButtonUp="WindowMouseLeftButtonUp" MouseRightButtonUp="WindowMouseLeftButtonUp" >
 
     <Window.Resources>
         <Storyboard x:Key="InitialBall">
@@ -645,6 +645,8 @@
             </Button.RenderTransform>
         </Button>
 
+        
+
         <Button x:Name="groupAddButton" Template="{DynamicResource GroupAddButton}" FontFamily="{StaticResource 851ゴクチカ}" Content="+" Foreground="#FFF" Background="#0A0" Visibility="Hidden" Click="GroupAdd_Click"/>
         <Button x:Name="groupDeleteButton" Template="{DynamicResource GroupDeleteButton}" FontFamily="{StaticResource 851ゴクチカ}" Content="削除" Foreground="#FFF" Background="#F00" Visibility="Hidden" Click="GroupDelete_Click"/>
         <Button x:Name="groupOpenButton" Template="{DynamicResource GroupOpenButton}" FontFamily="{StaticResource 851ゴクチカ}" Content="開ク" Foreground="#FFF" Background="#55A" Visibility="Hidden" Click="GroupOpen_Click"/>
@@ -672,7 +674,7 @@
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid>
-                        <Button Template="{DynamicResource MemberRankButton}" Tag="{Binding Path=Name}" Content="{Binding Path=Rank}" FontSize="{Binding Path=RankFontSize}" Background="#FF8822" Foreground="#FFF" Cursor="Hand" Margin="0,0,0,10" Click="MemberRank_Click" MouseRightButtonDown="MemberRank_RightClick" MouseEnter="Member_MouseEnter" MouseLeave="Member_MouseLeave"/><!-- Click="MemberRank_Click" MouseEnter="MemberRank_MouseEnter" MouseLeave="MemberRank_MouseLeave"/>-->
+                        <Button Template="{DynamicResource MemberRankButton}" Tag="{Binding Path=Name}" Content="{Binding Path=Rank}" FontSize="{Binding Path=RankFontSize}" Background="#FF8822" Foreground="#FFF" Cursor="Hand" Margin="0,0,0,10" Click="MemberRank_Click" MouseRightButtonUp="MemberRank_RightClick" MouseEnter="Member_MouseEnter" MouseLeave="Member_MouseLeave"/><!-- Click="MemberRank_Click" MouseEnter="MemberRank_MouseEnter" MouseLeave="MemberRank_MouseLeave"/>-->
                         <Button Template="{DynamicResource MemberNameButton}" Content="{Binding Path=Name}" FontSize="{Binding Path=NameFontSize}" Background="#FF8822" Foreground="#FFF" Cursor="Hand" Margin="0,0,0,10" Click="MemberName_Click" MouseEnter="Member_MouseEnter" MouseLeave="Member_MouseLeave"/><!-- Click="MemberName_Click" MouseEnter="MemberName_MouseEnter" MouseLeave="MemberName_MouseLeave"/>-->
                         <Button Template="{DynamicResource MemberDeleteButton}" Tag="{Binding Path=Name}" Content="削除" FontSize="{Binding Path=DeleteFontSize}" Background="#F00" Foreground="#FFF" Cursor="Hand" Margin="0,0,0,10" Click="MemberDelete_Click" MouseEnter="Member_MouseEnter" MouseLeave="Member_MouseLeave"/>
                     </Grid>
@@ -688,6 +690,25 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>-->
+        
+        <Button x:Name="tableButton" Template="{DynamicResource TableButton}" FontFamily="{StaticResource 851ゴクチカ}" Content="台数：" Foreground="#FFF" Background="#90D530" Visibility="Hidden" MouseEnter="TableMouseEnter" MouseLeave="TableMouseLeave" Click="TableClick" MouseRightButtonUp="TableRightClick"/>
+        <Button x:Name="comaButton" Template="{DynamicResource ComaButton}" FontFamily="{StaticResource 851ゴクチカ}"  Content="コマ数：" Foreground="#FFF" Background="#30D590" Visibility="Hidden" MouseEnter="ComaMouseEnter" MouseLeave="ComaMouseLeave" Click="ComaClick" MouseRightButtonUp="ComaRightClick"/>
+        <Label x:Name="algorithmLabel" Template="{DynamicResource AlgorithmLabel}" FontFamily="{StaticResource 851ゴクチカ}" Content="アルゴリズム：" Foreground="#000" Background="Transparent" Visibility="Hidden"/>
+        <Label x:Name="algorithmLabel0" Template="{DynamicResource AlgorithmLabel0}" FontFamily="{StaticResource 851ゴクチカ}" Content="遠" Foreground="#000" Background="Transparent" Visibility="Hidden"/>
+        <Label x:Name="algorithmLabel1" Template="{DynamicResource AlgorithmLabel1}" FontFamily="{StaticResource 851ゴクチカ}" Content="近" Foreground="#000" Background="Transparent" Visibility="Hidden"/>
+        <Label x:Name="algorithmLabel2" Template="{DynamicResource AlgorithmLabel2}" FontFamily="{StaticResource 851ゴクチカ}" Content="乱" Foreground="#000" Background="Transparent" Visibility="Hidden"/>
+        <ListBox Name="comaListBox" Visibility="Hidden" ItemContainerStyle="{StaticResource ContainerStyle}" ItemsSource="{Binding}" BorderBrush="Transparent" Background="Transparent" Height="500" Width="300" FontFamily="{StaticResource 851ゴクチカ}" FontSize="50" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="300,0,0,0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Label Template="{DynamicResource ComaAlgorithmLabel}" Content="{Binding Path=Label}" Background="Transparent" Foreground="#000" Margin="0,0,0,10" />
+                        <Button Template="{DynamicResource ComaAlgorithmButton0}" Tag="{Binding Path=Number0}" Content="{Binding Path=Check0}" Background="#88BBFF" Foreground="#FFF" Cursor="Hand" Margin="0,0,0,10" MouseEnter="AlgorithmEnter" MouseLeave="AlgorithmLeave" Click="AlgorithmClick"/>
+                        <Button Template="{DynamicResource ComaAlgorithmButton1}" Tag="{Binding Path=Number1}" Content="{Binding Path=Check1}" Background="#88BBFF" Foreground="#FFF" Cursor="Hand" Margin="0,0,0,10" MouseEnter="AlgorithmEnter" MouseLeave="AlgorithmLeave" Click="AlgorithmClick"/>
+                        <Button Template="{DynamicResource ComaAlgorithmButton2}" Tag="{Binding Path=Number2}" Content="{Binding Path=Check2}" Background="#88BBFF" Foreground="#FFF" Cursor="Hand" Margin="0,0,0,10" MouseEnter="AlgorithmEnter" MouseLeave="AlgorithmLeave" Click="AlgorithmClick"/>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
 
         <Button x:Name="toMenuButton" Visibility="Visible" Template="{DynamicResource ToMenuButton}" Foreground="#FFFFFF" Background="#FF2D5182" FontFamily="{StaticResource 851ゴクチカ}" FontSize="70" Content="モドル" HorizontalAlignment="Left" VerticalAlignment="Top" MouseEnter="toMenuButton_MouseEnter" MouseLeave="toMenuButton_MouseLeave" Click="toMenuButton_Click" RenderTransformOrigin="0.5,0.5" >
             <Button.RenderTransform>
@@ -716,6 +737,9 @@
                 </LinearGradientBrush>
             </Label.Background>
         </Label>
+
+        <Button x:Name="configButton" Template="{DynamicResource ConfigButton}" Foreground="#FFFFFF" Background="#FF55AA88" FontFamily="{StaticResource 851ゴクチカ}" FontSize="70" Content="オプション" Visibility="Hidden" Click="configButton_Click" MouseEnter="configButton_MouseEnter" MouseLeave="configButton_MouseLeave"/>
+
         <Polygon x:Name="footer" Style="{DynamicResource Footer}" Margin="0,504,0,0"  IsHitTestVisible="True" >
             <Polygon.Fill>
                 <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
@@ -797,7 +821,7 @@
             </Ellipse.RenderTransform>
         </Ellipse>
 
-        <Ellipse x:Name="effect1" Visibility="Collapsed" Stroke="#FF55AAFF" StrokeThickness="5" Height="10" Width="10" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5">
+        <Ellipse x:Name="effect1" Visibility="Collapsed" Stroke="#FF55FFAA" StrokeThickness="5" Height="10" Width="10" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5">
             <Ellipse.Effect>
                 <BlurEffect/>
             </Ellipse.Effect>
@@ -810,7 +834,7 @@
                 </TransformGroup>
             </Ellipse.RenderTransform>
         </Ellipse>
-        <Ellipse x:Name="effect2" Visibility="Collapsed" Stroke="#FF55AAFF" StrokeThickness="5" Height="10" Width="10" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5">
+        <Ellipse x:Name="effect2" Visibility="Collapsed" Stroke="#FF55FFAA" StrokeThickness="5" Height="10" Width="10" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5">
             <Ellipse.Effect>
                 <BlurEffect/>
             </Ellipse.Effect>
@@ -823,7 +847,33 @@
                 </TransformGroup>
             </Ellipse.RenderTransform>
         </Ellipse>
-        <Ellipse x:Name="effect3" Visibility="Collapsed" Stroke="#FF55AAFF" StrokeThickness="5" Height="10" Width="10" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5">
+        <Ellipse x:Name="effect3" Visibility="Collapsed" Stroke="#FF55FFAA" StrokeThickness="5" Height="10" Width="10" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5">
+            <Ellipse.Effect>
+                <BlurEffect/>
+            </Ellipse.Effect>
+            <Ellipse.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Ellipse.RenderTransform>
+        </Ellipse>
+        <Ellipse x:Name="effect4" Visibility="Collapsed" Stroke="#FF55FFAA" StrokeThickness="5" Height="10" Width="10" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5">
+            <Ellipse.Effect>
+                <BlurEffect/>
+            </Ellipse.Effect>
+            <Ellipse.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Ellipse.RenderTransform>
+        </Ellipse>
+        <Ellipse x:Name="effect5" Visibility="Collapsed" Stroke="#FF55FFAA" StrokeThickness="5" Height="10" Width="10" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5">
             <Ellipse.Effect>
                 <BlurEffect/>
             </Ellipse.Effect>

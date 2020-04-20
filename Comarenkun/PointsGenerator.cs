@@ -39,9 +39,13 @@ namespace Comarenkun
             string rightbottom = (rowSize * (p[2] + p[8])).ToString(format) + "," + (columnSize * (p[3] + p[9])).ToString(format);
             return PointCollection.Parse(leftbottom + lefttop + righttop + rightbottom);
         }
-        public Thickness MarginLeftCenter(double[] p)
+        public Thickness MarginLeftCenter(double[] p, double contentSize)
         {
-            double fontSize = columnSize * p[3] * 0.7;
+            double fontSize = rowSize * p[2] / contentSize * 0.7;
+            if (fontSize > columnSize * p[3] * 0.7)
+            {//縦幅を超えてしまわないように
+                fontSize = columnSize * p[3] * 0.7;
+            }
             //原点を左上として，ラベルなどの座標をマージンで指定する.
             //VerticalAlignment=Center,HorizontalAlignment=Left　のかわり(Gridを使用していないため)
 
@@ -53,9 +57,13 @@ namespace Comarenkun
             Thickness result = new Thickness(left, top, right, bottom);
             return result;
         }
-        public Thickness MarginLeftCenterS(double[] p)//ラベルなどの影用のちょっとずらしたマージン生成
+        public Thickness MarginLeftCenterS(double[] p, double contentSize)//ラベルなどの影用のちょっとずらしたマージン生成
         {
-            double fontSize = columnSize * p[3] * 0.7;
+            double fontSize = rowSize * p[2] / contentSize * 0.7;
+            if (fontSize > columnSize * p[3] * 0.7)
+            {//縦幅を超えてしまわないように
+                fontSize = columnSize * p[3] * 0.7;
+            }
             //原点を左上として，ラベルなどの座標をマージンで指定する.
             //VerticalAlignment=Center,HorizontalAlignment=Left　のかわり(Gridを使用していないため)
 
@@ -71,6 +79,10 @@ namespace Comarenkun
         {
             //横方向のマージンに文字数contentSizeが必要
             double fontSize = rowSize * p[2] * 1.0 / contentSize * 0.8;
+            if(fontSize > columnSize * p[3] * 0.8)
+            {//縦幅を超えてしまわないように
+                fontSize = columnSize * p[3] * 0.8;
+            }
             //原点を左上として，ラベルなどの座標をマージンで指定する.
             //VerticalAlignment=Center,HorizontalAlignment=Center　のかわり(Gridを使用していないため)
 
@@ -105,6 +117,10 @@ namespace Comarenkun
         public Thickness MarginCenterS(double[] p, double contentSize, string name)//ラベルなどの影用のちょっとずらしたマージン生成
         {
             double fontSize = rowSize * p[2] * 1.0 / contentSize * 0.8;
+            if (fontSize > columnSize * p[3] * 0.8)
+            {//縦幅を超えてしまわないように
+                fontSize = columnSize * p[3] * 0.8;
+            }
             //原点を左上として，ラベルなどの座標をマージンで指定する.
             //VerticalAlignment=Center,HorizontalAlignment=Left　のかわり(Gridを使用していないため)
 

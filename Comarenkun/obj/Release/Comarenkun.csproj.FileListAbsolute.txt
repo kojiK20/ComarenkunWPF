@@ -35,3 +35,4 @@ C:\Users\Koji\Documents\Visual Studio 2015\Projects\Comarenkun\Comarenkun\obj\Re
 C:\Users\Koji\Documents\Visual Studio 2015\Projects\Comarenkun\Comarenkun\obj\Release\Comarenkun.csproj.GenerateResource.Cache
 C:\Users\Koji\Documents\Visual Studio 2015\Projects\Comarenkun\Comarenkun\obj\Release\Comarenkun.exe
 C:\Users\Koji\Documents\Visual Studio 2015\Projects\Comarenkun\Comarenkun\obj\Release\Comarenkun.pdb
+C:\Users\Koji\Documents\Visual Studio 2015\Projects\Comarenkun\Comarenkun\obj\Release\Comarenkun.csprojResolveAssemblyReference.cache

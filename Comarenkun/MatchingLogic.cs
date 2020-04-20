@@ -23,8 +23,11 @@ namespace Comarenkun
         private MainWindow window;
         private string memberFilePath = "../../Texts/members.txt";//絶対パスは"pack://application:,,,/Comarenkun;component//"
         private string foreignerFilePath = "../../Texts/foreigners.txt";
-        StreamReader sr1;
-        StreamReader sr2;
+        private string configFilePath = "../../Texts/config.txt";
+        StreamReader sr;//config
+        StreamReader sr1;//member
+        StreamReader sr2;//foreigner
+        StreamWriter sw;
         StreamWriter sw1;
         StreamWriter sw2;
 
@@ -32,7 +35,109 @@ namespace Comarenkun
         {//メインウィンドウのオブジェクトをwindowから参照する
             this.window = window;
         }
-        
+
+        public void CreateIfNotExistsConfig()
+        {
+            if (!Directory.Exists("../../Texts"))
+            {
+                Directory.CreateDirectory("../../Texts");
+            }
+            if (!File.Exists("../../Texts/config.txt"))
+            {
+                //File.Create("../../Texts/members.txt");
+                sw = new StreamWriter(configFilePath, false, Encoding.GetEncoding("Shift_JIS"));
+                sw.WriteLine("table:10\ncoma:5\n1\n1\n2\n1\n0");
+                sw.Close();
+            }
+        }
+
+        public List<string> ReadConfigFile()
+        {//configテキストを読み込み配列にして返す
+            CreateIfNotExistsConfig();
+            //ReWriteIfNotRightConfig();
+            sr = new StreamReader(configFilePath, Encoding.GetEncoding("Shift_JIS"));
+
+            List<string> result = new List<string>();//台数,コマ数,各コマのアルゴリズム(0 or 1 or 2)
+            string line;
+            int fuga = 0;
+            try
+            {
+                while ((line = sr.ReadLine()) != null)
+                {//テキストが無くなるまで1行ずつ読む
+                    if (line != "")
+                    {
+                        if(fuga == 0)
+                        {//台数
+                            string[] t = line.Split(':');
+                            int piyo;
+                            if(t.Length > 2 || !int.TryParse(t[1], out piyo))
+                            {//形式がおかしいのでエラー
+                                throw new IndexOutOfRangeException();
+                            }else if(int.Parse(t[1]) > 50)
+                            {//max50台
+                                t[1] = "50";
+                            }
+                            result.Add(t[1]);
+                            fuga++;
+                        }else if(fuga == 1)
+                        {//コマ数
+                            string[] c = line.Split(':');
+                            int piyo;
+                            if (c.Length > 2 || !int.TryParse(c[1], out piyo))
+                            {//形式がおかしいのでエラー
+                                throw new IndexOutOfRangeException();
+                            }else if(int.Parse(c[1]) > 50)
+                            {//max50コマ
+                                c[1] = "50";
+                            }
+                            result.Add(c[1]);
+                            fuga++;
+                        }
+                        else
+                        {//各コマのアルゴリズム
+                            if(line != "0" && line != "1" && line != "2")
+                            {//形式がおかしいのでエラー
+                                throw new IndexOutOfRangeException();
+                            }
+                            result.Add(line);
+                        }
+                    }
+                }
+            }
+            catch
+            {//ファイルの内容が形式に沿わない場合は，旨を伝えそのファイルをコピーし，新たに初期ファイルを作成する
+                sr.Close();
+                string path = "";
+                for (int i = 1; true; i++)
+                {
+                    if (File.Exists("../../Texts/config_copy.txt") && File.Exists("../../Texts/config_copy" + i.ToString() + ".txt"))
+                    {//コピー先ファイル名が重複しているとき連番にする
+                    }
+                    else if (File.Exists("../../Texts/config_copy.txt"))
+                    {
+                        path = "config_copy" + i.ToString() + ".txt";
+                        File.Copy(configFilePath, "../../Texts/" + path);
+                        break;
+                    }
+                    else
+                    {
+                        path = "config_copy.txt";
+                        File.Copy(configFilePath, "../../Texts/" + path);
+                        break;
+                    }
+                }
+                sw = new StreamWriter(configFilePath, false, Encoding.GetEncoding("Shift_JIS"));
+                sw.WriteLine("table:10\ncoma:5\n1\n1\n2\n1\n0");
+                sw.Close();
+                MessageBox.Show("Comarenkun/Texts/config.txtの形式が不正です．\n" + path + "にコピーして新たにconfig.txtを作成しました．");
+                return ReadConfigFile();//再帰
+            }
+            
+            sr.Close();
+
+            return result;
+        }
+
         public void CreateIfNotExists()
         {
             if (!Directory.Exists("../../Texts"))
@@ -370,7 +475,7 @@ namespace Comarenkun
                     {
                         string[] c = line.Split(':');
                         if (c[1] == preName)
-                        {//所属名を置き換え,ランクや所属が置き換えられてはいけないので1行ずつやる
+                        {//メンバを置き換え,1行ずつやる
                             s = s + rank + ":" + name + ":" + c[2] + "\n";
                         }
                         else
@@ -393,8 +498,8 @@ namespace Comarenkun
                     if (line != "")
                     {
                         string[] c = line.Split(':');
-                        if (c[2] == preName)
-                        {//所属名を置き換え,ランクや所属が置き換えられてはいけないので1行ずつやる
+                        if (c[1] == preName)
+                        {//メンバを置き換え,1行ずつやる
                             s = s + rank + ":" + name + ":" + c[2] + "\n";
                         }
                         else
@@ -623,6 +728,180 @@ namespace Comarenkun
             //上書き保存
             sw2.Write(s);
             sw2.Close();
+        }
+
+        public void SetAlgorithm(string tag)
+        {
+            string[] t = tag.Split(':');
+            int coma = int.Parse(t[0]);
+            int set = int.Parse(t[1]);
+            sr = new StreamReader(configFilePath, Encoding.GetEncoding("Shift_JIS"));
+            string s = "";
+            string line;
+            int i = -1;
+            while ((line = sr.ReadLine()) != null)
+            {
+                if (line != "")
+                {
+                    if(i < 1)
+                    {
+                        s = s + line + "\n";
+                        i++;
+                    }
+                    else
+                    {//iコマ目
+                        if (i == coma)
+                        {//アルゴリズム置き換え対象
+                            s = s + set + "\n";
+                        }
+                        else
+                        {
+                            s = s + line + "\n";
+                        }
+                        i++;
+                    }      
+                }
+            }
+            sr.Close();
+            sw = new StreamWriter(configFilePath, false, Encoding.GetEncoding("Shift_JIS"));
+            sw.Write(s);
+            sw.Close();
+        }
+        public void PlusTable()
+        {
+            sr = new StreamReader(configFilePath, Encoding.GetEncoding("Shift_JIS"));
+            string s = "";
+            string line;
+            int i = -1;
+            while ((line = sr.ReadLine()) != null)
+            {
+                if (line != "")
+                {
+                    if (i == -1)
+                    {//台数を1増やす
+                        string[] table = line.Split(':');
+                        if(int.Parse(table[1]) >= 50)
+                        {//50以降は増えない
+                            s = s + line + "\n";
+                        }
+                        else
+                        {
+                            s = s + "table:" + (int.Parse(table[1]) + 1).ToString() + "\n";
+                        }
+                        
+                    }
+                    else
+                    {//他は変えない
+                        s = s + line + "\n";
+                    }
+                    i++;
+                }
+            }
+            sr.Close();
+            sw = new StreamWriter(configFilePath, false, Encoding.GetEncoding("Shift_JIS"));
+            sw.Write(s);
+            sw.Close();
+        }
+        public void MinusTable()
+        {
+            sr = new StreamReader(configFilePath, Encoding.GetEncoding("Shift_JIS"));
+            string s = "";
+            string line;
+            int i = -1;
+            while ((line = sr.ReadLine()) != null)
+            {
+                if (line != "")
+                {
+                    if (i == -1)
+                    {//台数を1減らす
+                        string[] table = line.Split(':');
+                        if (int.Parse(table[1]) <= 1)
+                        {//1以降は減らない
+                            s = s + line + "\n";
+                        }
+                        else
+                        {
+                            s = s + "table:" + (int.Parse(table[1]) - 1).ToString() + "\n";
+                        }
+
+                    }
+                    else
+                    {//他は変えない
+                        s = s + line + "\n";
+                    }
+                    i++;
+                }
+            }
+            sr.Close();
+            sw = new StreamWriter(configFilePath, false, Encoding.GetEncoding("Shift_JIS"));
+            sw.Write(s);
+            sw.Close();
+        }
+        public void PlusComa()
+        {
+            sr = new StreamReader(configFilePath, Encoding.GetEncoding("Shift_JIS"));
+            string s = "";
+            string line;
+            int i = -1;
+            while((line = sr.ReadLine()) != null)
+            {
+                if(i == 0)
+                {
+                    string coma = line.Split(':')[1];
+                    i = int.Parse(coma);
+                    break;//コマ数を取得
+                }
+                s = s + line + "\n";
+                i++;
+            }
+            if(i >= 50)
+            {//50以上は増えない
+                sr.Close();
+            }
+            else
+            {
+                s = s + "コマ数:" + (i + 1).ToString() + "\n";
+                line = sr.ReadToEnd();
+                //末尾に0を足す
+                s = s + line + "\n0\n";
+                sr.Close();
+                sw = new StreamWriter(configFilePath, false, Encoding.GetEncoding("Shift_JIS"));
+                sw.Write(s);
+                sw.Close();
+            }
+            
+        }
+        public void MinusComa()
+        {
+            sr = new StreamReader(configFilePath, Encoding.GetEncoding("Shift_JIS"));
+            string s = "";
+            string line;
+            int i = -1;
+            while ((line = sr.ReadLine()) != null)
+            {
+                if (i == 0)
+                {
+                    string coma = line.Split(':')[1];
+                    i = int.Parse(coma);
+                    break;//コマ数を取得
+                }
+                s = s + line + "\n";
+                i++;
+            }
+            if(i <= 1)
+            {//これ以上は減らない
+                sr.Close();
+            }
+            else
+            {
+                s = s + "コマ数:" + (i - 1).ToString() + "\n";
+                line = (sr.ReadToEnd()).TrimEnd();
+                s = s + line.Remove(line.Length - 1);//末尾一文字削除
+                sr.Close();
+                sw = new StreamWriter(configFilePath, false, Encoding.GetEncoding("Shift_JIS"));
+                sw.Write(s);
+                sw.Close();
+            }
         }
     }
 }

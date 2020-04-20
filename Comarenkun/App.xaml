@@ -127,6 +127,21 @@
                 <ContentPresenter/>
             </Grid>
         </ControlTemplate>
+        <ControlTemplate x:Key="ConfigButton" TargetType="Button" />
+        
+        <ControlTemplate x:Key="TableButton" TargetType="Button"/>
+        <ControlTemplate x:Key="ComaButton" TargetType="Button" />
+        <ControlTemplate x:Key="ComaAlgorithmLabel" TargetType="Label"/>
+        <ControlTemplate x:Key="AlgorithmLabel" TargetType="Label" />
+
+        <ControlTemplate x:Key="AlgorithmLabel1" TargetType="Label" />
+        <ControlTemplate x:Key="AlgorithmLabel0" TargetType="Label" />
+        <ControlTemplate x:Key="AlgorithmLabel2" TargetType="Label" />
+        <ControlTemplate x:Key="ComaAlgorithmButton0" TargetType="Button"/>
+        <ControlTemplate x:Key="ComaAlgorithmButton1" TargetType="Button"/>
+        <ControlTemplate x:Key="ComaAlgorithmButton2" TargetType="Button"/>
+        
+
         <ControlTemplate x:Key="ToMenuButton" TargetType="Button">
             <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,0,0" >
                 <Polygon Points="0,576 0,0 90,0 150,576" Fill="{TemplateBinding Background}" />
