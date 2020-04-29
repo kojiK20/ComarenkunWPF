@@ -106,6 +106,16 @@ namespace Comarenkun
                 OnPropertyChanged("Name");
             }
         }
+        private SolidColorBrush _Color;
+        public SolidColorBrush Color
+        {
+            get { return _Color; }
+            set
+            {
+                _Color = value;
+                OnPropertyChanged("Color");
+            }
+        }
         private string _Group;
         public string Group
         {
@@ -181,6 +191,17 @@ namespace Comarenkun
         public void Clear()
         {
             List.Clear();
+        }
+        public Member Find(string name)
+        {//nameで探す
+            foreach(Member m in List)
+            {
+                if(m.Name == name)
+                {
+                    return m;
+                }
+            }
+            return null;
         }
         public void Sort()
         {//ランクで昇順ソート．いったんListに移してソートしてObservableCollectionに戻す.計算量<=2n + n^2　=O(n^2)やからええやろ

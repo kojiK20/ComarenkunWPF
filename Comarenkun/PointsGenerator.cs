@@ -77,26 +77,38 @@ namespace Comarenkun
         }
         public Thickness MarginCenter(double[] p, double contentSize, string name)
         {
+            double[] pp = new double[p.Length];
+            Array.Copy(p, pp, p.Length);
+            if(name == "ParticipantRankLabel")
+            {//五角形形式から四角形形式に変換
+                pp[4] = p[4];
+                pp[5] = p[5];
+                pp[6] = p[6] - p[2];
+                pp[7] = p[7];
+                pp[8] = p[10];
+                pp[9] = p[11];
+                
+            }
             //横方向のマージンに文字数contentSizeが必要
-            double fontSize = rowSize * p[2] * 1.0 / contentSize * 0.8;
-            if(fontSize > columnSize * p[3] * 0.8)
+            double fontSize = rowSize * pp[2] * 1.0 / contentSize * 0.8;
+            if(fontSize > columnSize * pp[3] * 0.8)
             {//縦幅を超えてしまわないように
-                fontSize = columnSize * p[3] * 0.8;
+                fontSize = columnSize * pp[3] * 0.8;
             }
             //原点を左上として，ラベルなどの座標をマージンで指定する.
             //VerticalAlignment=Center,HorizontalAlignment=Center　のかわり(Gridを使用していないため)
 
             double trueWidth, trueHeight;
-            if (p.Length > 4)
+            if (pp.Length > 4)
             {
                 //多角形なので平均っぽい縦横の長さを上と左の辺を基準に計算
-                trueWidth = p[2] + p[6];
-                trueHeight = p[3] + p[5];
+                trueWidth = pp[2] + pp[6];
+                trueHeight = pp[3] + pp[5];
             }
             else
             {
-                trueWidth = p[2];
-                trueHeight = p[3];
+                trueWidth = pp[2];
+                trueHeight = pp[3];
             }
             //Marginは左上右下の順
             double left = rowSize * trueWidth / 2 - fontSize * contentSize / 2;
@@ -109,8 +121,8 @@ namespace Comarenkun
             {
                 top = columnSize * trueHeight / 2 - fontSize / 2;//縦のマージンはy座標の中央値-フォントサイズ/2(WPFではwindowの座標もフォントサイズもピクセル)
             }
-            double right = -windowWidth + rowSize * p[2];
-            double bottom = -windowHeight + columnSize * p[3];//右と下のマージンがないと画面一杯に範囲が広がってしまう
+            double right = -windowWidth + rowSize * pp[2];
+            double bottom = -windowHeight + columnSize * pp[3];//右と下のマージンがないと画面一杯に範囲が広がってしまう
             Thickness result = new Thickness(left, top, right, bottom);
             return result;
         }

@@ -80,7 +80,7 @@ namespace Comarenkun
             double contentSize = 1;
 
             if (label != null)
-            {//ListBoxのItems(nullを渡している)のフォントサイズはこのメソッドでは指定しない(形状は同じだが文字数が異なるため)
+            {//一部のListBoxのItems(nullを渡している)のフォントサイズはこのメソッドでは指定しない(形状は同じだが文字数が異なるため)
                 contentSize = label.Content.ToString().Replace("\n", "").Length;
             }
 
@@ -98,8 +98,13 @@ namespace Comarenkun
                 TemplateBindingExtension b = new TemplateBindingExtension(Label.BackgroundProperty);
                 pol.SetValue(Polygon.FillProperty, b);
                 pol.SetValue(Polygon.PointsProperty, PolygonPoints(p));
+                if (name == "ParticipantRankLabel")
+                {
+                    pol.SetValue(Polygon.StrokeProperty, new SolidColorBrush(Color.FromRgb(0,0,0)));
+                    pol.SetValue(Polygon.PointsProperty, PentaPoints(p));
+                }
             }
-            else//円形ラベル
+            else//円形ラベル//現状なし
             {
                 cir = new FrameworkElementFactory(typeof(Ellipse));
                 TemplateBindingExtension b = new TemplateBindingExtension(Label.BackgroundProperty);
@@ -111,10 +116,26 @@ namespace Comarenkun
             if (name != "MemberGroupLabel")//name == "Header" || name == "RankNameLabel" || name == "ComaAlgorithmLabel")//文字(コンテンツ)を持つラベル
             {
                 con = new FrameworkElementFactory(typeof(ContentPresenter));
-                con.SetValue(ContentPresenter.MarginProperty, MarginLeftCenter(p, contentSize));//マージンにより左端中央に配置
+                if(name == "ParticipantRankLabel")
+                {
+                    con.SetValue(ContentPresenter.MarginProperty, MarginCenter(p, 1.1, name));//マージンにより左端中央に配置
+                }
+                else
+                {
+                    con.SetValue(ContentPresenter.MarginProperty, MarginLeftCenter(p, contentSize));//マージンにより左端中央に配置
+                }
+                
                 if(label == null)
-                {//ComaAlgorithmLabelのとき
-                    con.SetValue(TextBlock.FontSizeProperty, rowSize * p[2] / 4);//[i][コ][マ][目]
+                {
+                    if(name == "ComaAlgorithmLabel")
+                    {//ComaAlgorithmLabelのとき
+                        con.SetValue(TextBlock.FontSizeProperty, rowSize * p[2] / 4);//[i][コ][マ][目]
+                    }
+                    else
+                    {//ParticipantRankLabelのとき
+                        con.SetValue(TextBlock.FontSizeProperty, rowSize * p[2] / 1.1);//だいたい1桁
+                    }
+                        
                 }
                 else if(name == "AlgorithmLabel" || name == "AlgorithmLabel0" || name == "AlgorithmLabel1" || name == "AlgorithmLabel2")
                 {
@@ -243,14 +264,14 @@ namespace Comarenkun
             pol.SetValue(Polygon.FillProperty, b);//pol要素のFillプロパティをbindingでバインドしますの意
             pol.SetValue(Polygon.PointsProperty, PolygonPoints(p));
             pol.SetValue(Polygon.CursorProperty, Cursors.Hand);
-            if (name == "MemberNameButton" || name == "MemberDeleteButton" || name == "ComaAlgorithmButton0" || name == "ComaAlgorithmButton1" || name == "ComaAlgorithmButton2")
+            if (name == "MemberNameButton" || name == "MemberDeleteButton" || name=="ParticipantMemberButton" || name == "ComaAlgorithmButton0" || name == "ComaAlgorithmButton1" || name == "ComaAlgorithmButton2")
             {//ListBoxでボタンを横に配置するため
                 pol.SetValue(ContentPresenter.MarginProperty, new Thickness(rowSize * p[0], 0, 0, 0));
             }
-            //pol.SetValue(Polygon.NameProperty, "memberPolygon");//何故かセットされない
+            //pol.SetValue(Polygon.NameProperty, "memberPolygon");//何故かこの方法ではNameはセットされない
             if (button == null || name == "GroupAddButton" || name == "GroupDeleteButton"
                 || name == "MemberAddButton" || name=="TableButton" || name == "ComaButton"
-                || name == "ComaAlgorithm0" || name == "ComaAlgorithm1" || name == "ComaAlgorithm2")//!shadowでも可？
+                || name == "ComaAlgorithm0" || name == "ComaAlgorithm1" || name == "ComaAlgorithm2" || name == "ParticipantMemberButton")//!shadowでも可？
             {//ボタンの枠線表示する
                 pol.SetValue(Polygon.StrokeProperty, Brushes.Black);
                 //pol.SetValue(Polygon.StrokeThicknessProperty, Shape.StrokeThickness(1));
@@ -262,7 +283,7 @@ namespace Comarenkun
             {//ListBoxItems
                 con.SetValue(ContentPresenter.IsHitTestVisibleProperty, false);//テキストにはマウス判定を持たせない
                 con.SetValue(ContentPresenter.VerticalAlignmentProperty, VerticalAlignment.Center);
-                if(name == "MemberNameButton" || name == "MemberDeleteButton" || name == "ComaAlgorithmButton0" || name == "ComaAlgorithmButton1" || name == "ComaAlgorithmButton2")
+                if(name == "MemberNameButton" || name == "MemberDeleteButton" || name=="ParticipantMemberButton" || name == "ComaAlgorithmButton0" || name == "ComaAlgorithmButton1" || name == "ComaAlgorithmButton2")
                 {//ListBoxでボタンを横に配置するため
                     con.SetValue(ContentPresenter.MarginProperty, new Thickness(rowSize * (0.2 + p[0]), 0, 0, 0));
                 }
@@ -280,7 +301,7 @@ namespace Comarenkun
                 con.SetValue(ContentPresenter.RenderTransformProperty, rotateTransform1);
                 con.SetValue(ContentPresenter.IsHitTestVisibleProperty, false);//テキストにはマウス判定を持たせない
             }
-            else if (name == "ToMenuButton")
+            else if (name == "ToMenuButton" || name == "NextButton")
             {
                 //縦書きなので別処理
                 con.SetValue(ContentPresenter.MarginProperty, PortrateMarginCenter(p, contentSize, name));//マージンにより左端中央に配置
@@ -327,7 +348,7 @@ namespace Comarenkun
                 gri.AppendChild(con);
             }
 
-            //pol.Name = "buttonPolygon";//この方法だとセットされる
+            //pol.Name = "buttonPolygon";//この方法だとNameはセットされる
             buttonTemplate.VisualTree = gri;
 
             //Setter buttonTemplateSetter = new Setter(TemplateProperty, buttonTemplate);
@@ -339,12 +360,12 @@ namespace Comarenkun
             {//ListBoxのItemsに関してはフォントサイズを各自で設定する(全てのItemが同じテンプレートを参照するため)
                 //が，MemberButtonsのNameボタンに関してはRankボタンの横に配置するためにマージンを設定する
                 button.Margin = new Thickness(rowSize * p[0], columnSize * p[1], 0, 0);
-                if (name == "ToMenuButton")// || name == "GroupAddButton" || name == "GroupDeleteButton" || name == "MemberAddButton")
+                if (name == "ToMenuButton" || name == "NextButton")// || name == "GroupAddButton" || name == "GroupDeleteButton" || name == "MemberAddButton")
                 {//縦書き
                     button.FontSize = columnSize * p[3] * 1.0 / contentSize * 0.3;//フォントサイズ＝80% * ボタンの縦幅/文字数
                 }
                 else if (name == "GroupDeleteButton" || name == "GroupAddButton" || name == "MemberAddButton")
-                {//縦書き(文字数の関係でボタンによって比率を変える)
+                {//縦書き(文字数の関係でボタンによって比率を変えている)
                     button.FontSize = columnSize * p[3] * 1.0 / contentSize * 0.4;//フォントサイズ＝80% * ボタンの縦幅/文字数
                 }
                 else
@@ -452,6 +473,26 @@ namespace Comarenkun
                 lb.FontSize = columnSize * comaAlgorithmButton0Params[3];
             }
         }
+        public void TextBlockSet(string name, TextBlock tb, double[] p)
+        {//長方形ですね(ほぼListBoxSetと一緒),親のScrollViewerも調整
+            if(name == "ParticipantNamesTextBlock")
+            {
+                ScrollViewer sc = this.participantNamesScrollViewer;
+                sc.Width = rowSize * p[2];
+                sc.Height = columnSize * p[3];
+                sc.Margin = new Thickness(rowSize * p[0], columnSize * p[1], 0, 0);
+                tb.FontSize = columnSize * p[3] * 0.8;
+            }
+            else if (name == "ParticipantNamesSumTextBlock")
+            {//まとめ時
+                ScrollViewer sc = this.participantNamesScrollViewer;
+                sc.Width = rowSize * p[2];
+                sc.Height = columnSize * p[3];
+                sc.Margin = new Thickness(rowSize * p[0], columnSize * p[1], 0, 0);
+                tb.FontSize = columnSize * 0.8;
+            }
+
+        }
         public void ComarenkunSet(string name, Button coma, double[] p)
         {
             //コマ練くんの画像ボタンのコントロールのコントロールテンプレートを設定する
@@ -475,7 +516,7 @@ namespace Comarenkun
 
         
         public void GroupsSetToListBox()
-        {//グループリストの更新
+        {//グループリストの更新(フォントサイズも更新している！)
             groupList.Clear();
             foreach (string name in groups)
             {
@@ -525,10 +566,24 @@ namespace Comarenkun
             double contentSize = name.Replace("\n", "").Length;
             if(obj == "Group")
             {
-                para = groupButtonParams;
+                if (nowGroup || nowMember)
+                {
+                    para = groupButtonParams;
+                }else
+                {
+                    para = participantGroupButtonParams;
+                }
+                
             }else if(obj == "MemberName")
             {
-                para = memberNameButtonParams;
+                if (nowGroup || nowMember)
+                {
+                    para = memberNameButtonParams;
+                }
+                else
+                {
+                    para = participantMemberButtonParams;
+                }
             }else if(obj == "MemberRank")
             {
                 para = memberRankButtonParams;
@@ -549,7 +604,7 @@ namespace Comarenkun
         }
 
         public void MembersSetToListBox(string groupName)
-        {//選んだグループに属するメンバーのリストの更新
+        {//選んだグループに属するメンバーのリストの更新(フォントサイズも調整している！)
             memberList.Clear();
             currentMembersToShow = mlogic.MembersOfGroup(groupName);
             foreach (string[] member in currentMembersToShow)
@@ -558,7 +613,25 @@ namespace Comarenkun
                 double nameFontSize = GroupFontSize(member[1],"MemberName");//Groupのものを再利用
                 double rankFontSize = GroupFontSize(member[0],"MemberRank");//Groupのものを再利用
                 double deleteFontSize = GroupFontSize("削除", "MemberDelete");//Groupのものを再利用
-                Member n = new Member { Rank = member[0], Name = member[1], NameFontSize = nameFontSize, RankFontSize = rankFontSize, DeleteFontSize = deleteFontSize };
+                SolidColorBrush c;
+                
+                if (nowMatching && coma > 1 && participants[coma -2].IndexOf(member[1]) != -1 && decrease[coma - 1].IndexOf(member[1]) == -1)
+                {//2コマ目以降で，前のコマに参加しており，選択されていないメンバー
+                    c = new SolidColorBrush(Color.FromRgb(100,10,200));
+                }
+                else if (nowMatching && coma > 1 && participants[coma - 2].IndexOf(member[1]) != -1 && decrease[coma - 1].IndexOf(member[1]) != -1)
+                {//2コマ目以降で，前のコマに参加しており，選択(decrease)されているメンバー
+                    c = new SolidColorBrush(Color.FromRgb(10, 10, 255));
+                }
+                else if (nowMatching && participants[coma - 1].IndexOf(member[1]) != -1)
+                {//1コマ目のマッチング画面で，選択されているor2コマ目以降で，前のコマに参加しておらず，選択されているメンバー
+                    c = new SolidColorBrush(Color.FromRgb(255, 55, 100));
+                }
+                else
+                {
+                    c = new SolidColorBrush(Color.FromRgb(255, 128, 34));
+                }
+                Member n = new Member { Rank = member[0], Name = member[1], Color =c, NameFontSize = nameFontSize, RankFontSize = rankFontSize, DeleteFontSize = deleteFontSize };
                 memberList.Add(n);
                 if(groupName == "部内")
                 {
@@ -566,6 +639,14 @@ namespace Comarenkun
                 }
             }
         }
+
+        public void MemberSetColor(string name, Color c)
+        {//Clickしたメンバの色を[選択済み/キャンセル]として変化させるメソッド
+            SolidColorBrush cc = new SolidColorBrush(c);
+            Member m = memberList.Find(name);
+            m.Color = cc;
+        }
+
         public void MemberFontSizeSet()
         {//Itemsのフォントサイズのみを更新　WindowSizeChanged用
             for (int i = 0; i < memberList.List.Count; i++)

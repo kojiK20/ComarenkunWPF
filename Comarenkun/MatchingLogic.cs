@@ -70,7 +70,7 @@ namespace Comarenkun
                         {//台数
                             string[] t = line.Split(':');
                             int piyo;
-                            if(t.Length > 2 || !int.TryParse(t[1], out piyo))
+                            if(t.Length > 2 || !int.TryParse(t[1], out piyo) || t[0] != "table")
                             {//形式がおかしいのでエラー
                                 throw new IndexOutOfRangeException();
                             }else if(int.Parse(t[1]) > 50)
@@ -83,7 +83,7 @@ namespace Comarenkun
                         {//コマ数
                             string[] c = line.Split(':');
                             int piyo;
-                            if (c.Length > 2 || !int.TryParse(c[1], out piyo))
+                            if (c.Length > 2 || !int.TryParse(c[1], out piyo) || c[0] != "coma")
                             {//形式がおかしいのでエラー
                                 throw new IndexOutOfRangeException();
                             }else if(int.Parse(c[1]) > 50)
@@ -198,7 +198,7 @@ namespace Comarenkun
                     string[] c = line.Split(':');
 
                     //名前が重複しているなら連番にする
-                    c[1] = NameDuplicateCheck(names, c[1], 2);
+                    c[1] = NameDuplicateCheck(names, c[1]);
                     names.Add(c[1]);
 
                     if (c[0] != "↑" && c[0] != "↓" && c[0] != "")
@@ -228,18 +228,18 @@ namespace Comarenkun
             }
             else
             {//重複している時，連番を1増やした文字で再帰チェック
-                return NameDuplicateCheck(names, name + 2, 2 + 1);
+                return NameDuplicateCheck(names, name, 2);
             }
         }
-        public string NameDuplicateCheck(List<string> names, string name, int i)
+        public string NameDuplicateCheck(List<string> names,string original, int i)
         {//名前が重複してたら連番にした名前を返す
-            if (names.IndexOf(name) == -1)
+            if (names.IndexOf(original + i.ToString()) == -1)
             {//重複していない
-                return name;
+                return original + i.ToString();
             }
             else
             {//重複している時，連番を1増やした文字で再帰チェック
-                return NameDuplicateCheck(names, name + i.ToString(), i + 1);
+                return NameDuplicateCheck(names, original, i + 1);
             }
         }
 
@@ -711,11 +711,23 @@ namespace Comarenkun
                 if (line != "")
                 {
                     string[] c = line.Split(':');
-                    if (c[1] == "sample" && c[2] == name)
-                    {//こいつは消す(所属ナシにsampleが溜まってしまうため)
-                    }else if (c[2] == name)
+                    if (c[2] == name)
                     {//所属名を置き換え,ランクや所属が置き換えられてはいけないので1行ずつやる
-                           s = s + c[0] + ":" + c[1] + ":" + "\n";
+                        if(c[1].Length >= 6)
+                        {
+                            if (c[1].Substring(0, 6) == "sample")
+                            {//こいつは消す(所属ナシにsampleが溜まってしまうため)
+
+                            }
+                            else
+                            {
+                                s = s + c[0] + ":" + c[1] + ":" + "\n";
+                            }
+                        }
+                        else
+                        {
+                            s = s + c[0] + ":" + c[1] + ":" + "\n";
+                        }  
                     }
                     else
                     {
@@ -860,7 +872,7 @@ namespace Comarenkun
             }
             else
             {
-                s = s + "コマ数:" + (i + 1).ToString() + "\n";
+                s = s + "coma:" + (i + 1).ToString() + "\n";
                 line = sr.ReadToEnd();
                 //末尾に0を足す
                 s = s + line + "\n0\n";
@@ -894,7 +906,7 @@ namespace Comarenkun
             }
             else
             {
-                s = s + "コマ数:" + (i - 1).ToString() + "\n";
+                s = s + "coma:" + (i - 1).ToString() + "\n";
                 line = (sr.ReadToEnd()).TrimEnd();
                 s = s + line.Remove(line.Length - 1);//末尾一文字削除
                 sr.Close();
