@@ -1311,21 +1311,39 @@ namespace Comarenkun
                 }
                 MakeButtonsVisible();
                 this.participantMemberButtons.Visibility = Visibility.Hidden;
-                if(coma == int.Parse(configs[1]))
+
+                for (int i = coma; i < int.Parse(configs[1]); i++)
+                {//コマの参加者情報をリセット
+                    participants[i].Clear();
+                }
+
+                if ((string)this.nextButton.Content == "オ\nカ\nワ\nリ")
                 {
+                    this.participantNamesTextBlock.Text = ParticipantNameTextBlockText();//マッチングする
+                    TextBlockSet("ParticipantNamesSumTextBlock", this.participantNamesTextBlock, participantNamesSumTextBlockParams);
+
+                    this.groupButtons.Visibility = Visibility.Hidden;
+                    this.talkLabel.Content = "このメンバーでマッチングして\nいいコマか？";
+                    TransParentLabelSet("talkLabel", this.talkLabel, talkLabelParams, noShadow);
+                    this.nextButton.Content = "G\nO\n!";//GOボタンを別にellipseで作るかも
+                }
+                else if (coma == int.Parse(configs[1]))
+                {//GO
                     this.nextButton.Content = "確\n認\n→";
                     TextBlockSet("ParticipantNamesTextBlock", this.participantNamesTextBlock, participantNamesTextBlockParams);
                     this.participantNamesTextBlock.Text = ParticipantNameTextBlockText();
                     this.talkLabel.Content = "途中参加者(赤)と途中脱退者(青)を\n選ぶコマ";
                     TransParentLabelSet("talkLabel", this.talkLabel, talkLabelParams, noShadow);
+                    this.participantNamesTextBlock.Text = ParticipantNameTextBlockText(coma);
                 }
                 else
                 {
                     this.nextButton.Content = (coma + 1).ToString() + "\nコ\nマ\n目\n→";
+                    this.participantNamesTextBlock.Text = ParticipantNameTextBlockText(coma);
                 }
-                this.participantNamesTextBlock.Text = ParticipantNameTextBlockText(coma);
-
-                if(coma == 1)
+                
+                
+                if (coma == 1)
                 {
                     this.talkLabel.Content = "右上のボタンから組み方など\n設定できるコマ";
                     TransParentLabelSet("talkLabel", this.talkLabel, talkLabelParams, noShadow);
