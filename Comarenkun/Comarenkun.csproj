@@ -67,8 +67,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClassDefinitions.cs" />
-    <Compile Include="MatchingLogic.cs" />
+    <Compile Include="FileLogic.cs" />
     <Compile Include="MainWindow.xaml.cs" />
+    <Compile Include="MatchingLogic.cs" />
     <Compile Include="ObjectGenerator.cs" />
     <Compile Include="PointsGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">

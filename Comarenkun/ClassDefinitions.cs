@@ -204,7 +204,7 @@ namespace Comarenkun
             return null;
         }
         public void Sort()
-        {//ランクで昇順ソート．いったんListに移してソートしてObservableCollectionに戻す.計算量<=2n + n^2　=O(n^2)やからええやろ
+        {//ランクで昇順ソート．いったんListに移してソートしてObservableCollectionに戻す.計算量<=2n + n^2　=O(n^2)
             List<Member> pre = new List<Member>();
             foreach(Member m in List)
             {

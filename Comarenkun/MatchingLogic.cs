@@ -1,919 +1,784 @@
 ﻿using System;
+using System.Windows;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Windows.Media.Animation;
-using System.ComponentModel;
-using System.IO;
 
 namespace Comarenkun
 {
-    public class MatchingLogic
+    class MatchingLogic
     {
+        
         private MainWindow window;
-        private string memberFilePath = "../../Texts/members.txt";//絶対パスは"pack://application:,,,/Comarenkun;component//"
-        private string foreignerFilePath = "../../Texts/foreigners.txt";
-        private string configFilePath = "../../Texts/config.txt";
-        StreamReader sr;//config
-        StreamReader sr1;//member
-        StreamReader sr2;//foreigner
-        StreamWriter sw;
-        StreamWriter sw1;
-        StreamWriter sw2;
-
         public MatchingLogic(MainWindow window)
-        {//メインウィンドウのオブジェクトをwindowから参照する
+        {
             this.window = window;
         }
 
-        public void CreateIfNotExistsConfig()
-        {
-            if (!Directory.Exists("../../Texts"))
-            {
-                Directory.CreateDirectory("../../Texts");
-            }
-            if (!File.Exists("../../Texts/config.txt"))
-            {
-                //File.Create("../../Texts/members.txt");
-                sw = new StreamWriter(configFilePath, false, Encoding.GetEncoding("Shift_JIS"));
-                sw.WriteLine("table:10\ncoma:5\n1\n1\n2\n1\n0");
-                sw.Close();
-            }
-        }
+        int leave = 0;
 
-        public List<string> ReadConfigFile()
-        {//configテキストを読み込み配列にして返す
-            CreateIfNotExistsConfig();
-            //ReWriteIfNotRightConfig();
-            sr = new StreamReader(configFilePath, Encoding.GetEncoding("Shift_JIS"));
-
-            List<string> result = new List<string>();//台数,コマ数,各コマのアルゴリズム(0 or 1 or 2)
-            string line;
+        public string Matching(List<List<string>> participants, List<List<string>> increase, List<List<string>> decrease, List<string> configs)
+        {//マッチングする
+            string result = "";
+            List<ResultSet> set = new List<ResultSet>();
+            int table = int.Parse(configs[0]);
+            int coma = int.Parse(configs[1]);
+            string[] alg = new string[configs.Count - 2];
             int fuga = 0;
-            try
+            foreach(string s in configs)
             {
-                while ((line = sr.ReadLine()) != null)
-                {//テキストが無くなるまで1行ずつ読む
-                    if (line != "")
-                    {
-                        if(fuga == 0)
-                        {//台数
-                            string[] t = line.Split(':');
-                            int piyo;
-                            if(t.Length > 2 || !int.TryParse(t[1], out piyo) || t[0] != "table")
-                            {//形式がおかしいのでエラー
-                                throw new IndexOutOfRangeException();
-                            }else if(int.Parse(t[1]) > 50)
-                            {//max50台
-                                t[1] = "50";
-                            }
-                            result.Add(t[1]);
-                            fuga++;
-                        }else if(fuga == 1)
-                        {//コマ数
-                            string[] c = line.Split(':');
-                            int piyo;
-                            if (c.Length > 2 || !int.TryParse(c[1], out piyo) || c[0] != "coma")
-                            {//形式がおかしいのでエラー
-                                throw new IndexOutOfRangeException();
-                            }else if(int.Parse(c[1]) > 50)
-                            {//max50コマ
-                                c[1] = "50";
-                            }
-                            result.Add(c[1]);
-                            fuga++;
-                        }
-                        else
-                        {//各コマのアルゴリズム
-                            if(line != "0" && line != "1" && line != "2")
-                            {//形式がおかしいのでエラー
-                                throw new IndexOutOfRangeException();
-                            }
-                            result.Add(line);
-                        }
-                    }
-                }
-            }
-            catch
-            {//ファイルの内容が形式に沿わない場合は，旨を伝えそのファイルをコピーし，新たに初期ファイルを作成する
-                sr.Close();
-                string path = "";
-                for (int i = 1; true; i++)
+                if(fuga > 1)
                 {
-                    if (File.Exists("../../Texts/config_copy.txt") && File.Exists("../../Texts/config_copy" + i.ToString() + ".txt"))
-                    {//コピー先ファイル名が重複しているとき連番にする
-                    }
-                    else if (File.Exists("../../Texts/config_copy.txt"))
-                    {
-                        path = "config_copy" + i.ToString() + ".txt";
-                        File.Copy(configFilePath, "../../Texts/" + path);
-                        break;
-                    }
-                    else
-                    {
-                        path = "config_copy.txt";
-                        File.Copy(configFilePath, "../../Texts/" + path);
-                        break;
-                    }
+                    alg[fuga - 2] = s;
                 }
-                sw = new StreamWriter(configFilePath, false, Encoding.GetEncoding("Shift_JIS"));
-                sw.WriteLine("table:10\ncoma:5\n1\n1\n2\n1\n0");
-                sw.Close();
-                MessageBox.Show("Comarenkun/Texts/config.txtの形式が不正です．\n" + path + "にコピーして新たにconfig.txtを作成しました．");
-                return ReadConfigFile();//再帰
+                fuga++;
             }
-            
-            sr.Close();
 
-            return result;
-        }
-
-        public void CreateIfNotExists()
-        {
-            if (!Directory.Exists("../../Texts"))
-            {
-                Directory.CreateDirectory("../../Texts");
-            }
-            if (!File.Exists("../../Texts/members.txt"))
-            {
-                //File.Create("../../Texts/members.txt");
-                sw1 = new StreamWriter(memberFilePath, false, Encoding.GetEncoding("Shift_JIS"));
-                sw1.WriteLine("1:sample:");
-                sw1.Close();
-            }
-            if (!File.Exists("../../Texts/foreigners.txt"))
-            {
-                //File.Create("../../Texts/foreigners.txt");
-                sw2 = new StreamWriter(foreignerFilePath, false, Encoding.GetEncoding("Shift_JIS"));
-                sw2.WriteLine(":sample:");
-                sw2.Close();
-            }
-        }
-        public void ReWriteIfNotRight()
-        {//ランクが整数値あるいは↑↓空以外のものは0もしくは空に置き換える
-            sr1 = new StreamReader(memberFilePath, Encoding.GetEncoding("Shift_JIS"));
-            sr2 = new StreamReader(foreignerFilePath, Encoding.GetEncoding("Shift_JIS"));
-            string s1 = "";// sr1.ReadToEnd();
-            string s2 = "";// sr2.ReadToEnd();
-            
-            string line;
-            List<string> names = new List<string>();
-            while ((line = sr1.ReadLine()) != null)
-            {
-                if(line != "")
+            FileLogic flogic = new FileLogic(window); 
+            leave = 0;
+            List<MemberNode> memberList = new List<MemberNode>();
+            List<List<MemberNode>> eachMemberList = new List<List<MemberNode>>();//[i]:iコマ目の参加者のNode
+            List<MemberNode> all = flogic.AllMemberNodes();//名簿内全員のノード集合
+            int r;
+            string n;
+            string g;
+            for(int i = 0; i < participants.Count; i++)
+            {//memberListに参加者全員のNodeをつっこむ
+                foreach(string inc in increase[i])
                 {
-                    string[] c = line.Split(':');
-                    //名前が重複しているなら連番にする
-                    c[1] = NameDuplicateCheck(names, c[1]);
-                    names.Add(c[1]);
-
-                    int i;
-                    if (int.TryParse(c[0], out i) == false)
-                    {//ランクが整数値以外の場合0に置き換え,名前や所属が置き換えられてはいけないので1行ずつやる
-                        s1 = s1 + "0:" + c[1] + ":" + c[2] + "\n";
-                    }
-                    else
+                    MemberNode m = all.Find(mm => mm.Name == inc);
+                    if(m.Group == "部内" || m.Group == "所属ナシ")
                     {
-                        s1 = s1 + c[0] + ":" + c[1] + ":" + c[2] + "\n";
+                        m.Group = "";
+                    }
+                    if(memberList.IndexOf(m) == -1)
+                    {
+                        memberList.Add(m);
                     }
                     
                 }
             }
-            sr1.Close();
-            names = new List<string>();
-            while((line = sr2.ReadLine()) != null)
-            {//ランクが↑↓空以外の場合空に置き換え
-                if(line != "")
+
+            List<Matching> edges = new List<Matching>();//参加者間の枝集合＝マッチング，動的な変更が多いのでリスト
+
+            //全参加者のノード集合memberListはできた，次はまず1コマ目時点での枝集合edgeを生成する，
+            Matching edge;
+            eachMemberList.Add(new List<MemberNode>());
+            List<MemberNode> first = eachMemberList[0];//参照渡し
+            foreach(string p in participants[0])
+            {//1コマ目のMemberNode集合
+                first.Add(memberList.Find(mm => mm.Name == p));
+            }
+            for (int i = 0; i < first.Count; i++)
+            {
+                for(int ii = i + 1; ii < first.Count; ii++)
                 {
-                    string[] c = line.Split(':');
-
-                    //名前が重複しているなら連番にする
-                    c[1] = NameDuplicateCheck(names, c[1]);
-                    names.Add(c[1]);
-
-                    if (c[0] != "↑" && c[0] != "↓" && c[0] != "")
-                    {
-                        s2 = s2 + ":" + c[1] + ":" + c[2] + "\n";
+                    if(first[i].Group != first[ii].Group || first[i].Group == "" || first[ii].Group == "")
+                    {//所属が異なる(＝このマッチングは無考慮に組んでOK)
+                        edge = new Matching(first[i].Name, first[ii].Name, first[i].Rank, first[ii].Rank, true);
                     }
                     else
                     {
-                        s2 = s2 + c[0] + ":" + c[1] + ":" + c[2] + "\n";
+                        edge = new Matching(first[i].Name, first[ii].Name, first[i].Rank, first[ii].Rank, false);
                     }
-                }  
-            }
-            //上書き保存
-            sr2.Close();
-            sw1 = new StreamWriter(memberFilePath, false, Encoding.GetEncoding("Shift_JIS"));
-            sw2 = new StreamWriter(foreignerFilePath, false, Encoding.GetEncoding("Shift_JIS"));
-            sw1.Write(s1);
-            sw2.Write(s2);
-            sw1.Close();
-            sw2.Close();
-        }
-        public string NameDuplicateCheck(List<string> names, string name)
-        {//名前が重複してたら連番にした名前を返す
-            if(names.IndexOf(name) == -1)
-            {//重複していない
-                return name;
-            }
-            else
-            {//重複している時，連番を1増やした文字で再帰チェック
-                return NameDuplicateCheck(names, name, 2);
-            }
-        }
-        public string NameDuplicateCheck(List<string> names,string original, int i)
-        {//名前が重複してたら連番にした名前を返す
-            if (names.IndexOf(original + i.ToString()) == -1)
-            {//重複していない
-                return original + i.ToString();
-            }
-            else
-            {//重複している時，連番を1増やした文字で再帰チェック
-                return NameDuplicateCheck(names, original, i + 1);
-            }
-        }
+                    edges.Add(edge);
 
-        public List<string[]> ReadMemberFile()
-        {//メンバテキストを読み込み配列にして返す
-            CreateIfNotExists();
-            ReWriteIfNotRight();
+                }
+            }
 
-            sr1 = new StreamReader(memberFilePath, Encoding.GetEncoding("Shift_JIS"));
-            sr2 = new StreamReader(foreignerFilePath, Encoding.GetEncoding("Shift_JIS"));
+            //これで，1コマ目時点での枝集合edgesができた
+            //各コマでの参加者Node集合をつくる
+            for(int i = 1;i < coma; i++)
+            {
+                eachMemberList.Add(new List<MemberNode>());
+                foreach(string p in participants[i])
+                {
+                    MemberNode m = memberList.Find(mm => mm.Name == p);
+                    eachMemberList[i].Add(m);
+                }
+            }
+
+            //コマ毎にアルゴリズムに従って操作していく
+            //アルゴリズムに従った枝選定->アルゴリズムに合致する枝がなくなれば合致しない枝も選定
+            //->それもなくなれば同所属間の枝も選定->それもなくなれば枝集合をリセット
+            /*List<string> patNum1 = ((textBox1.Text).Split('　')).ToList();
+            int patNum2 = patNum1.Count + add2.Length - dec2.Length;
+            int patNum3 = patNum2 + add3.Length - dec3.Length;
+            int patNum4 = patNum3 + add4.Length - dec4.Length;
+            int patNum5 = patNum4 + add5.Length - dec5.Length;
+            int table = 0;*/
+            bool duplicate = false;
+            int loopStopper = 0;//例外時に1
+            /*foreach (MemberNode m in memberList)
+            {
+                if (memberList.Count(mm => mm.Name == m.Name) > 1)
+                {//参加者の名前に重複がある
+                    duplicate = true;
+                    //throw new System.ArgumentException("error", "original");
+                }
+            }
+            if (duplicate)
+            {
+                MessageBox.Show("同じ名前の参加者が複数いるコマよ");
+                roopStopper = 1;
+            }*/
+            for(int i = 0; i < coma; i++)
+            {
+                List<string> l = participants[i];
+                if(l.Count <= 5)
+                {
+                    MessageBox.Show((i+1).ToString() + "コマ目の参加者が6人未満になっているコマ");
+                    loopStopper = 1;
+                    break;
+                }else if(l.Count > table * 3)
+                {
+                    MessageBox.Show((i+1).ToString() + "コマ目の参加者が【使用可能台数×3】(人)を超えているコマ...");
+                    loopStopper = 1;
+                    break;
+                }
+            }
+
             
-            List<string[]> result = new List<string[]>();
-            string line;
-            try
+            if (loopStopper == 0)//組み合わせ生成処理
             {
-                while ((line = sr1.ReadLine()) != null)
-                {//テキストが無くなるまで1行ずつ読む
-                    if (line != "")
-                    {//ランク，名前，所属の配列
-                        string[] memberNames = line.Split(':');
-                        if(memberNames.Length > 3)
-                        {
-                            throw new IndexOutOfRangeException();
-                        }
-                        memberNames[2] = "部内";
-                        result.Add(memberNames);
-                    }
-                }
-            }
-            catch
-            {//ファイルの内容が形式に沿わない場合は，旨を伝えそのファイルをコピーし，新たに初期ファイルを作成する
-                sr1.Close();
-                sr2.Close();
-                string path = "";
-                for(int i = 1; true; i++)
+                List<string> takyuChosen = new List<string>();
+                for(int i = 0; i < coma; i++)
                 {
-                    if(File.Exists("../../Texts/members_copy.txt") && File.Exists("../../Texts/members_copy" + i.ToString() + ".txt"))
-                    {//コピー先ファイル名が重複しているとき連番にする
-                    }
-                    else if(File.Exists("../../Texts/members_copy.txt"))
+                    ResultSet s = new ResultSet(null,null,null);
+                    set.Add(s);
+                    if(alg[i] == "0")
                     {
-                        path = "members_copy" + i.ToString() + ".txt";
-                        File.Copy(memberFilePath, "../../Texts/" + path);
-                        break;
+                        set[i] = TopToBottom(eachMemberList[i], edges, takyuChosen, table, i, set);
+                        //result = result +  (i + 1).ToString() + "コマ目：\n" + set.Result;
+                        edges = set[i].Edges;//残っている枝
+                        takyuChosen = set[i].TakyuChosen;//多球に選ばれた人
+                    }else if(alg[i] == "1")
+                    {
+                        set[i] = TopToBottom(eachMemberList[i], edges, takyuChosen, table, i, set);
+                        //result = result +  (i + 1).ToString() + "コマ目：\n" + set.Result;
+                        edges = set[i].Edges;//残っている枝
+                        takyuChosen = set[i].TakyuChosen;//多球に選ばれた人
                     }
                     else
                     {
-                        path = "members_copy.txt";
-                        File.Copy(memberFilePath, "../../Texts/" + path);
+                        set[i] = TopToBottom(eachMemberList[i], edges, takyuChosen, table, i, set);
+                        //result = result  + (i + 1).ToString() + "コマ目：\n" + set.Result;
+                        edges = set[i].Edges;//残っている枝
+                        takyuChosen = set[i].TakyuChosen;//多球に選ばれた人
+                    }
+                    if (set[i].Result == "error台が足りません")
+                    {
+                        MessageBox.Show(set[i].Result);
+                        loopStopper = 1;
+                        break;
+                        //フラグ等を立てて処理を終了させる
+                    }
+
+                    if(i < coma - 1)
+                    {
+                        foreach (string inc in increase[i + 1])
+                        {
+                            foreach (MemberNode m in eachMemberList[i])//1コマ目の参加者それぞれにadd2から枝をはる
+                            {
+                                MemberNode am = memberList.Find(mm => mm.Name == inc);
+                                Matching ade = new Matching(am.Name, m.Name, am.Rank, m.Rank, am.Group != m.Group || am.Group == "" || m.Group == "");
+                                edges.Add(ade);
+                            }
+                        }
+                        foreach (string dc in decrease[i + 1])//2コマ目での脱退者から伸びる枝を全て消す
+                        {
+                            edges.RemoveAll(pyo => pyo.Name1 == dc || pyo.Name2 == dc);
+                        }
+                    }
+                    
+                }
+            }
+            //throw new System.ArgumentException("error", "original");
+            if (loopStopper == 0)
+            {
+                //MessageBox.Show(result);
+            }
+            else//例外
+            {
+                return "ERROR";
+            }
+
+            for(int i = 0; i < set.Count; i++)
+            {
+                result = result + (i+1).ToString() + "コマ目：\n" + set[i].Result;
+            }
+            return result;
+        }
+        public bool haveSameGroup(List<Matching> edges, string name)
+        {
+            bool b = false;
+            foreach (Matching e in edges)
+            {
+                if (e.Name1 == name || e.Name2 == name)
+                {
+                    if (e.DifferentGroup == false)
+                    {
+                        b = true;
                         break;
                     }
                 }
-                sw1 = new StreamWriter(memberFilePath, false, Encoding.GetEncoding("Shift_JIS"));
-                sw1.WriteLine("1:sample:");
-                sw1.Close();
-                MessageBox.Show("Comarenkun/Texts/members.txtの形式が不正です．\n" + path + "にコピーして新たにmembers.txtを作成しました．");
-                return ReadMemberFile();//再帰
             }
-            try
+            return b;
+        }
+        //枝集合から枝をもつノード数を返す
+        public int NodeNumber(List<Matching> edges)
+        {
+            List<string> nodes = new List<string>();
+            foreach (Matching e in edges)
             {
-                while ((line = sr2.ReadLine()) != null)
-                {//外部参加者も数える
-                    if (line != "")
-                    {
-                        string[] foreignerNames = line.Split(':');
-                        if(foreignerNames.Length > 3)
-                        {
-                            throw new IndexOutOfRangeException();
-                        }
-
-                        if (foreignerNames[2] == "")
-                        {
-                            foreignerNames[2] = "所属ナシ";
-                        }
-                        else if (foreignerNames[2] == "部内")
-                        {//外部所属に「部内」を作れないように
-                            foreignerNames[2] = "部内2";
-                        }
-                        result.Add(foreignerNames);
-                    }
+                if (!nodes.Contains(e.Name1))
+                {
+                    nodes.Add(e.Name1);
+                }
+                if (!nodes.Contains(e.Name2))
+                {
+                    nodes.Add(e.Name2);
                 }
             }
-            catch
+            return nodes.Count;
+        }
+        //最小の次数を返す(同所属間の枝はないものとみなす)
+        public int MinDegree(List<Matching> edges, List<MemberNode> nodes)
+        {
+            int degree = nodes.Count - 1;//最小の次数
+            int degreePre = 0;
+            foreach (MemberNode n in nodes)
             {
-                sr1.Close();
-                sr2.Close();
-                string path = "";
-                for (int i = 1; true; i++)
+                foreach (Matching e in edges)
                 {
-                    if (File.Exists("../../Texts/foreigners_copy.txt") && File.Exists("../../Texts/foreigners_copy" + i.ToString() + ".txt"))
-                    {//コピー先ファイル名が重複しているとき連番にする
-                    }
-                    else if (File.Exists("../../Texts/foreigners_copy.txt"))
+                    if ((e.Name1 == n.Name || e.Name2 == n.Name) && e.DifferentGroup)
                     {
-                        path = "foreigners_copy" + i.ToString() + ".txt";
-                        File.Copy(foreignerFilePath, "../../Texts/" + path);
+                        degreePre++;
+                    }
+                }
+                if (degreePre < degree && degreePre != 0)
+                {
+                    degree = degreePre;
+                }
+                degreePre = 0;
+            }
+            return degree;
+        }
+        //最大の次数を返す(同所属間の枝はないものとみなす)
+        public int MaxDegree(List<Matching> edges, List<MemberNode> nodes)
+        {
+            int degree = 0;//最大の次数
+            int degreePre = 0;
+            foreach (MemberNode n in nodes)
+            {
+                foreach (Matching e in edges)
+                {
+                    if ((e.Name1 == n.Name || e.Name2 == n.Name) && e.DifferentGroup)
+                    {
+                        degreePre++;
+                    }
+                }
+                if (degreePre > degree && degreePre != 0)
+                {
+                    degree = degreePre;
+                }
+                degreePre = 0;
+            }
+            return degree;
+        }
+        //memberノードの次数を返す(同所属間の枝はないものとみなす)
+        public int Degree(List<Matching> edges, MemberNode member)
+        {
+            int degree = 0;
+            foreach (Matching e in edges)
+            {
+                if ((e.Name1 == member.Name || e.Name2 == member.Name) && e.DifferentGroup)
+                {
+                    degree++;
+                }
+            }
+            return degree;
+        }
+        public List<Matching> IsConnected(List<MemberNode> nodes, List<Matching> edges)
+        {//現在のグラフが連結かどうか判定する(n^2で妥協)
+         //連結ならばnull,非連結ならば橋候補(開始点とlabelが0の点の枝2通り)と開始点とその隣接点の2通りの枝を返す
+            //まず，隣接行列を作成(nodesおよびedgesはランクで昇順になっている前提)
+            int[,] mat = new int[nodes.Count, nodes.Count];//隣接行列,0で初期化
+            foreach(Matching e in edges)
+            {
+                int indexX = nodes.FindIndex((n => n.Name == e.Name1));
+                int indexY = nodes.FindIndex((n => n.Name == e.Name2));
+                mat[indexX, indexY] = 1;
+                mat[indexY, indexX] = 1;//無向グラフなので対称
+            }
+            //深さ優先で連結か判定
+            int[] label = new int[nodes.Count];
+            int nowIndex = 0;
+            int indexForResult = 0;
+            int flag = 0;
+            while (true)
+            {
+                flag = 0;
+                for(int i = 1; i < nodes.Count; i++)
+                {//行を探索(i=0は開始点で自明に探索済みなので1から)
+                    if(mat[nowIndex,i] == 1 && label[i] == 0)
+                    {//未探索の隣接ノード発見
+                        if (nowIndex == 0)
+                        {//開始点からの隣接ノードを記憶しておく
+                            indexForResult = i;
+                        }
+                        label[i] = label[nowIndex] + 1;
+                        nowIndex = i;
+                        flag = 1;
                         break;
                     }
-                    else
+                }
+                if(flag == 0)
+                {//新たな隣接ノードなし
+                    if(label[nowIndex] == 0)
+                    {//かつ，開始ノードまで戻っている→到達可能なノードを探索済み
+                        break;
+                    }
+                    int nearLabel = 0;
+                    int preIndex = 0;
+                    for (int i = 0; i < nodes.Count; i++)
+                    {//行を探索
+                        if (mat[nowIndex, i] == 1 && label[i] < label[nowIndex])
+                        {//探索済みの隣接ノードのうちlabelが最も近いものに戻る
+                            if(label[i] > nearLabel)
+                            {//更新
+                                nearLabel = label[i];
+                                preIndex = i;
+                            }
+                        }
+                    }
+                    nowIndex = preIndex;
+                }
+            }
+            int count = 0;
+            for(int i = 0; i < label.Length; i++)
+            {//labelが0のノードが2つ以上残っていれば非連結
+                if (label[i] == 0)
+                {
+                    count++;
+                }
+                if(count >= 2)
+                {
+                    Matching bridge1 = new Matching(nodes[0].Name, nodes[i].Name, nodes[0].Rank, nodes[i].Rank, nodes[0].Group != nodes[i].Group || nodes[0].Group == "" || nodes[i].Group == "");
+                    Matching bridge2 = new Matching(nodes[i].Name, nodes[0].Name, nodes[i].Rank, nodes[0].Rank, nodes[0].Group != nodes[i].Group || nodes[0].Group == "" || nodes[i].Group == "");
+                    Matching neighbor1 = new Matching(nodes[0].Name, nodes[indexForResult].Name, nodes[0].Rank, nodes[indexForResult].Rank, nodes[0].Group != nodes[indexForResult].Group || nodes[0].Group == "" || nodes[indexForResult].Group == "");
+                    Matching neighbor2 = new Matching(nodes[indexForResult].Name, nodes[0].Name, nodes[indexForResult].Rank, nodes[0].Rank, nodes[0].Group != nodes[indexForResult].Group || nodes[0].Group == "" || nodes[indexForResult].Group == "");
+                    List<Matching> result = new List<Matching>();
+                    result.Add(bridge1);
+                    result.Add(bridge2);
+                    result.Add(neighbor1);
+                    result.Add(neighbor2);
+                    return result;
+                }
+            }
+            return null;
+        }
+        //chosen内の枝を避けながら，アルゴリズムに従った枝選定->アルゴリズムに合致する枝がなくなれば合致しない枝も選定
+        //->それもなくなれば同所属間の枝も選定->それもなくなればchosenをリセット
+        public ResultSet TopToBottom(List<MemberNode> nodes, List<Matching> edges, List<string> takyuChosen, int table, int now, List<ResultSet> set)
+        {
+            //まず参加人数と台数から対人と多球の組数の方程式を解く
+            int p = nodes.Count;//1コマ目の参加人数
+            int taijin = -1;//対人組数
+            int takyu = -1;//多球組数
+            //2taijin+3takyu = p,taijin+takyu<=tをみたしtaijinが最大となるtaijinとtakyuの組み合わせを求める
+            if (3 * table - p < 0)
+            {
+                List<string> er = new List<string>();
+                ResultSet error = new ResultSet(edges, er, "error台が足りません");
+                return error;
+            }
+            else if (3 * table - p < p / 2)//taijinの条件は，3table-p以下又はp/2以下　である．この場合3table-p以下．
+            {
+
+                for (int i = 3 * table - p; i >= 0; i--)
+                {
+                    if ((p - 2 * i) % 3 == 0)//この時点でのiをtaijinとしたとき，残りを多球にできるか.できるならこれがtaijinの最大値
                     {
-                        path = "foreigners_copy.txt";
-                        File.Copy(foreignerFilePath, "../../Texts/" + path);
+                        taijin = i;
+                        takyu = (p - 2 * i) / 3;
                         break;
                     }
                 }
-                sw2 = new StreamWriter(foreignerFilePath, false, Encoding.GetEncoding("Shift_JIS"));
-                sw2.WriteLine(":sample:");
-                sw2.Close();
-                MessageBox.Show("Comarenkun/Texts/foreigners.txtの形式が不正です．\n" + path + "にコピーして新たにforeigners.txtを作成しました．");
-                return ReadMemberFile();//再帰
             }
-            
-            sr1.Close();
-            sr2.Close();
-            
-            return result;
-        }
+            else//taijinがp/2以下．
+            {
+                for (int i = p / 2; i >= 0; i--)
+                {
+                    if ((p - 2 * i) % 3 == 0)
+                    {
+                        taijin = i;
+                        takyu = (p - 2 * i) / 3;
+                        break;
+                    }
+                }
+            }
 
-        public List<string> AllMemberNames()
-        {
-            List<string[]> m = ReadMemberFile();
-            List<string> result = new List<string>();
-            foreach(string[] mem in m)
+            //もしも開始時点で,枝数がtaijin数よりも多いにもかかわらずグラフが非連結であった場合，特にメンバが偶数であれば各部分グラフ内で不足なくマッチングするのは不可能．
+            //この場合，ある頂点から生える枝(bridge[2]or[3])と，以前に選ばれているはずのその頂点から生える橋(bridge[0]or[1])のマッチングを入れ替える
+            if (edges.Count > taijin)
             {
-                result.Add(mem[1]);
-            }
-            return result;
-        }
-        public List<string[]> MembersOfGroup(string groupName)
-        {//引数に渡した所属に属するメンバーの{ランク，名前}を返す
-            List<string[]> members = ReadMemberFile();
-            List<string[]> result = new List<string[]>();
-            foreach (string[] mem in members)
-            {
-                if(mem[2] == groupName)
-                {
-                    string[] m = { mem[0], mem[1] };
-                    result.Add(m);
-                }
-            }
-            return result;
-        }
-        public void AddMember(string rank, string name, string group)
-        {
-            if(group == "部内")
-            {//所属が部内ならmembers.txtに書く(所属は""に)
-                sw1 = new StreamWriter(memberFilePath, true, Encoding.GetEncoding("Shift_JIS"));
-                try
-                {
-                    sw1.WriteLine("\n" + rank + ":" + name + ":" + group + "\n");
-                }
-                finally
-                {
-                    sw1.Close();
-                }
-            }
-            else
-            {//foreigners.txtに書く
-                sw2 = new StreamWriter(foreignerFilePath, true, Encoding.GetEncoding("Shift_JIS"));
-                try
-                {
-                    sw2.WriteLine("\n" + rank + ":" + name + ":" + group + "\n");
-                }
-                finally
-                {
-                    sw2.Close();
-                }
-            }
-        }
-        public void DeleteMember(string name, string group)
-        {//nameはmembername
-            if(group == "部内")
-            {//mmebers.txt
-                sr1 = new StreamReader(memberFilePath, Encoding.GetEncoding("Shift_JIS"));
-                string s = "";
-                string line;
-                while ((line = sr1.ReadLine()) != null)
-                {
-                    if (line != "")
-                    {
-                        string[] c = line.Split(':');
-                        if (c[1] == name)
-                        {//こいつの行を削除,ランクや所属が置き換えられてはいけないので1行ずつやる
-                        }
-                        else
-                        {
-                            s = s + c[0] + ":" + c[1] + ":" + c[2] + "\n";
-                        }
-                    }
-                }
-                sr1.Close();
-                sw1 = new StreamWriter(memberFilePath, false, Encoding.GetEncoding("Shift_JIS"));
-                //上書き保存
-                sw1.Write(s);
-                sw1.Close();
-            }
-            else
-            {//foreigners.txt
-                sr2 = new StreamReader(foreignerFilePath, Encoding.GetEncoding("Shift_JIS"));
-                string s = "";
-                string line;
-                while ((line = sr2.ReadLine()) != null)
-                {
-                    if (line != "")
-                    {
-                        string[] c = line.Split(':');
-                        if (c[1] == name)
-                        {//こいつの行を削除,ランクや所属が置き換えられてはいけないので1行ずつやる
-                        }
-                        else
-                        {
-                            s = s + c[0] + ":" + c[1] + ":" + c[2] + "\n";
-                        }
-                    }
-                }
-                sr2.Close();
-                sw2 = new StreamWriter(foreignerFilePath, false, Encoding.GetEncoding("Shift_JIS"));
-                //上書き保存
-                sw2.Write(s);
-                sw2.Close();
-            }
-        }
-        public void ChangeMember(string rank, string preName, string name, string group)
-        {
-            if(group == "部内")
-            {//members.txt
-                sr1 = new StreamReader(memberFilePath, Encoding.GetEncoding("Shift_JIS"));
-                string s = "";
-                string line;
-                while ((line = sr1.ReadLine()) != null)
-                {
-                    if (line != "")
-                    {
-                        string[] c = line.Split(':');
-                        if (c[1] == preName)
-                        {//メンバを置き換え,1行ずつやる
-                            s = s + rank + ":" + name + ":" + c[2] + "\n";
-                        }
-                        else
-                        {
-                            s = s + c[0] + ":" + c[1] + ":" + c[2] + "\n";
-                        }
-                    }
-                }
-                sr1.Close();
-                sw1 = new StreamWriter(memberFilePath, false, Encoding.GetEncoding("Shift_JIS"));
-                sw1.Write(s);
-                sw1.Close();
-            }else
-            {//foreigners.txt
-                sr2 = new StreamReader(foreignerFilePath, Encoding.GetEncoding("Shift_JIS"));
-                string s = "";
-                string line;
-                while ((line = sr2.ReadLine()) != null)
-                {
-                    if (line != "")
-                    {
-                        string[] c = line.Split(':');
-                        if (c[1] == preName)
-                        {//メンバを置き換え,1行ずつやる
-                            s = s + rank + ":" + name + ":" + c[2] + "\n";
-                        }
-                        else
-                        {
-                            s = s + c[0] + ":" + c[1] + ":" + c[2] + "\n";
-                        }
-                    }
-                }
-                sr2.Close();
-                sw2 = new StreamWriter(foreignerFilePath, false, Encoding.GetEncoding("Shift_JIS"));
-                sw2.Write(s);
-                sw2.Close();
-            }
-        }
-        public void PlusRank(string name, string group)
-        {
-            if (group == "部内")
-            {//数字を1上げる
-                sr1 = new StreamReader(memberFilePath, Encoding.GetEncoding("Shift_JIS"));
-                string s = "";
-                string line;
-                while ((line = sr1.ReadLine()) != null)
-                {
-                    if (line != "")
-                    {
-                        string[] c = line.Split(':');
-                        if (c[1] == name)
-                        {//ランクを置き換え,1行ずつやる
-                            s = s + (int.Parse(c[0]) + 1).ToString() + ":" + c[1] + ":" + c[2] + "\n";
-                        }
-                        else
-                        {
-                            s = s + c[0] + ":" + c[1] + ":" + c[2] + "\n";
-                        }
-                    }
-                }
-                sr1.Close();
-                sw1 = new StreamWriter(memberFilePath, false, Encoding.GetEncoding("Shift_JIS"));
-                sw1.Write(s);
-                sw1.Close();
-            }
-            else
-            {//↑→""→↓の順
-                sr2 = new StreamReader(foreignerFilePath, Encoding.GetEncoding("Shift_JIS"));
-                string s = "";
-                string line;
-                while ((line = sr2.ReadLine()) != null)
-                {
-                    if (line != "")
-                    {
-                        string[] c = line.Split(':');
-                        if (c[1] == name)
-                        {//ランクを置き換え,1行ずつやる
-                            if(c[0] == "↓")
+                List<Matching> bridge = IsConnected(nodes, edges);
+                if (bridge != null)
+                {//非連結
+                    MessageBox.Show("出戻りしたお");
+                    for (int i = now - 1; i >= 0; i--)
+                    {//以前のコマで選ばれた枝と入れ替える
+                        string bridge0 = bridge[0].Name1 + " - " + bridge[0].Name2;
+                        string bridge1 = bridge[1].Name1 + " - " + bridge[1].Name2;
+                        string exchange = bridge[2].Name1 + " - " + bridge[2].Name2;
+                        if (set[i].Result.Contains(bridge0) || set[i].Result.Contains(bridge1))
+                        {//このコマで橋を選択している
+                            string[] sep1 = new string[1];
+                            string[] sep2 = new string[1];
+                            string m = "";
+                            //exchangeのもう片方のノードと接続していたノードを取得しておく
+                            sep1[0] = bridge[2].Name2 + " - ";
+                            sep2[0] = " - " + bridge[2].Name2;
+                            if (set[i].Result.Contains(sep1[0]))
                             {
-                                s = s + "↑" + ":" + c[1] + ":" + c[2] + "\n";
+                                m = ((set[i].Result).Split(sep1, StringSplitOptions.None))[1].Split('\n')[0];
                             }
-                            else if(c[0] == "")
+                            else if (set[i].Result.Contains(sep2[0]))
                             {
-                                s = s + "↓" + ":" + c[1] + ":" + c[2] + "\n";
-                            }
-                            else if(c[0] == "↑")
-                            {
-                                s = s + "" + ":" + c[1] + ":" + c[2] + "\n";
-                            }
-                            
-                        }
-                        else
-                        {
-                            s = s + c[0] + ":" + c[1] + ":" + c[2] + "\n";
-                        }
-                    }
-                }
-                sr2.Close();
-                sw2 = new StreamWriter(foreignerFilePath, false, Encoding.GetEncoding("Shift_JIS"));
-                sw2.Write(s);
-                sw2.Close();
-            }
-        }
-        public void MinusRank(string name, string group)
-        {
-            if (group == "部内")
-            {//数字を1下げる
-                sr1 = new StreamReader(memberFilePath, Encoding.GetEncoding("Shift_JIS"));
-                string s = "";
-                string line;
-                while ((line = sr1.ReadLine()) != null)
-                {
-                    if (line != "")
-                    {
-                        string[] c = line.Split(':');
-                        if (c[1] == name)
-                        {//ランクを置き換え,1行ずつやる
-                            s = s + (int.Parse(c[0]) - 1).ToString() + ":" + c[1] + ":" + c[2] + "\n";
-                        }
-                        else
-                        {
-                            s = s + c[0] + ":" + c[1] + ":" + c[2] + "\n";
-                        }
-                    }
-                }
-                sr1.Close();
-                sw1 = new StreamWriter(memberFilePath, false, Encoding.GetEncoding("Shift_JIS"));
-                sw1.Write(s);
-                sw1.Close();
-            }
-            else
-            {//↓→""→↑の順
-                sr2 = new StreamReader(foreignerFilePath, Encoding.GetEncoding("Shift_JIS"));
-                string s = "";
-                string line;
-                while ((line = sr2.ReadLine()) != null)
-                {
-                    if (line != "")
-                    {
-                        string[] c = line.Split(':');
-                        if (c[1] == name)
-                        {//ランクを置き換え,1行ずつやる
-                            if (c[0] == "↓")
-                            {
-                                s = s + "" + ":" + c[1] + ":" + c[2] + "\n";
-                            }
-                            else if (c[0] == "")
-                            {
-                                s = s + "↑" + ":" + c[1] + ":" + c[2] + "\n";
-                            }
-                            else if (c[0] == "↑")
-                            {
-                                s = s + "↓" + ":" + c[1] + ":" + c[2] + "\n";
-                            }
+                                string[] md = (set[i].Result).Split(sep2, StringSplitOptions.None)[0].Split('\n');
+                                m = md[md.Length];
 
-                        }
-                        else
-                        {
-                            s = s + c[0] + ":" + c[1] + ":" + c[2] + "\n";
-                        }
-                    }
-                }
-                sr2.Close();
-                sw2 = new StreamWriter(foreignerFilePath, false, Encoding.GetEncoding("Shift_JIS"));
-                sw2.Write(s);
-                sw2.Close();
-            }
-        }
-
-        public List<string> AllGroups()
-        {
-            List<string[]> m = ReadMemberFile();
-            List<string> result = new List<string>();
-            result.Add("部内");
-            result.Add("所属ナシ");
-            foreach(string[] mem in m)
-            {
-                if(result.IndexOf(mem[2]) == -1)
-                {
-                    result.Add(mem[2]);
-                }
-                else
-                {//既にリストに加えている
-                }
-            }
-            return result;
-        }
-        public void ChangeGroup(string pre, string name)
-        {//所属名をnameでおきかえ,部内は書き換え不可なのでforeignersのみでよい
-            sr2 = new StreamReader(foreignerFilePath, Encoding.GetEncoding("Shift_JIS"));
-            string s = "";
-            string line;
-            while ((line = sr2.ReadLine()) != null)
-            {
-                if(line != "")
-                {
-                    string[] c = line.Split(':');
-                    if (c[2] == pre)
-                    {//所属名を置き換え,ランクや所属が置き換えられてはいけないので1行ずつやる
-                        s = s + c[0] + ":" + c[1] + ":" + name + "\n";
-                    }
-                    else
-                    {
-                        s = s + c[0] + ":" + c[1] + ":" + c[2] + "\n";
-                    }
-                }             
-            }
-            sr2.Close();
-            sw2 = new StreamWriter(foreignerFilePath, false, Encoding.GetEncoding("Shift_JIS"));
-            sw2.Write(s);
-            sw2.Close();
-        }
-
-        public void AddGroup(string name)
-        {
-            sw2 = new StreamWriter(foreignerFilePath, true, Encoding.GetEncoding("Shift_JIS"));
-            try
-            {
-                sw2.WriteLine("\n:sample:" + name);
-            }
-            finally
-            {
-                sw2.Close();
-            }
-        }
-        public void DeleteGroup(string name)
-        {//nameの所属を空文字に置き換えて所属ナシにする
-            sr2 = new StreamReader(foreignerFilePath, Encoding.GetEncoding("Shift_JIS"));
-            string s = "";
-            string line;
-            while ((line = sr2.ReadLine()) != null)
-            {
-                if (line != "")
-                {
-                    string[] c = line.Split(':');
-                    if (c[2] == name)
-                    {//所属名を置き換え,ランクや所属が置き換えられてはいけないので1行ずつやる
-                        if(c[1].Length >= 6)
-                        {
-                            if (c[1].Substring(0, 6) == "sample")
-                            {//こいつは消す(所属ナシにsampleが溜まってしまうため)
-
+                            }
+                            //まずbridgeと交換するぶんのResultの調整を行う
+                            if (set[i].Result.Contains(bridge0))
+                            {
+                                
+                                set[i].Result = set[i].Result.Replace(bridge0, exchange);
                             }
                             else
                             {
-                                s = s + c[0] + ":" + c[1] + ":" + "\n";
+                                
+                                set[i].Result = set[i].Result.Replace(bridge1, exchange);
                             }
-                        }
-                        else
-                        {
-                            s = s + c[0] + ":" + c[1] + ":" + "\n";
-                        }  
-                    }
-                    else
-                    {
-                        s = s + c[0] + ":" + c[1] + ":" + c[2] + "\n";
-                    }
-                }
-            }
-            sr2.Close();
-            sw2 = new StreamWriter(foreignerFilePath, false, Encoding.GetEncoding("Shift_JIS"));
-            //上書き保存
-            sw2.Write(s);
-            sw2.Close();
-        }
+                            
+                            set[i].Edges.Add(bridge[0]);//橋を消すのでEdgeには残る
+                            set[i].Edges.RemoveAll(e => e.Equal(bridge[2]) || e.Equal(bridge[3]));//橋と入れ替える枝を加えるのでEdgeからは消す
+                            edges.Add(bridge[0]);
+                            edges.RemoveAll(e => e.Equal(bridge[2]) || e.Equal(bridge[3]));
+                            
+                            
+                            MemberNode mm = nodes.Find(mmm => mmm.Name == m);
+                            //Matchingを作るためにexchangeのもう片方のノードを取得
+                            MemberNode em = nodes.Find(mmm => mmm.Name == bridge[2].Name2);
+                            Matching exchangeNeighbor = new Matching(em.Name, m, em.Rank, mm.Rank, em.Group != mm.Group || em.Group == "" || mm.Group == "");
+                            MemberNode bm = nodes.Find(mmm => mmm.Name == bridge[0].Name2);
+                            Matching exchangeNeighborToBridge1 = new Matching(m, bm.Name, mm.Rank, bm.Rank, bm.Group != mm.Group || bm.Group == "" || mm.Group == "");
+                            Matching exchangeNeighborToBridge2 = new Matching(bm.Name, m, bm.Rank, mm.Rank, bm.Group != mm.Group || bm.Group == "" || mm.Group == "");
 
-        public void SetAlgorithm(string tag)
-        {
-            string[] t = tag.Split(':');
-            int coma = int.Parse(t[0]);
-            int set = int.Parse(t[1]);
-            sr = new StreamReader(configFilePath, Encoding.GetEncoding("Shift_JIS"));
-            string s = "";
-            string line;
-            int i = -1;
-            while ((line = sr.ReadLine()) != null)
-            {
-                if (line != "")
-                {
-                    if(i < 1)
-                    {
-                        s = s + line + "\n";
-                        i++;
+                            string bridge2 = exchangeNeighbor.Name1 + " - " + exchangeNeighbor.Name2;
+                            string bridge3 = exchangeNeighbor.Name2 + " - " + exchangeNeighbor.Name1;
+                            string exchange2 = exchangeNeighborToBridge1.Name1 + " - " + exchangeNeighborToBridge1.Name2;
+                            if (set[i].Result.Contains(bridge2))
+                            {
+                                set[i].Result = set[i].Result.Replace(bridge2, exchange2);
+                            }
+                            else
+                            {
+                                set[i].Result = set[i].Result.Replace(bridge3, exchange2);
+                            }
+                            
+                            set[i].Edges.Add(exchangeNeighbor);
+                            set[i].Edges.RemoveAll(e => e.Equal(exchangeNeighborToBridge1) || e.Equal(exchangeNeighborToBridge2));
+                            edges.Add(exchangeNeighbor);
+                            edges.RemoveAll(e => e.Equal(exchangeNeighborToBridge1) || e.Equal(exchangeNeighborToBridge2));
+                            break;
+                        }
                     }
-                    else
-                    {//iコマ目
-                        if (i == coma)
-                        {//アルゴリズム置き換え対象
-                            s = s + set + "\n";
-                        }
-                        else
-                        {
-                            s = s + line + "\n";
-                        }
-                        i++;
-                    }      
+                    
                 }
-            }
-            sr.Close();
-            sw = new StreamWriter(configFilePath, false, Encoding.GetEncoding("Shift_JIS"));
-            sw.Write(s);
-            sw.Close();
-        }
-        public void PlusTable()
-        {
-            sr = new StreamReader(configFilePath, Encoding.GetEncoding("Shift_JIS"));
-            string s = "";
-            string line;
-            int i = -1;
-            while ((line = sr.ReadLine()) != null)
-            {
-                if (line != "")
-                {
-                    if (i == -1)
-                    {//台数を1増やす
-                        string[] table = line.Split(':');
-                        if(int.Parse(table[1]) >= 50)
-                        {//50以降は増えない
-                            s = s + line + "\n";
-                        }
-                        else
-                        {
-                            s = s + "table:" + (int.Parse(table[1]) + 1).ToString() + "\n";
-                        }
-                        
-                    }
-                    else
-                    {//他は変えない
-                        s = s + line + "\n";
-                    }
-                    i++;
-                }
-            }
-            sr.Close();
-            sw = new StreamWriter(configFilePath, false, Encoding.GetEncoding("Shift_JIS"));
-            sw.Write(s);
-            sw.Close();
-        }
-        public void MinusTable()
-        {
-            sr = new StreamReader(configFilePath, Encoding.GetEncoding("Shift_JIS"));
-            string s = "";
-            string line;
-            int i = -1;
-            while ((line = sr.ReadLine()) != null)
-            {
-                if (line != "")
-                {
-                    if (i == -1)
-                    {//台数を1減らす
-                        string[] table = line.Split(':');
-                        if (int.Parse(table[1]) <= 1)
-                        {//1以降は減らない
-                            s = s + line + "\n";
-                        }
-                        else
-                        {
-                            s = s + "table:" + (int.Parse(table[1]) - 1).ToString() + "\n";
-                        }
-
-                    }
-                    else
-                    {//他は変えない
-                        s = s + line + "\n";
-                    }
-                    i++;
-                }
-            }
-            sr.Close();
-            sw = new StreamWriter(configFilePath, false, Encoding.GetEncoding("Shift_JIS"));
-            sw.Write(s);
-            sw.Close();
-        }
-        public void PlusComa()
-        {
-            sr = new StreamReader(configFilePath, Encoding.GetEncoding("Shift_JIS"));
-            string s = "";
-            string line;
-            int i = -1;
-            while((line = sr.ReadLine()) != null)
-            {
-                if(i == 0)
-                {
-                    string coma = line.Split(':')[1];
-                    i = int.Parse(coma);
-                    break;//コマ数を取得
-                }
-                s = s + line + "\n";
-                i++;
-            }
-            if(i >= 50)
-            {//50以上は増えない
-                sr.Close();
-            }
-            else
-            {
-                s = s + "coma:" + (i + 1).ToString() + "\n";
-                line = sr.ReadToEnd();
-                //末尾に0を足す
-                s = s + line + "\n0\n";
-                sr.Close();
-                sw = new StreamWriter(configFilePath, false, Encoding.GetEncoding("Shift_JIS"));
-                sw.Write(s);
-                sw.Close();
             }
             
-        }
-        public void MinusComa()
-        {
-            sr = new StreamReader(configFilePath, Encoding.GetEncoding("Shift_JIS"));
-            string s = "";
-            string line;
-            int i = -1;
-            while ((line = sr.ReadLine()) != null)
+            string result = "";
+            //まずランクの中央値を求める
+            List<int> ranks = new List<int>();//中央値算出のため
+            int midrank = -1;//ランクの中央値
+            foreach (MemberNode s in nodes)
             {
-                if (i == 0)
-                {
-                    string coma = line.Split(':')[1];
-                    i = int.Parse(coma);
-                    break;//コマ数を取得
-                }
-                s = s + line + "\n";
-                i++;
+                ranks.Add(s.Rank);
             }
-            if(i <= 1)
-            {//これ以上は減らない
-                sr.Close();
+            ranks.Sort();
+            if (ranks.Count % 2 == 1)
+            {
+                midrank = ranks[(ranks.Count + 1) / 2];
             }
             else
             {
-                s = s + "coma:" + (i - 1).ToString() + "\n";
-                line = (sr.ReadToEnd()).TrimEnd();
-                s = s + line.Remove(line.Length - 1);//末尾一文字削除
-                sr.Close();
-                sw = new StreamWriter(configFilePath, false, Encoding.GetEncoding("Shift_JIS"));
-                sw.Write(s);
-                sw.Close();
+                midrank = ranks[ranks.Count / 2];
             }
+            
+            //枝をtaijin本選んだら，残り3takyu個のノードを選ぶ
+            //Rank1>=midrank&&Rank2<=midrank || Rank1<=midrank&&Rank2>=midrankを満たす枝を，次数が低いものからランダムに抽出
+            Random r = new Random();//乱数
+            edges = edges.OrderBy(e => r.Next(edges.Count)).ToList();//edgesをシャッフル
+            nodes = nodes.OrderBy(n => r.Next(nodes.Count)).ToList();//nodesをシャッフル
+            List<Matching> origin = new List<Matching>(edges);//もとのedgesを値コピー->あとでmatchsの枝を消して返り値へ
+            List<Matching> matchs = new List<Matching>();//得られたマッチングを格納->resultへ
+            List<string[]> takyuMatchs = new List<string[]>();//得られた多球マッチングを格納->resultへ 
+            takyuChosen = takyuChosen;//今までに多球に選ばれた人たち．↑の列挙版を加える
+
+            for (int i = 0; i < taijin;)//taijin組の対人が見つかるまで
+            {
+                int ii = i;//iがforeachを抜けても変化していないならば条件を緩める
+                int minD = MinDegree(edges, nodes);//現在の枝の最小次数
+                int maxD = MaxDegree(edges, nodes);//現在の枝の最大次数
+                foreach (Matching e in edges)
+                {
+                    int d1 = Degree(edges, nodes.Find(m => m.Name == e.Name1));
+                    int d2 = Degree(edges, nodes.Find(m => m.Name == e.Name2));//枝eの両端の次数を算出
+                    if (d1 == minD || d2 == minD)//枝eが最小次数ならば
+                    {
+                        if (NodeNumber(edges) > 3 * takyu)//選んだ枝のノードが関与する枝はすべて削除するため
+                        {
+                            if ((e.Rank1 >= midrank && e.Rank2 <= midrank) || (e.Rank1 <= midrank && e.Rank2 >= midrank)
+                                && e.DifferentGroup && (takyuChosen.Contains(e.Name1) || takyuChosen.Contains(e.Name2)))
+                            //条件(上位＜＝＞下位,所属が違う，多球に選ばれている）に合う枝を見つけたら採用)
+                            //条件はforループごとに徐々に緩める
+                            {
+                                edges.RemoveAll(hoge => hoge.Name1 == e.Name1 || hoge.Name2 == e.Name1
+                                                || hoge.Name1 == e.Name2 || hoge.Name2 == e.Name2);//採用された枝の2ノードが関与する枝はすべて削除
+                                matchs.Add(e);
+                                i++;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (ii == i)//条件の枝が見つからない(条件を緩める，ランクの条件をとっぱらう)
+                {
+                    foreach (Matching e in edges)
+                    {
+                        int d1 = Degree(edges, nodes.Find(m => m.Name == e.Name1));
+                        int d2 = Degree(edges, nodes.Find(m => m.Name == e.Name2));//枝eの両端の次数を算出
+                        if (d1 == minD || d2 == minD)//枝eが最小次数ならば
+                        {
+                            if (NodeNumber(edges) > 3 * takyu)//選んだ枝のノードが関与する枝はすべて削除するため
+                            {
+                                if (e.DifferentGroup && (takyuChosen.Contains(e.Name1) || takyuChosen.Contains(e.Name2)))
+                                //条件(所属が違う，多球に選ばれている）に合う枝を見つけたら採用)
+                                //条件はforループごとに徐々に緩める
+                                {
+                                    edges.RemoveAll(hoge => hoge.Name1 == e.Name1 || hoge.Name2 == e.Name1
+                                                    || hoge.Name1 == e.Name2 || hoge.Name2 == e.Name2);//採用された枝の2ノードが関与する枝はすべて削除
+                                    matchs.Add(e);
+                                    i++;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (ii == i)//条件の枝が見つからない(条件を緩める，所属の条件をとっぱらう)
+                {
+                    foreach (Matching e in edges)
+                    {
+                        int d1 = Degree(edges, nodes.Find(m => m.Name == e.Name1));
+                        int d2 = Degree(edges, nodes.Find(m => m.Name == e.Name2));//枝eの両端の次数を算出
+                        if (d1 == minD || d2 == minD)//枝eが最小次数ならば
+                        {
+                            if (NodeNumber(edges) > 3 * takyu)//選んだ枝のノードが関与する枝はすべて削除するため
+                            {
+                                if (takyuChosen.Contains(e.Name1) || takyuChosen.Contains(e.Name2))
+                                //条件(多球に選ばれている）に合う枝を見つけたら採用)
+                                //条件はforループごとに徐々に緩める
+                                {
+                                    edges.RemoveAll(hoge => hoge.Name1 == e.Name1 || hoge.Name2 == e.Name1
+                                                    || hoge.Name1 == e.Name2 || hoge.Name2 == e.Name2);//採用された枝の2ノードが関与する枝はすべて削除
+                                    matchs.Add(e);
+                                    i++;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (ii == i)//条件の枝が見つからない(条件を緩める，すべてとっぱらう)
+                {
+                    foreach (Matching e in edges)
+                    {
+                        int d1 = Degree(edges, nodes.Find(m => m.Name == e.Name1));
+                        int d2 = Degree(edges, nodes.Find(m => m.Name == e.Name2));//枝eの両端の次数を算出
+                        if (d1 == minD || d2 == minD)//枝eが最小次数ならば
+                        {
+                            if (NodeNumber(edges) > 3 * takyu)//選んだ枝のノードが関与する枝はすべて削除するため,枝を持つノード数=処理していない人数
+                            {
+                                //条件なし
+                                edges.RemoveAll(hoge => hoge.Name1 == e.Name1 || hoge.Name2 == e.Name1
+                                                || hoge.Name1 == e.Name2 || hoge.Name2 == e.Name2);//採用された枝の2ノードが関与する枝はすべて削除
+                                matchs.Add(e);
+                                i++;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (ii == i)//これでも見つからないならば枝の選定状況をリセット(完全グラフから，このコマで既に選んだ枝のみを除いたグラフにedgesを置き換える)
+                            //次数の低いノードから選択しているのでこの状況になるのは単純に残る枝数が足りていないときだと思われる
+                {
+                    //完全グラフを作成
+                    edges = new List<Matching>();
+                    Matching edge = new Matching(null, null, 0, 0, false);
+                    for (int j = 0; j < nodes.Count; j++)
+                    {
+                        for (int jj = j + 1; jj < nodes.Count; jj++)
+                        {
+                            if (nodes[j].Group != nodes[jj].Group || nodes[j].Group == "" || nodes[jj].Group == "")
+                            {//所属が異なる(＝このマッチングは無考慮に組んでOK)
+                                edge = new Matching(nodes[j].Name, nodes[jj].Name, nodes[j].Rank, nodes[jj].Rank, true);
+                            }
+                            else
+                            {
+                                edge = new Matching(nodes[j].Name, nodes[jj].Name, nodes[j].Rank, nodes[jj].Rank, false);
+                            }
+                            edges.Add(edge);
+
+                        }
+                    }
+                    //このコマで既に選んだ枝の両端ノードが関与する枝を除く(同じコマで複数同じ人が出現することを防ぐため)
+                    List<Matching> edgesCopy = new List<Matching>(edges);
+                    foreach (Matching m in matchs)
+                    {
+                        foreach (Matching e in edgesCopy)
+                        {
+                            if (e.Name1 == m.Name1 || e.Name2 == m.Name1 || e.Name1 == m.Name2 || e.Name2 == m.Name2)
+                            {
+                                edges.Remove(e);
+                            }
+                        }
+                    }
+                    //多球の選出状況もリセット
+                    takyuChosen = new List<string>();
+                }
+            }
+            //nodesとorigin(返り値に使用)からマッチングしたメンバーを消す
+            foreach (Matching m in matchs)
+            {
+                nodes.RemoveAll(hoge => hoge.Name == m.Name1 || hoge.Name == m.Name2);
+                origin.RemoveAll(ed => ed.Equal(m));
+            }
+            //以下，多球を選ぶ
+            if (takyu == 0)
+            {
+                //多球がないときはそのまま返り値処理
+                foreach (Matching m in matchs)
+                {
+                    result = result + m.Pair();
+                }
+            }
+            else
+            {
+                if (nodes.Count % 3 != 0)
+                {
+                    throw new System.ArgumentException("残った多球用ノードが3の倍数になってない", "original");
+                }
+                else//多球メンバを3人ずつえらぶ．既にシャッフルしてるので頭からでよい
+                {
+                    for (int i = 0; i < nodes.Count / 3; i = i++)
+                    {
+                        string[] t = new string[] { nodes[0].Name, nodes[1].Name, nodes[2].Name };
+                        takyuMatchs.Add(t);
+                        foreach (string n in t)
+                        {
+                            takyuChosen.Add(n);
+                        }
+                        nodes.RemoveRange(0, 3);
+                    }
+                }
+
+                //返り値処理
+                foreach (Matching m in matchs)
+                {
+                    result = result + m.Pair();
+                }
+                foreach (string[] s in takyuMatchs)
+                {
+                    result = result + "    多球: " + s[0] + "-" + s[1] + "-" + s[2] + "\n";
+                }
+            }
+            ResultSet outPut = new ResultSet(origin, takyuChosen, result);
+            return outPut;
+
+        }//今日はここまで．
+
+        /*public ResultSet NearMatch(List<MemberNode> nodes, List<Matching> edges)
+        {
+
+        }
+        public ResultSet Random(List<MemberNode> nodes, List<Matching> edges)
+        {
+
+        }*/
+
+    }
+
+    public class MemberNode//参加者を表すノードの構造体
+    {
+        public int Rank { set; get; }
+        public string Name { set; get; }
+        public string Group { set; get; }//部内者は"",外部参加者で所属分けする場合は末尾3文字を読みアルファベットを格納
+
+        public MemberNode(int Rank, string Name, string Group)
+        {
+            this.Rank = Rank;
+            this.Name = Name;
+            this.Group = Group;
+        }
+
+    }
+    public class Matching//参加間のマッチングを表す枝の構造体
+    {
+        public string Name1 { set; get; }
+        public string Name2 { set; get; }
+        public int Rank1 { set; get; }
+        public int Rank2 { set; get; }
+        public bool DifferentGroup { set; get; }//2端の所属が異なるか，どちらかが""のときtrue
+
+        public Matching(string Name1, string Name2, int Rank1, int Rank2, bool DifferentGroup)
+        {
+            this.Name1 = Name1;
+            this.Name2 = Name2;
+            this.Rank1 = Rank1;
+            this.Rank2 = Rank2;
+            this.DifferentGroup = DifferentGroup;
+        }
+        public bool Equal(Matching M)
+        {
+            if (this.Name1 == M.Name1 && this.Name2 == M.Name2 && this.Rank1 == M.Rank1 && this.Rank2 == M.Rank2 && this.DifferentGroup == M.DifferentGroup)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public string Pair()
+        {
+            return "    " + this.Name1 + " - " + this.Name2 + "\n";
+        }
+    }
+    public class ResultSet//アルゴリズムに沿った枝集合と組み合わせのstringをまとめた出力に使用
+    {
+        public List<Matching> Edges { set; get; }//枝を抜く前のもとの枝集合から，選んだマッチング枝のみを削除したもの
+        public List<string> TakyuChosen { set; get; }//多球に選ばれたメンバ
+        public string Result { set; get; }//そのコマの組み合わせ
+
+        public ResultSet(List<Matching> Edges, List<string> TakyuChosen, string Result)
+        {
+            this.Edges = Edges;
+            this.TakyuChosen = TakyuChosen;
+            this.Result = Result;
         }
     }
 }

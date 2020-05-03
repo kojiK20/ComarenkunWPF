@@ -25,7 +25,8 @@ namespace Comarenkun
     /// </summary>
     public partial class MainWindow : Window
     {
-        MatchingLogic mlogic;//ロジック部を実行してくれる人
+        FileLogic flogic;//ロジック部を実行してくれる人
+        MatchingLogic mlogic;//
         List<string[]> members;
         List<string> memberNames;
         List<string[]> currentMembersToShow;
@@ -34,11 +35,11 @@ namespace Comarenkun
         List<List<string>> increase = new List<List<string>>();//increace[i]:i-1 -> iコマ目での参加者 [0] = participants
         List<List<string>> decrease = new List<List<string>>();//decrease[i]:i-1 -> iコマ目での退出者 [0] = null
         List<string> groups;
-        public GroupList groupList;
-        public MemberList memberList;
-        public ComaList comaList;
-        public int tableNum = 10;
-        public int comaNum = 5;
+        GroupList groupList;
+        MemberList memberList;
+        ComaList comaList;
+        int tableNum = 10;
+        int comaNum = 5;
 
         int gridRow = 30;//疑似グリッド．列数
         int gridColumn = 30;//疑似グリッド．行数
@@ -143,10 +144,11 @@ namespace Comarenkun
         {
             InitializeComponent();
             SetMode(menu);
-            mlogic = new MatchingLogic(this);//ロジック部を実行してくれる人
-            members = mlogic.ReadMemberFile();
-            memberNames = mlogic.AllMemberNames();
-            groups = mlogic.AllGroups();
+            flogic = new FileLogic(this);//ロジック部を実行してくれる人
+            mlogic = new MatchingLogic(this);
+            members = flogic.ReadMemberFile();
+            memberNames = flogic.AllMemberNames();
+            groups = flogic.AllGroups();
 
             //XAMLからこのクラスのメンバ変数を参照可能にする
             this.DataContext = this;
@@ -155,7 +157,7 @@ namespace Comarenkun
             this.groupAddButton.Content = "追\n加\n＋";
             this.groupDeleteButton.Content = "削\n除";
             this.memberAddButton.Content = "追\n加\n＋";
-            this.participantNamesTextBlock.Text = "コマ目:";
+            this.participantNamesTextBlock.Text = "コマ目：";
             this.nextButton.Content = "2\nコ\nマ\n目\n→";
             this.tableButton.Content = "台数：" + tableNum.ToString();
             this.comaButton.Content = "コマ数：" + comaNum.ToString();
@@ -169,7 +171,7 @@ namespace Comarenkun
             this.participantMemberButtons.DataContext = memberList.List;
             comaList = new ComaList();
             this.comaListBox.DataContext = comaList.List;
-            configs = mlogic.ReadConfigFile();//configsを更新
+            configs = flogic.ReadConfigFile();//configsを更新
 
             for (int i = 0; i < int.Parse(configs[1]); i++)
             {//あるコマまで，空Listで宣言しておく
@@ -301,7 +303,7 @@ namespace Comarenkun
                 ListBoxSet("ParticipantMemberButtons", this.participantMemberButtons, participantMemberButtonsParams);
                 PolygonButtonSet("ParticipantMemberButton", null, participantMemberButtonParams, noShadow);
                 LabelSet("ParticipantRankLabel", null, participantRankLabelParams, noShadow);
-                if ((string)this.nextButton.Content != "G\nO\n!")
+                if ((string)this.nextButton.Content != "G\nO\n!" || (string)this.nextButton.Content == "オ\nカ\nワ\nリ")
                 {
                     TextBlockSet("ParticipantNamesTextBlock", this.participantNamesTextBlock, participantNamesTextBlockParams);
                 }
@@ -309,21 +311,23 @@ namespace Comarenkun
                 {
                     TextBlockSet("ParticipantNamesSumTextBlock", this.participantNamesTextBlock, participantNamesSumTextBlockParams);
                 }
+
+                PolygonButtonSet("TableButton", this.tableButton, tableButtonParams, noShadow);
+                PolygonButtonSet("ComaButton", this.comaButton, comaButtonParams, noShadow);
+                LabelSet("AlgorithmLabel", this.algorithmLabel, algorithmLabelParams, noShadow);
+                LabelSet("AlgorithmLabel0", this.algorithmLabel0, algorithmLabel0Params, noShadow);
+                LabelSet("AlgorithmLabel1", this.algorithmLabel1, algorithmLabel1Params, noShadow);
+                LabelSet("AlgorithmLabel2", this.algorithmLabel2, algorithmLabel2Params, noShadow);
+                ListBoxSet("ComaListBox", this.comaListBox, comaListBoxParams);
+                LabelSet("ComaAlgorithmLabel", null, comaAlgorithmLabelParams, noShadow);
+                PolygonButtonSet("ComaAlgorithmButton0", null, comaAlgorithmButton0Params, noShadow);
+                PolygonButtonSet("ComaAlgorithmButton1", null, comaAlgorithmButton1Params, noShadow);
+                PolygonButtonSet("ComaAlgorithmButton2", null, comaAlgorithmButton2Params, noShadow);
             }
             
 
 
-            PolygonButtonSet("TableButton", this.tableButton, tableButtonParams, noShadow);
-            PolygonButtonSet("ComaButton", this.comaButton, comaButtonParams, noShadow);
-            LabelSet("AlgorithmLabel", this.algorithmLabel, algorithmLabelParams, noShadow);
-            LabelSet("AlgorithmLabel0", this.algorithmLabel0, algorithmLabel0Params, noShadow);
-            LabelSet("AlgorithmLabel1", this.algorithmLabel1, algorithmLabel1Params, noShadow);
-            LabelSet("AlgorithmLabel2", this.algorithmLabel2, algorithmLabel2Params, noShadow);
-            ListBoxSet("ComaListBox", this.comaListBox, comaListBoxParams);
-            LabelSet("ComaAlgorithmLabel", null, comaAlgorithmLabelParams, noShadow);
-            PolygonButtonSet("ComaAlgorithmButton0", null, comaAlgorithmButton0Params, noShadow);
-            PolygonButtonSet("ComaAlgorithmButton1", null, comaAlgorithmButton1Params, noShadow);
-            PolygonButtonSet("ComaAlgorithmButton2", null, comaAlgorithmButton2Params, noShadow);
+            
 
             //GroupButtonsSet("GroupButton", groupButtonParams);
             //PolygonButtonSet("GroupButton", this.sampleGroup, groupButtonParams);
@@ -509,11 +513,11 @@ namespace Comarenkun
                 {
                     name = name.Substring(0, 30);//文字数は上限30とする 知らんけど
                 }
-                name = mlogic.NameDuplicateCheck(groups, name);//重複してるなら連番に
+                name = flogic.NameDuplicateCheck(groups, name);//重複してるなら連番に
                 if (name != "")
                 {
-                    mlogic.AddGroup(name);
-                    groups = mlogic.AllGroups();
+                    flogic.AddGroup(name);
+                    groups = flogic.AllGroups();
                     GroupsSetToListBox();
                 }
             }
@@ -539,8 +543,8 @@ namespace Comarenkun
                 {
                     if (groups.IndexOf(name) == -1)
                     {//ユニークな所属名
-                        mlogic.ChangeGroup(pre, name);
-                        groups = mlogic.AllGroups();
+                        flogic.ChangeGroup(pre, name);
+                        groups = flogic.AllGroups();
                         GroupsSetToListBox();
                     }
                     else
@@ -549,8 +553,8 @@ namespace Comarenkun
                         {
                             if (groups.IndexOf(name + i.ToString()) == -1)
                             {//既に存在する所属名のときは連番にする
-                                mlogic.ChangeGroup(pre, name + i.ToString());
-                                groups = mlogic.AllGroups();
+                                flogic.ChangeGroup(pre, name + i.ToString());
+                                groups = flogic.AllGroups();
                                 GroupsSetToListBox();
                                 break;
                             }
@@ -581,8 +585,8 @@ namespace Comarenkun
 
                 if (dr == MessageBoxResult.Yes)
                 {
-                    mlogic.DeleteGroup((string)preSelectedGroup.Content);
-                    groups = mlogic.AllGroups();
+                    flogic.DeleteGroup((string)preSelectedGroup.Content);
+                    groups = flogic.AllGroups();
                     GroupsSetToListBox();
                     preSelectedGroup = null;
                     isGroupSelected = false;
@@ -686,11 +690,11 @@ namespace Comarenkun
                     {
                         name = name.Substring(0, 30);//文字数は上限30とする 知らんけど
                     }
-                    name = mlogic.NameDuplicateCheck(memberNames, name);//重複しているなら連番にする
+                    name = flogic.NameDuplicateCheck(memberNames, name);//重複しているなら連番にする
                     if (name != "")
                     {
-                        mlogic.AddMember(rank, name, preSelectedGroup.Content.ToString());//members.txtファイル更新
-                        memberNames = mlogic.AllMemberNames();//更新
+                        flogic.AddMember(rank, name, preSelectedGroup.Content.ToString());//members.txtファイル更新
+                        memberNames = flogic.AllMemberNames();//更新
                         MembersSetToListBox(preSelectedGroup.Content.ToString());//members.txtファイル読んで指定のグループ名のメンバーをリストボックスにセット
                     }
                 }   
@@ -701,16 +705,16 @@ namespace Comarenkun
         {
             string name = ((Button)sender).Tag.ToString();
             //ランクを上げる
-            mlogic.MinusRank(name, preSelectedGroup.Content.ToString());
-            memberNames = mlogic.AllGroups();
+            flogic.MinusRank(name, preSelectedGroup.Content.ToString());
+            memberNames = flogic.AllGroups();
             MembersSetToListBox(preSelectedGroup.Content.ToString());
         }
         private void MemberRank_RightClick(object sender, RoutedEventArgs e)
         {
             string name = ((Button)sender).Tag.ToString();
             //ランクを下げる
-            mlogic.PlusRank(name, preSelectedGroup.Content.ToString());
-            memberNames = mlogic.AllGroups();
+            flogic.PlusRank(name, preSelectedGroup.Content.ToString());
+            memberNames = flogic.AllGroups();
             MembersSetToListBox(preSelectedGroup.Content.ToString());
         }
         private void MemberName_Click(object sender, RoutedEventArgs e)
@@ -746,14 +750,14 @@ namespace Comarenkun
                             {
                                 name = name.Substring(0, 30);//文字数は上限30とする 知らんけど
                             }
-                            name = mlogic.NameDuplicateCheck(memberNames, name);//重複しているなら連番にする
+                            name = flogic.NameDuplicateCheck(memberNames, name);//重複しているなら連番にする
                             if (name == "")
                             {
                                 name = preName;
                             }
 
-                            mlogic.ChangeMember(rank, preName, name, preSelectedGroup.Content.ToString());
-                            memberNames = mlogic.AllGroups();
+                            flogic.ChangeMember(rank, preName, name, preSelectedGroup.Content.ToString());
+                            memberNames = flogic.AllGroups();
                             MembersSetToListBox(preSelectedGroup.Content.ToString());
                         }
 
@@ -765,14 +769,14 @@ namespace Comarenkun
                         {
                             name = name.Substring(0, 30);//文字数は上限30とする 知らんけど
                         }
-                        name = mlogic.NameDuplicateCheck(memberNames, name);//重複しているなら連番にする
+                        name = flogic.NameDuplicateCheck(memberNames, name);//重複しているなら連番にする
                         if (name == "")
                         {
                             name = preName;
                         }
 
-                        mlogic.ChangeMember(preRank, preName, name, preSelectedGroup.Content.ToString());
-                        memberNames = mlogic.AllGroups();
+                        flogic.ChangeMember(preRank, preName, name, preSelectedGroup.Content.ToString());
+                        memberNames = flogic.AllGroups();
                         MembersSetToListBox(preSelectedGroup.Content.ToString());
                     }
 
@@ -802,7 +806,7 @@ namespace Comarenkun
             {//まだ選ばれていない場合→選択
                 participants[coma - 1].Add(name);
                 
-                if (this.participantNamesTextBlock.Text.EndsWith(":"))
+                if (this.participantNamesTextBlock.Text.EndsWith("："))
                 {
                     this.participantNamesTextBlock.Text = this.participantNamesTextBlock.Text + name;
                 }
@@ -837,7 +841,7 @@ namespace Comarenkun
                 participants[coma - 1].Add(name);
                 increase[coma - 1].Add(name);
 
-                if (this.participantNamesTextBlock.Text.EndsWith(":"))
+                if (this.participantNamesTextBlock.Text.EndsWith("："))
                 {//increaseなので＋をつける
                     this.participantNamesTextBlock.Text = this.participantNamesTextBlock.Text + "＋" + name;
                 }
@@ -854,7 +858,7 @@ namespace Comarenkun
                 participants[coma - 1].Remove(name);
                 decrease[coma - 1].Add(name);
 
-                if (this.participantNamesTextBlock.Text.EndsWith(":"))
+                if (this.participantNamesTextBlock.Text.EndsWith("："))
                 {//decreaseなので―をつける
                     this.participantNamesTextBlock.Text = this.participantNamesTextBlock.Text + "ー" + name;
                 }
@@ -912,8 +916,8 @@ namespace Comarenkun
 
                 if (dr == MessageBoxResult.Yes)
                 {
-                    mlogic.DeleteMember(((Button)sender).Tag.ToString(), preSelectedGroup.Content.ToString());
-                    memberNames = mlogic.AllMemberNames();
+                    flogic.DeleteMember(((Button)sender).Tag.ToString(), preSelectedGroup.Content.ToString());
+                    memberNames = flogic.AllMemberNames();
                     MembersSetToListBox(preSelectedGroup.Content.ToString());
                 }
                 else if (dr == MessageBoxResult.No)
@@ -1027,7 +1031,7 @@ namespace Comarenkun
             }
             PolygonButtonSet("NextButton", this.nextButton, nextButtonParams, shadow);
             //string[] pt = (this.participantNamesTextBlock.Text).Split(':');
-            //this.participantNamesTextBlock.Text = coma.ToString() + "コマ目:" + pt[1];
+            //this.participantNamesTextBlock.Text = coma.ToString() + "コマ目：" + pt[1];
             this.participantNamesTextBlock.Text = ParticipantNameTextBlockText(coma);
             TextBlockSet("ParticipantNamesTextBlock", this.participantNamesTextBlock, participantNamesTextBlockParams);
 
@@ -1075,12 +1079,30 @@ namespace Comarenkun
             }
             else if((string)this.nextButton.Content == "確\n認\n→")
             {//まとめ
+                this.participantNamesTextBlock.Text = ParticipantNameTextBlockText();//マッチングする
                 TextBlockSet("ParticipantNamesSumTextBlock", this.participantNamesTextBlock, participantNamesSumTextBlockParams);
-                this.participantNamesTextBlock.Text = ParticipantNameTextBlockText();
+
                 this.groupButtons.Visibility = Visibility.Hidden;
                 this.talkLabel.Content = "このメンバーでマッチングして\nいいコマか？";
                 TransParentLabelSet("talkLabel", this.talkLabel, talkLabelParams, noShadow);
-                this.nextButton.Content = "G\nO\n!";
+                this.nextButton.Content = "G\nO\n!";//GOボタンを別にellipseで作るかも(その場合は↓を移植)
+            }
+            else if((string)this.nextButton.Content == "G\nO\n!" || (string)this.nextButton.Content == "オ\nカ\nワ\nリ")
+            {//participantNamesTextBlockのContentに組み合わせ結果を記述する．
+                string result = mlogic.Matching(participants, increase, decrease, configs);//マッチングする
+                if(result != "ERROR")
+                {
+                    this.participantNamesTextBlock.Text = result;//マッチングする
+                    TextBlockSet("ParticipantNamesSumTextBlock", this.participantNamesTextBlock, participantNamesSumTextBlockParams);
+                    
+                    this.groupButtons.Visibility = Visibility.Hidden;
+                    this.talkLabel.Content = "マッチングしたコマ！";
+                    TransParentLabelSet("talkLabel", this.talkLabel, talkLabelParams, noShadow);
+                    this.nextButton.Content = "オ\nカ\nワ\nリ";
+                    PolygonButtonSet("NextButton", this.nextButton, nextButtonParams, shadow);
+
+                    MessageBox.Show(result);
+                }
             }
             else
             {
@@ -1127,7 +1149,7 @@ namespace Comarenkun
             this.nextButton.Visibility = Visibility.Hidden;
             this.participantNamesTextBlock.Visibility = Visibility.Hidden;
 
-            configs = mlogic.ReadConfigFile();//configsを更新
+            configs = flogic.ReadConfigFile();//configsを更新
             this.tableButton.Content = "台数：" + configs[0];
             this.comaButton.Content = "コマ数：" + configs[1];
             PolygonButtonSet("TableButton", this.tableButton, tableButtonParams, noShadow);
@@ -1149,8 +1171,8 @@ namespace Comarenkun
         private void AlgorithmClick(object sender, RoutedEventArgs e)
         {
             string tag = (string)((Button)sender).Tag;
-            mlogic.SetAlgorithm(tag);//config.txtに反映
-            configs = mlogic.ReadConfigFile();//config.txtを再読み込み
+            flogic.SetAlgorithm(tag);//config.txtに反映
+            configs = flogic.ReadConfigFile();//config.txtを再読み込み
             comaList.Change(tag);//プロパティを変更しリアルタイムに反映
         }
         private void TableMouseEnter(object sender, RoutedEventArgs e)
@@ -1165,16 +1187,16 @@ namespace Comarenkun
         }
         private void TableClick(object sender, RoutedEventArgs e)
         {//1増やす
-            mlogic.PlusTable();
-            configs = mlogic.ReadConfigFile();
+            flogic.PlusTable();
+            configs = flogic.ReadConfigFile();
             string table = int.Parse(configs[0]).ToString();
             ((Button)sender).Content = "台数：" + table;
             
         }
         private void TableRightClick(object sender, RoutedEventArgs e)
         {//1減らす
-            mlogic.MinusTable();
-            configs = mlogic.ReadConfigFile();
+            flogic.MinusTable();
+            configs = flogic.ReadConfigFile();
             string table = int.Parse(configs[0]).ToString();
             ((Button)sender).Content = "台数：" + table;
         }
@@ -1190,8 +1212,8 @@ namespace Comarenkun
         }
         private void ComaClick(object sender, RoutedEventArgs e)
         {//コマ数を増やし，ListBoxにも反映する
-            mlogic.PlusComa();
-            configs = mlogic.ReadConfigFile();
+            flogic.PlusComa();
+            configs = flogic.ReadConfigFile();
             string coma = int.Parse(configs[1]).ToString();
             ((Button)sender).Content = "コマ数：" + coma;
             ComaSetToListBox();
@@ -1202,8 +1224,8 @@ namespace Comarenkun
         }
         private void ComaRightClick(object sender, RoutedEventArgs e)
         {//コマ数を減らし，ListBoxにも反映する
-            mlogic.MinusComa();
-            configs = mlogic.ReadConfigFile();
+            flogic.MinusComa();
+            configs = flogic.ReadConfigFile();
             string coma = int.Parse(configs[1]).ToString();
             ((Button)sender).Content = "コマ数：" + coma;
             ComaSetToListBox();
@@ -1282,7 +1304,7 @@ namespace Comarenkun
                 //this.groupButtons.Visibility = Visibility.Hidden;//この辺はストーリーボードで後々
             } else if (nowMatching && coma > 1)
             {
-                if((string)this.nextButton.Content != "G\nO\n!")
+                if((string)this.nextButton.Content != "G\nO\n!" && (string)this.nextButton.Content != "オ\nカ\nワ\nリ")
                 {
                     coma--;
                     
@@ -1349,7 +1371,7 @@ namespace Comarenkun
 
         public string ParticipantNameTextBlockText(int c)
         {
-            string p = c.ToString() + "コマ目:";
+            string p = c.ToString() + "コマ目：";
             // increase/decreaseから参加者をつくる
             int ii = 0;
             if(increase[c - 1] != null)
@@ -1471,6 +1493,18 @@ namespace Comarenkun
                 this.comaListBox.Visibility = Visibility.Visible;
 
                 this.toMenuButton.Visibility = Visibility.Visible;
+
+                PolygonButtonSet("TableButton", this.tableButton, tableButtonParams, noShadow);
+                PolygonButtonSet("ComaButton", this.comaButton, comaButtonParams, noShadow);
+                LabelSet("AlgorithmLabel", this.algorithmLabel, algorithmLabelParams, noShadow);
+                LabelSet("AlgorithmLabel0", this.algorithmLabel0, algorithmLabel0Params, noShadow);
+                LabelSet("AlgorithmLabel1", this.algorithmLabel1, algorithmLabel1Params, noShadow);
+                LabelSet("AlgorithmLabel2", this.algorithmLabel2, algorithmLabel2Params, noShadow);
+                ListBoxSet("ComaListBox", this.comaListBox, comaListBoxParams);
+                LabelSet("ComaAlgorithmLabel", null, comaAlgorithmLabelParams, noShadow);
+                PolygonButtonSet("ComaAlgorithmButton0", null, comaAlgorithmButton0Params, noShadow);
+                PolygonButtonSet("ComaAlgorithmButton1", null, comaAlgorithmButton1Params, noShadow);
+                PolygonButtonSet("ComaAlgorithmButton2", null, comaAlgorithmButton2Params, noShadow);
             }
         }
         

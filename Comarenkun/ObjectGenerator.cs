@@ -606,7 +606,7 @@ namespace Comarenkun
         public void MembersSetToListBox(string groupName)
         {//選んだグループに属するメンバーのリストの更新(フォントサイズも調整している！)
             memberList.Clear();
-            currentMembersToShow = mlogic.MembersOfGroup(groupName);
+            currentMembersToShow = flogic.MembersOfGroup(groupName);
             foreach (string[] member in currentMembersToShow)
             {
                 //double contentSize = member[1].Replace("\n", "").Length;//名前の文字数
