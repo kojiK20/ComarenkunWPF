@@ -702,8 +702,8 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <ScrollViewer x:Name="participantNamesScrollViewer" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden" PreviewMouseWheel="participantNamesTextBlock_MouseWheel" HorizontalAlignment="Left" VerticalAlignment="Top">
-            <TextBlock x:Name="participantNamesTextBlock" Visibility="Hidden"  FontFamily="{StaticResource 851ゴクチカ}" Foreground="#FFF" Background="#99000000"  TextWrapping="NoWrap"/>
+        <ScrollViewer x:Name="participantNamesScrollViewer" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden" PreviewMouseWheel="ParticipantNamesTextBox_MouseWheel" HorizontalAlignment="Left" VerticalAlignment="Top">
+            <TextBox x:Name="participantNamesTextBox" Visibility="Hidden" BorderThickness="0"  FontFamily="Meiryo" Foreground="#FFF" Background="#99000000"  TextWrapping="NoWrap"/>
         </ScrollViewer>
         
         <Button x:Name="nextButton" Template="{DynamicResource NextButton}" FontFamily="{StaticResource 851ゴクチカ}" Content="→1コマ目" Foreground="#FFF" Background="#053" Visibility="Hidden" MouseEnter="nextButton_MouseEnter" MouseLeave="nextButton_MouseLeave" Click="nextButton_Click"/>

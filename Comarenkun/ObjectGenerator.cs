@@ -473,23 +473,23 @@ namespace Comarenkun
                 lb.FontSize = columnSize * comaAlgorithmButton0Params[3];
             }
         }
-        public void TextBlockSet(string name, TextBlock tb, double[] p)
+        public void TextBoxSet(string name, TextBox tb, double[] p)
         {//長方形ですね(ほぼListBoxSetと一緒),親のScrollViewerも調整
-            if(name == "ParticipantNamesTextBlock")
+            if(name == "ParticipantNamesTextBox")
             {
                 ScrollViewer sc = this.participantNamesScrollViewer;
                 sc.Width = rowSize * p[2];
                 sc.Height = columnSize * p[3];
                 sc.Margin = new Thickness(rowSize * p[0], columnSize * p[1], 0, 0);
-                tb.FontSize = columnSize * p[3] * 0.8;
+                tb.FontSize = columnSize * p[3] * 0.6;
             }
-            else if (name == "ParticipantNamesSumTextBlock")
+            else if (name == "ParticipantNamesSumTextBox")
             {//まとめ時
                 ScrollViewer sc = this.participantNamesScrollViewer;
                 sc.Width = rowSize * p[2];
                 sc.Height = columnSize * p[3];
                 sc.Margin = new Thickness(rowSize * p[0], columnSize * p[1], 0, 0);
-                tb.FontSize = columnSize * 0.8;
+                tb.FontSize = columnSize * 0.6;
             }
 
         }

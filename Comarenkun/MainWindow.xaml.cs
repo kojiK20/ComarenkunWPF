@@ -95,14 +95,14 @@ namespace Comarenkun
         double[] memberDeleteButtonParams = { 12, 0, 2, 2, 0, 0, 0, 0, 0, 0 };
         double[] rankNameLabelParams = { 8, 3.5, 16.5, 1.5, 0, 0, 0, 0, 0, 0 };//「Rank/Name」
 
-        double[] participantGroupButtonsParams = { 5, 4.75, 10, 18 };//マッチング画面でのグループListBox
+        double[] participantGroupButtonsParams = { 5, 5, 10, 17.75 };//マッチング画面でのグループListBox
         double[] participantGroupButtonParams = { 0, 0, 9, 3, 1, 0, 0, 0, 0, 0 };
-        double[] participantMemberButtonsParams = { 15, 4.75, 10.5, 18 };//マッチング画面でのメンバーListBox
+        double[] participantMemberButtonsParams = { 15, 5, 10.5, 17.75 };//マッチング画面でのメンバーListBox
         double[] participantRankLabelParams = { 0, 0, 1, 2, 0, 0, 1.4, 0, 1, 0.5, 0.6, 0 };
         double[] participantMemberButtonParams = { 2, 0, 7.5, 2, 0, 0, 0, 0, 0, 0 };
         double[] nextButtonParams = { 26, 1, 4, 20, 0.5, 0, 0, 0, 0, 0 };
-        double[] participantNamesTextBlockParams = { 4, 3.5, 21, 1 };//選択された参加者を表示
-        double[] participantNamesSumTextBlockParams = { 5, 3.5, 20, 17 };//選択された参加者のまとめを表示
+        double[] ParticipantNamesTextBoxParams = { 4, 3.6, 21, 1.2 };//選択された参加者を表示
+        double[] ParticipantNamesSumTextBoxParams = { 5, 3.5, 20, 17 };//選択された参加者のまとめを表示
         double[] configButtonParams = { 22.5, 0, 7.5, 1.55, 0, 0.55, 0, 0, 0, 0 };
         double[] tableButtonParams = { 5, 3.75, 10, 8, 1, 0, 0, 0, 0, 0 };
         double[] comaButtonParams = { 6, 12.75, 9, 8, 1, 0, 0, 0, 0, 0 };
@@ -157,7 +157,7 @@ namespace Comarenkun
             this.groupAddButton.Content = "追\n加\n＋";
             this.groupDeleteButton.Content = "削\n除";
             this.memberAddButton.Content = "追\n加\n＋";
-            this.participantNamesTextBlock.Text = "コマ目：";
+            this.participantNamesTextBox.Text = "コマ目：";
             this.nextButton.Content = "2\nコ\nマ\n目\n→";
             this.tableButton.Content = "台数：" + tableNum.ToString();
             this.comaButton.Content = "コマ数：" + comaNum.ToString();
@@ -303,13 +303,13 @@ namespace Comarenkun
                 ListBoxSet("ParticipantMemberButtons", this.participantMemberButtons, participantMemberButtonsParams);
                 PolygonButtonSet("ParticipantMemberButton", null, participantMemberButtonParams, noShadow);
                 LabelSet("ParticipantRankLabel", null, participantRankLabelParams, noShadow);
-                if ((string)this.nextButton.Content != "G\nO\n!" || (string)this.nextButton.Content == "オ\nカ\nワ\nリ")
+                if ((string)this.nextButton.Content != "G\nO\n!" || (string)this.nextButton.Content != "オ\nカ\nワ\nリ")
                 {
-                    TextBlockSet("ParticipantNamesTextBlock", this.participantNamesTextBlock, participantNamesTextBlockParams);
+                    TextBoxSet("ParticipantNamesTextBox", this.participantNamesTextBox, ParticipantNamesTextBoxParams);
                 }
                 else
                 {
-                    TextBlockSet("ParticipantNamesSumTextBlock", this.participantNamesTextBlock, participantNamesSumTextBlockParams);
+                    TextBoxSet("ParticipantNamesSumTextBox", this.participantNamesTextBox, ParticipantNamesSumTextBoxParams);
                 }
 
                 PolygonButtonSet("TableButton", this.tableButton, tableButtonParams, noShadow);
@@ -785,16 +785,16 @@ namespace Comarenkun
             {//メンバ選択時
                 if (coma == 1)
                 {//1コマ目
-                    ParticipantNamesTextBlockControl((string)((Button)sender).Content, (Button)sender);
+                    ParticipantNamesTextBoxControl((string)((Button)sender).Content, (Button)sender);
                 }
                 else
                 {//2コマ目以降
-                    ParticipantNamesTextBlockControl((string)((Button)sender).Content, (Button)sender, coma);
+                    ParticipantNamesTextBoxControl((string)((Button)sender).Content, (Button)sender, coma);
                 }
             }
 
         }
-        public void ParticipantNamesTextBlockControl(string name, Button button)
+        public void ParticipantNamesTextBoxControl(string name, Button button)
         {
             for(int i = 1; i < int.Parse(configs[1]); i++)
             {//メンバに変更があった場合それ以降のコマの参加者情報はリセット
@@ -806,29 +806,29 @@ namespace Comarenkun
             {//まだ選ばれていない場合→選択
                 participants[coma - 1].Add(name);
                 
-                if (this.participantNamesTextBlock.Text.EndsWith("："))
+                if (this.participantNamesTextBox.Text.EndsWith("："))
                 {
-                    this.participantNamesTextBlock.Text = this.participantNamesTextBlock.Text + name;
+                    this.participantNamesTextBox.Text = this.participantNamesTextBox.Text + name;
                 }
                 else
                 {
-                    this.participantNamesTextBlock.Text = this.participantNamesTextBlock.Text + "/ " + name;
+                    this.participantNamesTextBox.Text = this.participantNamesTextBox.Text + "/ " + name;
                 }
-                TextBlockSet("ParticipantNamesTextBlock", this.participantNamesTextBlock, participantNamesTextBlockParams);
+                TextBoxSet("ParticipantNamesTextBox", this.participantNamesTextBox, ParticipantNamesTextBoxParams);
                 //ClickはMouseEnter中に完結するためボタンの色が明るくならないので，明るくなった色にしておく(MouseLeaveでもとに戻る)
                 MemberSetColor(name, Brighten(Color.FromRgb(255, 55, 100)));
             }
             else
             {//選択済み→キャンセル
                 participants[coma -1].Remove(name);
-                this.participantNamesTextBlock.Text = this.participantNamesTextBlock.Text.Replace("/ " + name, "");
-                this.participantNamesTextBlock.Text = this.participantNamesTextBlock.Text.Replace(name + "/ ", "");
-                this.participantNamesTextBlock.Text = this.participantNamesTextBlock.Text.Replace(name, "");
-                TextBlockSet("ParticipantNamesTextBlock", this.participantNamesTextBlock, participantNamesTextBlockParams);
+                this.participantNamesTextBox.Text = this.participantNamesTextBox.Text.Replace("/ " + name, "");
+                this.participantNamesTextBox.Text = this.participantNamesTextBox.Text.Replace(name + "/ ", "");
+                this.participantNamesTextBox.Text = this.participantNamesTextBox.Text.Replace(name, "");
+                TextBoxSet("ParticipantNamesTextBox", this.participantNamesTextBox, ParticipantNamesTextBoxParams);
                 MemberSetColor(name, Brighten(Color.FromRgb(255, 128, 34)));
             }
         }
-        public void ParticipantNamesTextBlockControl(string name, Button button, int coma)
+        public void ParticipantNamesTextBoxControl(string name, Button button, int coma)
         {
             for (int i = coma; i < int.Parse(configs[1]); i++)
             {//メンバに変更があった場合それ以降のコマの参加者情報はリセット
@@ -841,15 +841,15 @@ namespace Comarenkun
                 participants[coma - 1].Add(name);
                 increase[coma - 1].Add(name);
 
-                if (this.participantNamesTextBlock.Text.EndsWith("："))
+                if (this.participantNamesTextBox.Text.EndsWith("："))
                 {//increaseなので＋をつける
-                    this.participantNamesTextBlock.Text = this.participantNamesTextBlock.Text + "＋" + name;
+                    this.participantNamesTextBox.Text = this.participantNamesTextBox.Text + "＋" + name;
                 }
                 else
                 {
-                    this.participantNamesTextBlock.Text = this.participantNamesTextBlock.Text + "/ " + "＋" + name;
+                    this.participantNamesTextBox.Text = this.participantNamesTextBox.Text + "/ " + "＋" + name;
                 }
-                TextBlockSet("ParticipantNamesTextBlock", this.participantNamesTextBlock, participantNamesTextBlockParams);
+                TextBoxSet("ParticipantNamesTextBox", this.participantNamesTextBox, ParticipantNamesTextBoxParams);
                 //ClickはMouseEnter中に完結するためボタンの色が明るくならないので，明るくなった色にしておく(MouseLeaveでもとに戻る)
                 MemberSetColor(name, Brighten(Color.FromRgb(255, 55, 100)));
             }
@@ -858,15 +858,15 @@ namespace Comarenkun
                 participants[coma - 1].Remove(name);
                 decrease[coma - 1].Add(name);
 
-                if (this.participantNamesTextBlock.Text.EndsWith("："))
+                if (this.participantNamesTextBox.Text.EndsWith("："))
                 {//decreaseなので―をつける
-                    this.participantNamesTextBlock.Text = this.participantNamesTextBlock.Text + "ー" + name;
+                    this.participantNamesTextBox.Text = this.participantNamesTextBox.Text + "ー" + name;
                 }
                 else
                 {
-                    this.participantNamesTextBlock.Text = this.participantNamesTextBlock.Text + "/ " + "ー" + name;
+                    this.participantNamesTextBox.Text = this.participantNamesTextBox.Text + "/ " + "ー" + name;
                 }
-                TextBlockSet("ParticipantNamesTextBlock", this.participantNamesTextBlock, participantNamesTextBlockParams);
+                TextBoxSet("ParticipantNamesTextBox", this.participantNamesTextBox, ParticipantNamesTextBoxParams);
                 //ClickはMouseEnter中に完結するためボタンの色が明るくならないので，明るくなった色にしておく(MouseLeaveでもとに戻る)
                 MemberSetColor(name, Brighten(Color.FromRgb(10, 10, 255)));
             }
@@ -874,24 +874,24 @@ namespace Comarenkun
             {//前回参加しておらず，選択済み→＋をキャンセル
                 participants[coma - 1].Remove(name);
                 increase[coma - 1].Remove(name);
-                this.participantNamesTextBlock.Text = this.participantNamesTextBlock.Text.Replace("/ " + "＋" + name, "");
-                this.participantNamesTextBlock.Text = this.participantNamesTextBlock.Text.Replace("＋" + name + "/ ", "");
-                this.participantNamesTextBlock.Text = this.participantNamesTextBlock.Text.Replace("＋" + name, "");
-                TextBlockSet("ParticipantNamesTextBlock", this.participantNamesTextBlock, participantNamesTextBlockParams);
+                this.participantNamesTextBox.Text = this.participantNamesTextBox.Text.Replace("/ " + "＋" + name, "");
+                this.participantNamesTextBox.Text = this.participantNamesTextBox.Text.Replace("＋" + name + "/ ", "");
+                this.participantNamesTextBox.Text = this.participantNamesTextBox.Text.Replace("＋" + name, "");
+                TextBoxSet("ParticipantNamesTextBox", this.participantNamesTextBox, ParticipantNamesTextBoxParams);
                 MemberSetColor(name, Brighten(Color.FromRgb(255, 128, 34)));
             }
             else
             {//前回参加しており，選択済み→ーをキャンセル
                 participants[coma - 1].Add(name);
                 decrease[coma - 1].Remove(name);
-                this.participantNamesTextBlock.Text = this.participantNamesTextBlock.Text.Replace("/ " + "ー" + name, "");
-                this.participantNamesTextBlock.Text = this.participantNamesTextBlock.Text.Replace("ー" + name + "/ ", "");
-                this.participantNamesTextBlock.Text = this.participantNamesTextBlock.Text.Replace("ー" + name, "");
-                TextBlockSet("ParticipantNamesTextBlock", this.participantNamesTextBlock, participantNamesTextBlockParams);
+                this.participantNamesTextBox.Text = this.participantNamesTextBox.Text.Replace("/ " + "ー" + name, "");
+                this.participantNamesTextBox.Text = this.participantNamesTextBox.Text.Replace("ー" + name + "/ ", "");
+                this.participantNamesTextBox.Text = this.participantNamesTextBox.Text.Replace("ー" + name, "");
+                TextBoxSet("ParticipantNamesTextBox", this.participantNamesTextBox, ParticipantNamesTextBoxParams);
                 MemberSetColor(name, Brighten(Color.FromRgb(100, 10, 200)));
             }
         }
-        public void participantNamesTextBlock_MouseWheel(object sender, MouseWheelEventArgs e)
+        public void ParticipantNamesTextBox_MouseWheel(object sender, MouseWheelEventArgs e)
         {//横方向にスクロールしたい
             ScrollViewer scrollviewer = (ScrollViewer)sender;
             if (e.Delta > 0)
@@ -1030,10 +1030,10 @@ namespace Comarenkun
                 this.nextButton.Content = "確\n認\n→";
             }
             PolygonButtonSet("NextButton", this.nextButton, nextButtonParams, shadow);
-            //string[] pt = (this.participantNamesTextBlock.Text).Split(':');
-            //this.participantNamesTextBlock.Text = coma.ToString() + "コマ目：" + pt[1];
-            this.participantNamesTextBlock.Text = ParticipantNameTextBlockText(coma);
-            TextBlockSet("ParticipantNamesTextBlock", this.participantNamesTextBlock, participantNamesTextBlockParams);
+            //string[] pt = (this.participantNamesTextBox.Text).Split(':');
+            //this.participantNamesTextBox.Text = coma.ToString() + "コマ目：" + pt[1];
+            this.participantNamesTextBox.Text = ParticipantNameTextBoxText(coma);
+            TextBoxSet("ParticipantNamesTextBox", this.participantNamesTextBox, ParticipantNamesTextBoxParams);
 
             MakeButtonsVisible();
 
@@ -1061,40 +1061,28 @@ namespace Comarenkun
             {
                 coma++;
             }
-            
-            MakeButtonsVisible();
-            this.configButton.Visibility = Visibility.Hidden;
-            this.participantMemberButtons.Visibility = Visibility.Hidden;
-            this.participantNamesTextBlock.Text = ParticipantNameTextBlockText(coma);
-            TextBlockSet("ParticipantNamesTextBlock", this.participantNamesTextBlock, participantNamesTextBlockParams);
-            this.talkLabel.Content = "途中参加者(赤)と途中脱退者(青)を\n選ぶコマ";
-            TransParentLabelSet("talkLabel", this.talkLabel, talkLabelParams, noShadow);
-            if (configs[1] != coma.ToString())
-            {
-                this.nextButton.Content = (coma+1).ToString() + "\nコ\nマ\n目\n→";
-                foreach(string s in participants[coma - 2])
-                {
-                    participants[coma - 1].Add(s);
-                }
-            }
-            else if((string)this.nextButton.Content == "確\n認\n→")
+
+
+
+            if ((string)this.nextButton.Content == "確\n認\n→")
             {//まとめ
-                this.participantNamesTextBlock.Text = ParticipantNameTextBlockText();//マッチングする
-                TextBlockSet("ParticipantNamesSumTextBlock", this.participantNamesTextBlock, participantNamesSumTextBlockParams);
+                this.participantMemberButtons.Visibility = Visibility.Hidden;
+                this.participantNamesTextBox.Text = ParticipantNameTextBoxText();//マッチングするメンバ一覧
+                TextBoxSet("ParticipantNamesSumTextBox", this.participantNamesTextBox, ParticipantNamesSumTextBoxParams);
 
                 this.groupButtons.Visibility = Visibility.Hidden;
                 this.talkLabel.Content = "このメンバーでマッチングして\nいいコマか？";
                 TransParentLabelSet("talkLabel", this.talkLabel, talkLabelParams, noShadow);
                 this.nextButton.Content = "G\nO\n!";//GOボタンを別にellipseで作るかも(その場合は↓を移植)
             }
-            else if((string)this.nextButton.Content == "G\nO\n!" || (string)this.nextButton.Content == "オ\nカ\nワ\nリ")
-            {//participantNamesTextBlockのContentに組み合わせ結果を記述する．
+            else if ((string)this.nextButton.Content == "G\nO\n!" || (string)this.nextButton.Content == "オ\nカ\nワ\nリ")
+            {//ParticipantNamesTextBoxのContentに組み合わせ結果を記述する．
                 string result = mlogic.Matching(participants, increase, decrease, configs);//マッチングする
-                if(result != "ERROR")
+                if (result != "ERROR")
                 {
-                    this.participantNamesTextBlock.Text = result;//マッチングする
-                    TextBlockSet("ParticipantNamesSumTextBlock", this.participantNamesTextBlock, participantNamesSumTextBlockParams);
-                    
+                    this.participantNamesTextBox.Text = result;//マッチングする
+                    TextBoxSet("ParticipantNamesSumTextBox", this.participantNamesTextBox, ParticipantNamesSumTextBoxParams);
+
                     this.groupButtons.Visibility = Visibility.Hidden;
                     this.talkLabel.Content = "マッチングしたコマ！";
                     TransParentLabelSet("talkLabel", this.talkLabel, talkLabelParams, noShadow);
@@ -1103,9 +1091,39 @@ namespace Comarenkun
 
                     MessageBox.Show(result);
                 }
+                else
+                {
+                    /*this.participantNamesTextBox.Text = ParticipantNameTextBoxText();//マッチングする
+                    TextBoxSet("ParticipantNamesSumTextBox", this.participantNamesTextBox, ParticipantNamesSumTextBoxParams);
+
+                    this.groupButtons.Visibility = Visibility.Hidden;
+                    this.talkLabel.Content = "このメンバーでマッチングして\nいいコマか？";
+                    TransParentLabelSet("talkLabel", this.talkLabel, talkLabelParams, noShadow);
+                    this.nextButton.Content = "G\nO\n!";//GOボタンを別にellipseで作るかも*/
+                }
+            }
+            else if (configs[1] != coma.ToString())
+            {
+                MakeButtonsVisible();
+                this.configButton.Visibility = Visibility.Hidden;
+                this.participantMemberButtons.Visibility = Visibility.Hidden;
+                this.participantNamesTextBox.Text = ParticipantNameTextBoxText(coma);
+                TextBoxSet("ParticipantNamesTextBox", this.participantNamesTextBox, ParticipantNamesTextBoxParams);
+                this.talkLabel.Content = "途中参加者(赤)と途中脱退者(青)を\n選ぶコマ";
+                TransParentLabelSet("talkLabel", this.talkLabel, talkLabelParams, noShadow);
+
+                this.nextButton.Content = (coma + 1).ToString() + "\nコ\nマ\n目\n→";
+                foreach (string s in participants[coma - 2])
+                {
+                    participants[coma - 1].Add(s);
+                }
+
             }
             else
             {
+                this.participantMemberButtons.Visibility = Visibility.Hidden;
+                this.participantNamesTextBox.Text = ParticipantNameTextBoxText(coma);
+                TextBoxSet("ParticipantNamesTextBox", this.participantNamesTextBox, ParticipantNamesTextBoxParams);
                 this.nextButton.Content = "確\n認\n→";
                 foreach (string s in participants[coma - 2])
                 {
@@ -1147,7 +1165,7 @@ namespace Comarenkun
             this.groupButtons.Visibility = Visibility.Hidden;
             this.participantMemberButtons.Visibility = Visibility.Hidden;
             this.nextButton.Visibility = Visibility.Hidden;
-            this.participantNamesTextBlock.Visibility = Visibility.Hidden;
+            this.participantNamesTextBox.Visibility = Visibility.Hidden;
 
             configs = flogic.ReadConfigFile();//configsを更新
             this.tableButton.Content = "台数：" + configs[0];
@@ -1274,7 +1292,7 @@ namespace Comarenkun
                 this.configButton.Visibility = Visibility.Hidden;
                 this.participantMemberButtons.Visibility = Visibility.Hidden;
                 this.nextButton.Visibility = Visibility.Hidden;
-                this.participantNamesTextBlock.Visibility = Visibility.Hidden;
+                this.participantNamesTextBox.Visibility = Visibility.Hidden;
                 groupAddButtonParams = groupAddButtonParamsCopy;
                 PolygonButtonSet("GroupAddButton", this.groupAddButton, groupAddButtonParams, noShadow);//形を戻しておく
 
@@ -1319,8 +1337,8 @@ namespace Comarenkun
 
                 if ((string)this.nextButton.Content == "オ\nカ\nワ\nリ")
                 {
-                    this.participantNamesTextBlock.Text = ParticipantNameTextBlockText();//マッチングする
-                    TextBlockSet("ParticipantNamesSumTextBlock", this.participantNamesTextBlock, participantNamesSumTextBlockParams);
+                    this.participantNamesTextBox.Text = ParticipantNameTextBoxText();//マッチングする
+                    TextBoxSet("ParticipantNamesSumTextBox", this.participantNamesTextBox, ParticipantNamesSumTextBoxParams);
 
                     this.groupButtons.Visibility = Visibility.Hidden;
                     this.talkLabel.Content = "このメンバーでマッチングして\nいいコマか？";
@@ -1330,16 +1348,16 @@ namespace Comarenkun
                 else if (coma == int.Parse(configs[1]))
                 {//GO
                     this.nextButton.Content = "確\n認\n→";
-                    TextBlockSet("ParticipantNamesTextBlock", this.participantNamesTextBlock, participantNamesTextBlockParams);
-                    this.participantNamesTextBlock.Text = ParticipantNameTextBlockText();
+                    TextBoxSet("ParticipantNamesTextBox", this.participantNamesTextBox, ParticipantNamesTextBoxParams);
+                    this.participantNamesTextBox.Text = ParticipantNameTextBoxText();
                     this.talkLabel.Content = "途中参加者(赤)と途中脱退者(青)を\n選ぶコマ";
                     TransParentLabelSet("talkLabel", this.talkLabel, talkLabelParams, noShadow);
-                    this.participantNamesTextBlock.Text = ParticipantNameTextBlockText(coma);
+                    this.participantNamesTextBox.Text = ParticipantNameTextBoxText(coma);
                 }
                 else
                 {
                     this.nextButton.Content = (coma + 1).ToString() + "\nコ\nマ\n目\n→";
-                    this.participantNamesTextBlock.Text = ParticipantNameTextBlockText(coma);
+                    this.participantNamesTextBox.Text = ParticipantNameTextBoxText(coma);
                 }
                 
                 
@@ -1387,7 +1405,7 @@ namespace Comarenkun
             toMenuButtonPush = false;
         }
 
-        public string ParticipantNameTextBlockText(int c)
+        public string ParticipantNameTextBoxText(int c)
         {
             string p = c.ToString() + "コマ目：";
             // increase/decreaseから参加者をつくる
@@ -1444,7 +1462,7 @@ namespace Comarenkun
             
             return p;
         }
-        public string ParticipantNameTextBlockText()
+        public string ParticipantNameTextBoxText()
         {//確認画面で総まとめ
             string result = "台数：" + configs[0] + "台\n\n";
             for(int i = 1; i <= int.Parse(configs[1]); i++)
@@ -1462,7 +1480,7 @@ namespace Comarenkun
                 {
                     alg = "ランダム";
                 }
-                result = result + ParticipantNameTextBlockText(i) + "\nアルゴリズム：" + alg + "\n\n";
+                result = result + ParticipantNameTextBoxText(i) + "\nアルゴリズム：" + alg + "\n\n";
             }
             return result;
         }
@@ -1491,7 +1509,7 @@ namespace Comarenkun
             else if (nowMatching)
             {
                 this.nextButton.Visibility = Visibility.Visible;
-                this.participantNamesTextBlock.Visibility = Visibility.Visible;
+                this.participantNamesTextBox.Visibility = Visibility.Visible;
                 if(coma == 1)
                 {
                     this.configButton.Visibility = Visibility.Visible;
