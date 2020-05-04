@@ -17,6 +17,8 @@ using System.ComponentModel;
 using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
 using Microsoft.VisualBasic;
+using System.Net;
+using System.Web;
 
 namespace Comarenkun
 {
@@ -88,7 +90,8 @@ namespace Comarenkun
         double[] groupButtonParams = { 0, 0, 13, 3, 1, 0, 0, 0, 0, 0 };//メンバ画面で所属を選択するボタン
 
         double[] memberAddButtonParams = { 25.6, 1.5, 4.4, 20, 1, 0, 0, 0, 0, 0 };
-        double[] memberGroupLabelParams = { 23, 3.75, 3, 17.25, 0, 0, 0, 0, 0, 0 };//メンバ画面で所属名を表示
+        double[] memberGroupLabelParams = { 23, 3.75, 3, 13.25, 0, 0, 0, 0, 0, 0 };//メンバ画面で所属名を表示
+        double[] memberSortButtonParams = { 22.5, 17, 3.5, 3, 0, 0, 0, 0, 3.0/20, 0 };
         double[] memberButtonsParams = { 7, 5, 15, 16};//所属選択後にメンバ編集するためのボタン
         double[] memberRankButtonParams = { 0, 0, 2.2, 2, 0, 0, 0, 0, -0.2, 0 };
         double[] memberNameButtonParams = { 2.3, 0, 9.6, 2, -0.2, 0, 0, 0, 0, 0 };
@@ -290,7 +293,8 @@ namespace Comarenkun
             MemberFontSizeSet();
 
             PolygonButtonSet("MemberAddButton", this.memberAddButton, memberAddButtonParams, noShadow);
-            LabelSet("MemberGroupLabel", this.memberGroupLabel, memberGroupLabelParams, noShadow);      
+            LabelSet("MemberGroupLabel", this.memberGroupLabel, memberGroupLabelParams, noShadow);
+            PolygonButtonSet("MemberSortButton", this.memberSortButton, memberSortButtonParams, noShadow);    
             LabelSet("RankNameLabel", this.rankNameLabel, rankNameLabelParams, noShadow);
 
             PolygonButtonSet("ConfigButton", this.configButton, configButtonParams, shadow);
@@ -470,12 +474,18 @@ namespace Comarenkun
                 LabelSet("ParticipantRankLabel", null, participantRankLabelParams, noShadow);
             }
         }
+        ContextMenu c = new ContextMenu();
         private void Group_MouseEnter(object sender, RoutedEventArgs e)
         {
             Button button = (Button)sender;
             if(button != preSelectedGroup)
             {//選択していないボタンの場合
                 ButtonBrighten(button);
+            }
+            if (nowGroup)
+            {//マッチングモード以外ではコンテキストメニューを表示しない(MouseLeaveするまでnullにかえておく)
+                c = button.ContextMenu;
+                button.ContextMenu = null;
             }
         }
         private void Group_MouseLeave(object sender, RoutedEventArgs e)
@@ -495,6 +505,68 @@ namespace Comarenkun
                 else
                 {
                     button.Background = Brushes.LightGreen;
+                }
+            }
+            if (nowGroup)
+            {
+                button.ContextMenu = c;
+            }
+        }
+
+        private void groupButton_Context1_Click(object sender, RoutedEventArgs e)
+        {//そのグループ内の全メンバを一括選択
+            List<string[]> mems = flogic.MembersOfGroup(((MenuItem)sender).Tag.ToString());
+            if (coma == 1)
+            {//1コマ目
+                foreach (string[] mem in mems)
+                {
+                    if(participants[coma - 1].IndexOf(mem[1]) == -1)
+                    {//選択されていないメンバ全てに対してクリック時の処理を行う
+                        ParticipantNamesTextBoxControl(mem[1]);
+                        //MouseLeave時の色処理を行う
+                        MemberLeaveColorFunc(mem[1]);
+                    }
+                    
+                }
+            }
+            else
+            {//2コマ目以降
+                foreach (string[] mem in mems)
+                {
+                    if (participants[coma - 1].IndexOf(mem[1]) == -1)
+                    {//選択されていないメンバ全てに対してクリック時の処理を行う
+                        ParticipantNamesTextBoxControl(mem[1], coma);
+                        //MouseLeave時の色処理を行う
+                        MemberLeaveColorFunc(mem[1]);
+                    }
+                }
+            }
+        }
+        private void groupButton_Context2_Click(object sender, RoutedEventArgs e)
+        {//そのグループ内の全メンバを一括選択解除
+            List<string[]> mems = flogic.MembersOfGroup(((MenuItem)sender).Tag.ToString());
+            if (coma == 1)
+            {//1コマ目
+                foreach (string[] mem in mems)
+                {
+                    if (participants[coma - 1].IndexOf(mem[1]) != -1)
+                    {//選択されているメンバ全てに対してクリック時の処理を行う
+                        ParticipantNamesTextBoxControl(mem[1]);
+                        //MouseLeave時の色処理を行う
+                        MemberLeaveColorFunc(mem[1]);
+                    }
+                }
+            }
+            else
+            {//2コマ目以降
+                foreach (string[] mem in mems)
+                {
+                    if (participants[coma - 1].IndexOf(mem[1]) != -1)
+                    {//選択されていないメンバ全てに対してクリック時の処理を行う
+                        ParticipantNamesTextBoxControl(mem[1], coma);
+                        //MouseLeave時の色処理を行う
+                        MemberLeaveColorFunc(mem[1]);
+                    }
                 }
             }
         }
@@ -700,22 +772,88 @@ namespace Comarenkun
                 }   
             }
         }
+        private void memberSortButton_Click(object sender, RoutedEventArgs e)
+        {
+            memberList.Sort();
+        }
+        private void memberSortButton_MouseEnter(object sender, RoutedEventArgs e)
+        {
+            ButtonBrighten((Button)sender);
+        }
+        private void memberSortButton_MouseLeave(object sender, RoutedEventArgs e)
+        {
+            ButtonBrighten((Button)sender);
+            ButtonDarken((Button)sender);
+        }
 
         private void MemberRank_Click(object sender, RoutedEventArgs e)
         {
             string name = ((Button)sender).Tag.ToString();
             //ランクを上げる
             flogic.MinusRank(name, preSelectedGroup.Content.ToString());
-            memberNames = flogic.AllGroups();
-            MembersSetToListBox(preSelectedGroup.Content.ToString());
+            if(preSelectedGroup.Content.ToString() == "部内")
+            {
+                string rank = ((Button)sender).Content.ToString();
+                int minus = int.Parse(rank) - 1;
+                if(minus < 0)
+                {
+                    minus = 0;
+                }
+                memberList.Find(name).Rank = minus.ToString();
+                //((Button)sender).Content = minus.ToString();
+            }
+            else
+            {
+                string rank = ((Button) sender).Content.ToString();
+                if(rank == "")
+                {
+                    rank = "↑";
+                }else if(rank == "↑")
+                {
+                    rank = "↓";
+                }
+                else
+                {
+                    rank = "";
+                }
+                memberList.Find(name).Rank = rank.ToString();
+            }
+            //MembersSetToListBox(preSelectedGroup.Content.ToString());表示に反映はしない
         }
         private void MemberRank_RightClick(object sender, RoutedEventArgs e)
         {
             string name = ((Button)sender).Tag.ToString();
             //ランクを下げる
             flogic.PlusRank(name, preSelectedGroup.Content.ToString());
-            memberNames = flogic.AllGroups();
-            MembersSetToListBox(preSelectedGroup.Content.ToString());
+            if (preSelectedGroup.Content.ToString() == "部内")
+            {
+                string rank = ((Button)sender).Content.ToString();
+                int plus = int.Parse(rank) + 1;
+                if (plus > 1000)
+                {
+                    plus = 1000;
+                }
+                memberList.Find(name).Rank = plus.ToString();
+                //((Button)sender).Content = plus.ToString();
+            }
+            else
+            {
+                string rank = ((Button)sender).Content.ToString();
+                if (rank == "")
+                {
+                    rank = "↓";
+                }
+                else if (rank == "↑")
+                {
+                    rank = "";
+                }
+                else
+                {
+                    rank = "↑";
+                }
+                memberList.Find(name).Rank = rank.ToString();
+            }
+            //MembersSetToListBox(preSelectedGroup.Content.ToString());表示に反映はしない
         }
         private void MemberName_Click(object sender, RoutedEventArgs e)
         {
@@ -757,7 +895,7 @@ namespace Comarenkun
                             }
 
                             flogic.ChangeMember(rank, preName, name, preSelectedGroup.Content.ToString());
-                            memberNames = flogic.AllGroups();
+                            memberNames = flogic.AllMemberNames();
                             MembersSetToListBox(preSelectedGroup.Content.ToString());
                         }
 
@@ -785,16 +923,16 @@ namespace Comarenkun
             {//メンバ選択時
                 if (coma == 1)
                 {//1コマ目
-                    ParticipantNamesTextBoxControl((string)((Button)sender).Content, (Button)sender);
+                    ParticipantNamesTextBoxControl((string)((Button)sender).Content);
                 }
                 else
                 {//2コマ目以降
-                    ParticipantNamesTextBoxControl((string)((Button)sender).Content, (Button)sender, coma);
+                    ParticipantNamesTextBoxControl((string)((Button)sender).Content, coma);
                 }
             }
 
         }
-        public void ParticipantNamesTextBoxControl(string name, Button button)
+        public void ParticipantNamesTextBoxControl(string name)//, Button button)
         {
             for(int i = 1; i < int.Parse(configs[1]); i++)
             {//メンバに変更があった場合それ以降のコマの参加者情報はリセット
@@ -828,7 +966,7 @@ namespace Comarenkun
                 MemberSetColor(name, Brighten(Color.FromRgb(255, 128, 34)));
             }
         }
-        public void ParticipantNamesTextBoxControl(string name, Button button, int coma)
+        public void ParticipantNamesTextBoxControl(string name, int coma)//, Button button, int coma)
         {
             for (int i = coma; i < int.Parse(configs[1]); i++)
             {//メンバに変更があった場合それ以降のコマの参加者情報はリセット
@@ -956,25 +1094,29 @@ namespace Comarenkun
             }
             else
             {
+                MemberLeaveColorFunc(name);
                 
-                if(coma > 1 && participants[coma - 2].IndexOf(name) != -1 && decrease[coma - 1].IndexOf(name) == -1)
-                {//前のコマで参加しており，現在ーに選択されていない
-                    MemberSetColor(name, (Color.FromRgb(100,10,200)));
-                }
-                else if(coma > 1 && participants[coma - 2].IndexOf(name) != -1 && decrease[coma - 1].IndexOf(name) != -1)
-                {//前のコマで参加しており，現在ーに選択されている
-                    MemberSetColor(name, (Color.FromRgb(10, 10, 255)));
-                }
-                else if (participants[coma - 1].IndexOf(name) != -1)
-                {//1コマ目および前のコマで参加していない場合で，選択されている
-                    MemberSetColor(name, (Color.FromRgb(255, 55, 100)));
-                }
-                else
-                {
-                    MemberSetColor(name, (Color.FromRgb(255, 128, 34)));
-                }
             }
             
+        }
+        public void MemberLeaveColorFunc(string name)
+        {//メンバ―ボタンMouseLeave時の色処理
+            if (coma > 1 && participants[coma - 2].IndexOf(name) != -1 && decrease[coma - 1].IndexOf(name) == -1)
+            {//前のコマで参加しており，現在ーに選択されていない
+                MemberSetColor(name, (Color.FromRgb(100, 10, 200)));
+            }
+            else if (coma > 1 && participants[coma - 2].IndexOf(name) != -1 && decrease[coma - 1].IndexOf(name) != -1)
+            {//前のコマで参加しており，現在ーに選択されている
+                MemberSetColor(name, (Color.FromRgb(10, 10, 255)));
+            }
+            else if (participants[coma - 1].IndexOf(name) != -1)
+            {//1コマ目および前のコマで参加していない場合で，選択されている
+                MemberSetColor(name, (Color.FromRgb(255, 55, 100)));
+            }
+            else
+            {
+                MemberSetColor(name, (Color.FromRgb(255, 128, 34)));
+            }
         }
         
         private void matchingButton_MouseEnter(object sender, RoutedEventArgs e)
@@ -1082,6 +1224,7 @@ namespace Comarenkun
                 {
                     this.participantNamesTextBox.Text = result;//マッチングする
                     TextBoxSet("ParticipantNamesSumTextBox", this.participantNamesTextBox, ParticipantNamesSumTextBoxParams);
+                    flogic.SendToLINE(result);//LINEに送信
 
                     this.groupButtons.Visibility = Visibility.Hidden;
                     this.talkLabel.Content = "マッチングしたコマ！";
@@ -1165,7 +1308,7 @@ namespace Comarenkun
             this.groupButtons.Visibility = Visibility.Hidden;
             this.participantMemberButtons.Visibility = Visibility.Hidden;
             this.nextButton.Visibility = Visibility.Hidden;
-            this.participantNamesTextBox.Visibility = Visibility.Hidden;
+            this.participantNamesScrollViewer.Visibility = Visibility.Hidden;
 
             configs = flogic.ReadConfigFile();//configsを更新
             this.tableButton.Content = "台数：" + configs[0];
@@ -1278,6 +1421,87 @@ namespace Comarenkun
                 leave.Begin();
             }
         }
+
+        public string ParticipantNameTextBoxText(int c)
+        {
+            string p = c.ToString() + "コマ目：";
+            // increase/decreaseから参加者をつくる
+            int ii = 0;
+            if (increase[c - 1] != null)
+            {
+                foreach (string s in increase[c - 1])
+                {
+                    string ss;
+                    if (c == 1)
+                    {
+                        ss = s;
+                    }
+                    else
+                    {
+                        ss = "＋" + s;
+                    }
+
+                    if (ii == 0)
+                    {
+                        p = p + ss;
+                        ii++;
+                    }
+                    else
+                    {
+                        p = p + "/ " + ss;
+                    }
+
+                }
+            }
+            if (decrease[coma - 1] != null)
+            {
+                foreach (string s in decrease[c - 1])
+                {//1コマ目にはdecreaseはないので無視
+                    if (c > 1)
+                    {
+
+                        string ss = "ー" + s;
+
+
+                        if (ii == 0)
+                        {
+                            p = p + ss;
+                            ii++;
+                        }
+                        else
+                        {
+                            p = p + "/ " + ss;
+                        }
+                    }
+
+                }
+            }
+
+            return p;
+        }
+        public string ParticipantNameTextBoxText()
+        {//確認画面で総まとめ
+            string result = "台数：" + configs[0] + "台\n\n";
+            for (int i = 1; i <= int.Parse(configs[1]); i++)
+            {//再帰は改行などややこいのでループで
+                string alg = "";
+                if (configs[i + 1] == "0")
+                {
+                    alg = "ランクのトオサ優先";
+                }
+                else if (configs[i + 1] == "1")
+                {
+                    alg = "ランクのチカサ優先";
+                }
+                else
+                {
+                    alg = "ランダム";
+                }
+                result = result + ParticipantNameTextBoxText(i) + "\nアルゴリズム：" + alg + "\n\n";
+            }
+            return result;
+        }
+
         private void toMenuButton_Click(object sender, RoutedEventArgs e)
         {//1階層モードを戻る
             if (nowGroup || nowMatching && coma == 1)
@@ -1292,7 +1516,7 @@ namespace Comarenkun
                 this.configButton.Visibility = Visibility.Hidden;
                 this.participantMemberButtons.Visibility = Visibility.Hidden;
                 this.nextButton.Visibility = Visibility.Hidden;
-                this.participantNamesTextBox.Visibility = Visibility.Hidden;
+                this.participantNamesScrollViewer.Visibility = Visibility.Hidden;
                 groupAddButtonParams = groupAddButtonParamsCopy;
                 PolygonButtonSet("GroupAddButton", this.groupAddButton, groupAddButtonParams, noShadow);//形を戻しておく
 
@@ -1316,6 +1540,7 @@ namespace Comarenkun
                 this.memberGroupLabel.Visibility = Visibility.Hidden;
                 this.memberButtons.Visibility = Visibility.Hidden;
                 this.rankNameLabel.Visibility = Visibility.Hidden;
+                this.memberSortButton.Visibility = Visibility.Hidden;
                 preSelectedGroup = null;
                 isGroupSelected = false;
                 //this.groupOpenButton.Visibility = Visibility.Hidden;
@@ -1405,85 +1630,7 @@ namespace Comarenkun
             toMenuButtonPush = false;
         }
 
-        public string ParticipantNameTextBoxText(int c)
-        {
-            string p = c.ToString() + "コマ目：";
-            // increase/decreaseから参加者をつくる
-            int ii = 0;
-            if(increase[c - 1] != null)
-            {
-                foreach (string s in increase[c - 1])
-                {
-                    string ss;
-                    if (c == 1)
-                    {
-                        ss = s;
-                    }
-                    else
-                    {
-                        ss = "＋" + s;
-                    }
-
-                    if (ii == 0)
-                    {
-                        p = p + ss;
-                        ii++;
-                    }
-                    else
-                    {
-                        p = p + "/ " + ss;
-                    }
-
-                }
-            }
-            if (decrease[coma - 1] != null)
-            {
-                foreach (string s in decrease[c - 1])
-                {//1コマ目にはdecreaseはないので無視
-                    if (c > 1)
-                    {
-
-                        string ss = "ー" + s;
-                    
-
-                        if (ii == 0)
-                        {
-                            p = p + ss;
-                            ii++;
-                        }
-                        else
-                        {
-                            p = p + "/ " + ss;
-                        }
-                    }
-
-                }
-            }
-            
-            return p;
-        }
-        public string ParticipantNameTextBoxText()
-        {//確認画面で総まとめ
-            string result = "台数：" + configs[0] + "台\n\n";
-            for(int i = 1; i <= int.Parse(configs[1]); i++)
-            {//再帰は改行などややこいのでループで
-                string alg = "";
-                if(configs[i + 1] == "0")
-                {
-                    alg = "ランクのトオサ優先";    
-                }
-                else if(configs[i + 1] == "1")
-                {
-                    alg = "ランクのチカサ優先";
-                }
-                else
-                {
-                    alg = "ランダム";
-                }
-                result = result + ParticipantNameTextBoxText(i) + "\nアルゴリズム：" + alg + "\n\n";
-            }
-            return result;
-        }
+        
         public void MakeButtonsVisible()
         {//現在のモードに合わせて，そのモードに表示されるボタンをまとめて表示するメソッド
             //非表示にする分はストーリーボードに任す．
@@ -1500,6 +1647,7 @@ namespace Comarenkun
             {
                 this.memberAddButton.Visibility = Visibility.Visible;
                 this.memberGroupLabel.Visibility = Visibility.Visible;
+                this.memberSortButton.Visibility = Visibility.Visible;
                 this.memberButtons.Visibility = Visibility.Visible;
                 this.rankNameLabel.Visibility = Visibility.Visible;
 
@@ -1509,8 +1657,8 @@ namespace Comarenkun
             else if (nowMatching)
             {
                 this.nextButton.Visibility = Visibility.Visible;
-                this.participantNamesTextBox.Visibility = Visibility.Visible;
-                if(coma == 1)
+                this.participantNamesScrollViewer.Visibility = Visibility.Visible;
+                if (coma == 1)
                 {
                     this.configButton.Visibility = Visibility.Visible;
                 }

@@ -115,6 +115,7 @@
             </Grid>
         </ControlTemplate>
         <ControlTemplate x:Key="MemberGroupLabel" TargetType="Label" />
+        <ControlTemplate x:Key="MemberSortButton" TargetType="Button"/>
         <ControlTemplate x:Key="MemberButton" TargetType="Button">
             <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Margin="30,112.4,0,0">
                 <Polygon Points="0,360 0,0 360,-19.2 390,370.4" Fill="{TemplateBinding Background}"/>

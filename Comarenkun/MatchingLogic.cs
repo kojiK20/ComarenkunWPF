@@ -669,7 +669,7 @@ namespace Comarenkun
                             //if (NodeNumber(edges) > 3 * takyu)//選んだ枝のノードが関与する枝はすべて削除するため
                             //{
                                 if (e.DifferentGroup)
-                                //条件(多球に選ばれている）に合う枝を見つけたら採用)
+                                //条件(所属が異なる）に合う枝を見つけたら採用)
                                 //条件はforループごとに徐々に緩める
                                 {
                                     edges.RemoveAll(hoge => hoge.Name1 == e.Name1 || hoge.Name2 == e.Name1

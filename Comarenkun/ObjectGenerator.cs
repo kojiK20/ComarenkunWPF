@@ -269,9 +269,9 @@ namespace Comarenkun
                 pol.SetValue(ContentPresenter.MarginProperty, new Thickness(rowSize * p[0], 0, 0, 0));
             }
             //pol.SetValue(Polygon.NameProperty, "memberPolygon");//何故かこの方法ではNameはセットされない
-            if (button == null || name == "GroupAddButton" || name == "GroupDeleteButton"
+            if (!sh)/*button == null || name == "GroupAddButton" || name == "GroupDeleteButton"
                 || name == "MemberAddButton" || name=="TableButton" || name == "ComaButton"
-                || name == "ComaAlgorithm0" || name == "ComaAlgorithm1" || name == "ComaAlgorithm2" || name == "ParticipantMemberButton")//!shadowでも可？
+                || name == "ComaAlgorithm0" || name == "ComaAlgorithm1" || name == "ComaAlgorithm2" || name == "ParticipantMemberButton")//!shadowでも可？*/
             {//ボタンの枠線表示する
                 pol.SetValue(Polygon.StrokeProperty, Brushes.Black);
                 //pol.SetValue(Polygon.StrokeThicknessProperty, Shape.StrokeThickness(1));
@@ -633,10 +633,10 @@ namespace Comarenkun
                 }
                 Member n = new Member { Rank = member[0], Name = member[1], Color =c, NameFontSize = nameFontSize, RankFontSize = rankFontSize, DeleteFontSize = deleteFontSize };
                 memberList.Add(n);
-                if(groupName == "部内")
+                /*if(groupName == "部内")
                 {
                     memberList.Sort();//ランク順ソート
-                }
+                }*/
             }
         }
 

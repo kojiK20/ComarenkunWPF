@@ -210,7 +210,16 @@ namespace Comarenkun
             {
                 pre.Add(m);
             }
-            pre.Sort((a, b) => int.Parse(a.Rank) - int.Parse(b.Rank));//ランクで昇順ソート(たぶんn^2以下)
+            int hoge = 0;
+            if(int.TryParse(pre[0].Rank, out hoge))
+            {//ランクが整数＝部内なら数値ソート
+                pre.Sort((a, b) => int.Parse(a.Rank) - int.Parse(b.Rank));//ランクで昇順ソート(たぶんn^2以下)
+            }
+            else
+            {//部外なら文字列ソート
+                pre.Sort((a,b) => a.Rank.CompareTo(b.Rank));
+            }
+            
             List.Clear();
             foreach(Member m in pre)
             {

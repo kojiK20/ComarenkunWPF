@@ -15,6 +15,10 @@ using System.Windows.Shapes;
 using System.Windows.Media.Animation;
 using System.ComponentModel;
 using System.IO;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Web;
 
 namespace Comarenkun
 {
@@ -24,12 +28,15 @@ namespace Comarenkun
         private string memberFilePath = "../../Texts/members.txt";//絶対パスは"pack://application:,,,/Comarenkun;component//"
         private string foreignerFilePath = "../../Texts/foreigners.txt";
         private string configFilePath = "../../Texts/config.txt";
+        private string LINEtokenFilePath = "../../Texts/LINEtoken.txt";
         StreamReader sr;//config
         StreamReader sr1;//member
         StreamReader sr2;//foreigner
+        StreamReader sr3;//LINEtoken
         StreamWriter sw;
         StreamWriter sw1;
         StreamWriter sw2;
+        StreamWriter sw3;
 
         public FileLogic(MainWindow window)
         {//メインウィンドウのコントロールをwindowから参照する
@@ -182,6 +189,14 @@ namespace Comarenkun
                     {//ランクが整数値以外の場合0に置き換え,名前や所属が置き換えられてはいけないので1行ずつやる
                         s1 = s1 + "0:" + c[1] + ":" + c[2] + "\n";
                     }
+                    else if(int.Parse(c[0]) < 0)
+                    {
+                        s1 = s1 + "0:" + c[1] + ":" + c[2] + "\n";
+                    }
+                    else if (int.Parse(c[0]) > 1000)
+                    {
+                        s1 = s1 + "1000:" + c[1] + ":" + c[2] + "\n";
+                    }
                     else
                     {
                         s1 = s1 + c[0] + ":" + c[1] + ":" + c[2] + "\n";
@@ -250,8 +265,9 @@ namespace Comarenkun
 
             sr1 = new StreamReader(memberFilePath, Encoding.GetEncoding("Shift_JIS"));
             sr2 = new StreamReader(foreignerFilePath, Encoding.GetEncoding("Shift_JIS"));
-            
-            List<string[]> result = new List<string[]>();
+
+            List<string[]> result1 = new List<string[]>();
+            List<string[]> result2 = new List<string[]>();
             string line;
             try
             {
@@ -260,12 +276,12 @@ namespace Comarenkun
                     if (line != "")
                     {//ランク，名前，所属の配列
                         string[] memberNames = line.Split(':');
-                        if(memberNames.Length > 3)
+                        if (memberNames.Length > 3)
                         {
                             throw new IndexOutOfRangeException();
                         }
                         memberNames[2] = "部内";
-                        result.Add(memberNames);
+                        result1.Add(memberNames);
                     }
                 }
             }
@@ -274,12 +290,12 @@ namespace Comarenkun
                 sr1.Close();
                 sr2.Close();
                 string path = "";
-                for(int i = 1; true; i++)
+                for (int i = 1; true; i++)
                 {
-                    if(File.Exists("../../Texts/members_copy.txt") && File.Exists("../../Texts/members_copy" + i.ToString() + ".txt"))
+                    if (File.Exists("../../Texts/members_copy.txt") && File.Exists("../../Texts/members_copy" + i.ToString() + ".txt"))
                     {//コピー先ファイル名が重複しているとき連番にする
                     }
-                    else if(File.Exists("../../Texts/members_copy.txt"))
+                    else if (File.Exists("../../Texts/members_copy.txt"))
                     {
                         path = "members_copy" + i.ToString() + ".txt";
                         File.Copy(memberFilePath, "../../Texts/" + path);
@@ -298,6 +314,10 @@ namespace Comarenkun
                 MessageBox.Show("Comarenkun/Texts/members.txtの形式が不正です．\n" + path + "にコピーして新たにmembers.txtを作成しました．");
                 return ReadMemberFile();//再帰
             }
+            //ソートしておく
+            //数値ソート
+            result1.Sort((a, b) => int.Parse(a[0]) - int.Parse(b[0]));//ランクで昇順ソート(たぶんn^2以下)
+
             try
             {
                 while ((line = sr2.ReadLine()) != null)
@@ -318,7 +338,7 @@ namespace Comarenkun
                         {//外部所属に「部内」を作れないように
                             foreignerNames[2] = "部内2";
                         }
-                        result.Add(foreignerNames);
+                        result2.Add(foreignerNames);
                     }
                 }
             }
@@ -351,11 +371,15 @@ namespace Comarenkun
                 MessageBox.Show("Comarenkun/Texts/foreigners.txtの形式が不正です．\n" + path + "にコピーして新たにforeigners.txtを作成しました．");
                 return ReadMemberFile();//再帰
             }
-            
+            //ソートしておく
+            //文字列ソート
+            result2.Sort((a, b) => a[0].CompareTo(b[0]));
+
             sr1.Close();
             sr2.Close();
-            
-            return result;
+
+            result1.AddRange(result2);
+            return result1;
         }
 
         public List<string> AllMemberNames()
@@ -576,7 +600,15 @@ namespace Comarenkun
                         string[] c = line.Split(':');
                         if (c[1] == name)
                         {//ランクを置き換え,1行ずつやる
-                            s = s + (int.Parse(c[0]) + 1).ToString() + ":" + c[1] + ":" + c[2] + "\n";
+                            if(int.Parse(c[0]) >= 1000)
+                            {
+                                s = s + "1000:" + c[1] + ":" + c[2] + "\n";
+                            }
+                            else
+                            {
+                                s = s + (int.Parse(c[0]) + 1).ToString() + ":" + c[1] + ":" + c[2] + "\n";
+                            }
+                            
                         }
                         else
                         {
@@ -641,7 +673,14 @@ namespace Comarenkun
                         string[] c = line.Split(':');
                         if (c[1] == name)
                         {//ランクを置き換え,1行ずつやる
-                            s = s + (int.Parse(c[0]) - 1).ToString() + ":" + c[1] + ":" + c[2] + "\n";
+                            if(int.Parse(c[0]) <= 0)
+                            {
+                                s = s + "0:" + c[1] + ":" + c[2] + "\n";
+                            }
+                            else
+                            {
+                                s = s + (int.Parse(c[0]) - 1).ToString() + ":" + c[1] + ":" + c[2] + "\n";
+                            }
                         }
                         else
                         {
@@ -962,6 +1001,48 @@ namespace Comarenkun
                 sw.Write(s);
                 sw.Close();
             }
+        }
+
+        public void SendToLINE(string result)
+        {
+            sr3 = new StreamReader(LINEtokenFilePath, Encoding.GetEncoding("Shift_JIS"));
+
+            List<string> tokens = new List<string>();
+            string line;
+            while ((line = sr3.ReadLine()) != null)
+            {//テキストが無くなるまで1行ずつ読む
+                if (line != "")
+                {//ランク，名前，所属の配列
+                    string token = line;
+                    tokens.Add(token);
+                }
+            }
+
+            var url = "https://notify-api.line.me/api/notify";
+            var enc = Encoding.UTF8;
+            try
+            {
+                //foreach (string token in tokens)
+                //{
+                    var content = new FormUrlEncodedContent(new Dictionary<string, string>
+                        {
+                            { "message", "\n組み合わせたコマよ～↓\n" + result },
+                        });
+                    using (var hc = new HttpClient())
+                    {
+                        hc.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokens[0]);
+
+                        var response = hc.PostAsync(url, content);
+                        response.Wait();
+                    }
+                //}
+            }
+            catch
+            {
+                MessageBox.Show("送信できませんでした");
+            }
+            
+            sr3.Close();
         }
     }
 }

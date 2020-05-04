@@ -655,7 +655,14 @@
         <ListBox Name="groupButtons" Visibility="Hidden" ItemContainerStyle="{StaticResource ContainerStyle}" BorderBrush="Transparent" ItemsSource="{Binding}" Background="Transparent" Height="500" Width="300" FontFamily="{StaticResource 851ゴクチカ}" FontSize="50" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="300,0,0,0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Button Template="{DynamicResource GroupButton}" Content="{Binding Path=Name}" FontSize="{Binding Path=FontSize}" Background="{Binding Path=Color}"  Foreground="#666" Cursor="Hand" Margin="0,0,0,10" Click="Group_Click" MouseEnter="Group_MouseEnter" MouseLeave="Group_MouseLeave"/>
+                    <Button Template="{DynamicResource GroupButton}" Content="{Binding Path=Name}" FontSize="{Binding Path=FontSize}" Background="{Binding Path=Color}"  Foreground="#666" Cursor="Hand" Margin="0,0,0,10" Click="Group_Click" MouseEnter="Group_MouseEnter" MouseLeave="Group_MouseLeave">
+                        <Button.ContextMenu>
+                            <ContextMenu IsOpen="False">
+                                <MenuItem Tag="{Binding Path=Name}" Header="この所属の全メンバーを選択" Click="groupButton_Context1_Click"/>
+                                <MenuItem Tag="{Binding Path=Name}" Header="この所属の全メンバーの選択を解除" Click="groupButton_Context2_Click"/>
+                            </ContextMenu>
+                        </Button.ContextMenu>
+                    </Button>
                     <!--<TextBlock Text="{Binding Path=Name}" FontSize="{Binding Path=FontSize}" Background="{Binding Path=Color}"  Foreground="#FFFFFF" Cursor="Hand" Margin="0,0,0,10"/>-->
                 </DataTemplate>
             </ListBox.ItemTemplate>
@@ -670,6 +677,7 @@
 
         <Button x:Name="memberAddButton" Visibility="Hidden" Template="{DynamicResource MemberAddButton}" FontFamily="{StaticResource 851ゴクチカ}" Content="+" Foreground="#FFF" Background="#0A0" Click="MemberAdd_Click"/>
         <Label x:Name="memberGroupLabel" Visibility="Hidden" Template="{DynamicResource MemberGroupLabel}"  FontFamily="{StaticResource 851ゴクチカ}" Content="groupName" Foreground="#000" Background="Transparent"/>
+        <Button x:Name="memberSortButton" Visibility="Hidden" Template="{DynamicResource MemberSortButton}" FontFamily="{StaticResource 851ゴクチカ}" Content="整列" Foreground="#FFF" Background="#0A8" Click="memberSortButton_Click" MouseEnter="memberSortButton_MouseEnter" MouseLeave="memberSortButton_MouseLeave"/>
         <ListBox Name="memberButtons" Visibility="Hidden" ItemContainerStyle="{StaticResource ContainerStyle}" ItemsSource="{Binding}" BorderBrush="Transparent" Background="Transparent" Height="500" Width="300" FontFamily="{StaticResource 851ゴクチカ}" FontSize="50" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="300,0,0,0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
             <ListBox.ItemTemplate>
                 <DataTemplate>
@@ -702,8 +710,8 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <ScrollViewer x:Name="participantNamesScrollViewer" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden" PreviewMouseWheel="ParticipantNamesTextBox_MouseWheel" HorizontalAlignment="Left" VerticalAlignment="Top">
-            <TextBox x:Name="participantNamesTextBox" Visibility="Hidden" BorderThickness="0"  FontFamily="Meiryo" Foreground="#FFF" Background="#99000000"  TextWrapping="NoWrap"/>
+        <ScrollViewer x:Name="participantNamesScrollViewer" Visibility="Hidden" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden" PreviewMouseWheel="ParticipantNamesTextBox_MouseWheel" HorizontalAlignment="Left" VerticalAlignment="Top">
+            <TextBox x:Name="participantNamesTextBox" BorderThickness="0"  FontFamily="Meiryo" Foreground="#FFF" Background="#99000000"  TextWrapping="NoWrap" />
         </ScrollViewer>
         
         <Button x:Name="nextButton" Template="{DynamicResource NextButton}" FontFamily="{StaticResource 851ゴクチカ}" Content="→1コマ目" Foreground="#FFF" Background="#053" Visibility="Hidden" MouseEnter="nextButton_MouseEnter" MouseLeave="nextButton_MouseLeave" Click="nextButton_Click"/>
