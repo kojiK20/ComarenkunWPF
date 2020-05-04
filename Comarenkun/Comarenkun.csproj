@@ -91,7 +91,6 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <Resource Include="Fonts\851letrogo.ttf" />
-    <Resource Include="Fonts\Kosugi-Regular.ttf" />
     <Resource Include="Fonts\851Gkktt_005.ttf" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

@@ -89,15 +89,5 @@ namespace Comarenkun.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
-        /// <summary>
-        ///   型 System.Byte[] のローカライズされたリソースを検索します。
-        /// </summary>
-        internal static byte[] Kosugi_Regular {
-            get {
-                object obj = ResourceManager.GetObject("Kosugi_Regular", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
     }
 }
