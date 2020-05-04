@@ -1296,33 +1296,42 @@ namespace Comarenkun
             }
             else if ((string)this.nextButton.Content == "G\nO\n!" || (string)this.nextButton.Content == "オ\nカ\nワ\nリ")
             {//ParticipantNamesTextBoxのContentに組み合わせ結果を記述する．
-                string result = mlogic.Matching(participants, increase, decrease, configs);//マッチングする
-                if (result != "ERROR")
+                try
                 {
-                    this.participantNamesTextBox.Text = result;//マッチングする
-                    TextBoxSet("ParticipantNamesSumTextBox", this.participantNamesTextBox, participantNamesSumTextBoxParams);
-                    PolygonButtonSet("LINESendButton", this.LINESendButton, LINESendButtonParams, shadow);
-                    this.LINESendButton.Visibility = Visibility.Visible;
-                    //flogic.SendToLINE(result);//LINEに送信
+                    string result = mlogic.Matching(participants, increase, decrease, configs);//マッチングする
+                    if (result != "ERROR")
+                    {
 
-                    this.groupButtons.Visibility = Visibility.Hidden;
-                    this.talkLabel.Content = "マッチングしたコマ！";
-                    TransParentLabelSet("talkLabel", this.talkLabel, talkLabelParams, noShadow);
-                    this.nextButton.Content = "オ\nカ\nワ\nリ";
-                    PolygonButtonSet("NextButton", this.nextButton, nextButtonParams, shadow);
+                        this.participantNamesTextBox.Text = result;//マッチングする
+                        TextBoxSet("ParticipantNamesSumTextBox", this.participantNamesTextBox, participantNamesSumTextBoxParams);
+                        PolygonButtonSet("LINESendButton", this.LINESendButton, LINESendButtonParams, shadow);
+                        this.LINESendButton.Visibility = Visibility.Visible;
+                        //flogic.SendToLINE(result);//LINEに送信
 
-                    //MessageBox.Show(result);
+                        this.groupButtons.Visibility = Visibility.Hidden;
+                        this.talkLabel.Content = "マッチングしたコマ！";
+                        TransParentLabelSet("talkLabel", this.talkLabel, talkLabelParams, noShadow);
+                        this.nextButton.Content = "オ\nカ\nワ\nリ";
+                        PolygonButtonSet("NextButton", this.nextButton, nextButtonParams, shadow);
+
+                        //MessageBox.Show(result);
+                    }
+                    else
+                    {
+                        /*this.participantNamesTextBox.Text = ParticipantNameTextBoxText();//マッチングする
+                        TextBoxSet("ParticipantNamesSumTextBox", this.participantNamesTextBox, ParticipantNamesSumTextBoxParams);
+
+                        this.groupButtons.Visibility = Visibility.Hidden;
+                        this.talkLabel.Content = "このメンバーでマッチングして\nいいコマか？";
+                        TransParentLabelSet("talkLabel", this.talkLabel, talkLabelParams, noShadow);
+                        this.nextButton.Content = "G\nO\n!";//GOボタンを別にellipseで作るかも*/
+                    }
                 }
-                else
+                catch
                 {
-                    /*this.participantNamesTextBox.Text = ParticipantNameTextBoxText();//マッチングする
-                    TextBoxSet("ParticipantNamesSumTextBox", this.participantNamesTextBox, ParticipantNamesSumTextBoxParams);
-
-                    this.groupButtons.Visibility = Visibility.Hidden;
-                    this.talkLabel.Content = "このメンバーでマッチングして\nいいコマか？";
-                    TransParentLabelSet("talkLabel", this.talkLabel, talkLabelParams, noShadow);
-                    this.nextButton.Content = "G\nO\n!";//GOボタンを別にellipseで作るかも*/
+                    MessageBox.Show("申し訳ないコマ\nエラーが発生したコマ...\nもう一度組んでみてほしいコマ");
                 }
+                
             }
             else if (configs[1] != coma.ToString())
             {

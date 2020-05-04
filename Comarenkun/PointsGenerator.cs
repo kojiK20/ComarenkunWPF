@@ -270,7 +270,7 @@ namespace Comarenkun
             }
             if (rgb[2] > 255 - 16 * 1)
             {
-                b = 0;
+                b = 255;
             }
             else
             {

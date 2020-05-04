@@ -734,9 +734,9 @@
                 <DataTemplate>
                     <Grid>
                         <Label Template="{DynamicResource ComaAlgorithmLabel}" Content="{Binding Path=Label}" Background="Transparent" Foreground="#000" Margin="0,0,0,10" />
-                        <Button Template="{DynamicResource ComaAlgorithmButton0}" Tag="{Binding Path=Number0}" Content="{Binding Path=Check0}" Background="#88BBFF" Foreground="#FFF" Cursor="Hand" Margin="0,0,0,10" MouseEnter="AlgorithmEnter" MouseLeave="AlgorithmLeave" Click="AlgorithmClick"/>
-                        <Button Template="{DynamicResource ComaAlgorithmButton1}" Tag="{Binding Path=Number1}" Content="{Binding Path=Check1}" Background="#88BBFF" Foreground="#FFF" Cursor="Hand" Margin="0,0,0,10" MouseEnter="AlgorithmEnter" MouseLeave="AlgorithmLeave" Click="AlgorithmClick"/>
-                        <Button Template="{DynamicResource ComaAlgorithmButton2}" Tag="{Binding Path=Number2}" Content="{Binding Path=Check2}" Background="#88BBFF" Foreground="#FFF" Cursor="Hand" Margin="0,0,0,10" MouseEnter="AlgorithmEnter" MouseLeave="AlgorithmLeave" Click="AlgorithmClick"/>
+                        <Button Template="{DynamicResource ComaAlgorithmButton0}" Tag="{Binding Path=Number0}" Content="{Binding Path=Check0}" Background="#88BBEF" Foreground="#FFF" Cursor="Hand" Margin="0,0,0,10" MouseEnter="AlgorithmEnter" MouseLeave="AlgorithmLeave" Click="AlgorithmClick"/>
+                        <Button Template="{DynamicResource ComaAlgorithmButton1}" Tag="{Binding Path=Number1}" Content="{Binding Path=Check1}" Background="#88BBEF" Foreground="#FFF" Cursor="Hand" Margin="0,0,0,10" MouseEnter="AlgorithmEnter" MouseLeave="AlgorithmLeave" Click="AlgorithmClick"/>
+                        <Button Template="{DynamicResource ComaAlgorithmButton2}" Tag="{Binding Path=Number2}" Content="{Binding Path=Check2}" Background="#88BBEF" Foreground="#FFF" Cursor="Hand" Margin="0,0,0,10" MouseEnter="AlgorithmEnter" MouseLeave="AlgorithmLeave" Click="AlgorithmClick"/>
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
