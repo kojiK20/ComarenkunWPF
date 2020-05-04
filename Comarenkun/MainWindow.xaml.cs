@@ -550,7 +550,7 @@ namespace Comarenkun
             {//1コマ目
                 foreach (string[] mem in mems)
                 {
-                    if(participants[coma - 1].IndexOf(mem[1]) == -1)
+                    if(this.participantNamesTextBox.Text.IndexOf(mem[1]) == -1)
                     {//選択されていないメンバ全てに対してクリック時の処理を行う
                         ParticipantNamesTextBoxControl(mem[1]);
                         //MouseLeave時の色処理を行う
@@ -563,7 +563,7 @@ namespace Comarenkun
             {//2コマ目以降
                 foreach (string[] mem in mems)
                 {
-                    if (participants[coma - 1].IndexOf(mem[1]) == -1)
+                    if (this.participantNamesTextBox.Text.IndexOf(mem[1]) == -1)
                     {//選択されていないメンバ全てに対してクリック時の処理を行う
                         ParticipantNamesTextBoxControl(mem[1], coma);
                         //MouseLeave時の色処理を行う
@@ -579,7 +579,7 @@ namespace Comarenkun
             {//1コマ目
                 foreach (string[] mem in mems)
                 {
-                    if (participants[coma - 1].IndexOf(mem[1]) != -1)
+                    if (this.participantNamesTextBox.Text.IndexOf(mem[1]) != -1)
                     {//選択されているメンバ全てに対してクリック時の処理を行う
                         ParticipantNamesTextBoxControl(mem[1]);
                         //MouseLeave時の色処理を行う
@@ -591,7 +591,7 @@ namespace Comarenkun
             {//2コマ目以降
                 foreach (string[] mem in mems)
                 {
-                    if (participants[coma - 1].IndexOf(mem[1]) != -1)
+                    if (this.participantNamesTextBox.Text.IndexOf(mem[1]) != -1)
                     {//選択されていないメンバ全てに対してクリック時の処理を行う
                         ParticipantNamesTextBoxControl(mem[1], coma);
                         //MouseLeave時の色処理を行う
