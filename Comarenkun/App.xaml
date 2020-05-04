@@ -136,6 +136,7 @@
         
         <ControlTemplate x:Key="TableButton" TargetType="Button"/>
         <ControlTemplate x:Key="ComaButton" TargetType="Button" />
+        <ControlTemplate x:Key="LINEButton" TargetType="Button" />
         <ControlTemplate x:Key="ComaAlgorithmLabel" TargetType="Label"/>
         <ControlTemplate x:Key="AlgorithmLabel" TargetType="Label" />
 
@@ -216,9 +217,9 @@
             </Grid>
         </ControlTemplate>
 
-        <ControlTemplate x:Key="RankNameLabel" TargetType="Label">
-
-        </ControlTemplate>
+        <ControlTemplate x:Key="RankNameLabel" TargetType="Label"/>
+        <ControlTemplate x:Key="LINESendButton" TargetType="Button"/>
+        <Style x:Key="ParticipantNamesBackground" TargetType="Polygon" />
         <!--<ControlTemplate x:Key="MemberGroupButton" TargetType="Button">
             <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,0,0">
                 <Polygon Stroke ="Black" StrokeThickness="1" Points="0,100 0,0 500,0 500,100" Fill="{TemplateBinding Background}" />

@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Comarenkun"
-        xmlns:Media="clr-namespace:MS.Internal.Media;assembly=PresentationCore" x:Class="Comarenkun.MainWindow"
+        xmlns:Media="clr-namespace:MS.Internal.Media;assembly=PresentationCore" x:Name="window" x:Class="Comarenkun.MainWindow"
         mc:Ignorable="d"
         Background="#FFE2D7FF"
         Title="コマ練くん" Height="720" Width="900" MinHeight="450" MinWidth="600" MaxWidth="2200"
@@ -375,12 +375,15 @@
                 <!--B:+16*8-->
             </ColorAnimationUsingKeyFrames>
             <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsHitTestVisible)" Storyboard.TargetName="memberButton">
-                <DiscreteBooleanKeyFrame KeyTime="0:0:0.2" Value="True"/>
-                <DiscreteBooleanKeyFrame KeyTime="0:0:0.5" Value="False"/>
+                <DiscreteBooleanKeyFrame KeyTime="0" Value="False"/>
+                <DiscreteBooleanKeyFrame KeyTime="0:0:0.5" Value="True"/>
             </BooleanAnimationUsingKeyFrames>
             <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsHitTestVisible)" Storyboard.TargetName="matchingButton">
+                <DiscreteBooleanKeyFrame KeyTime="0" Value="False"/>
+                <DiscreteBooleanKeyFrame KeyTime="0:0:0.5" Value="True"/>
+            </BooleanAnimationUsingKeyFrames>
+            <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsHitTestVisible)" Storyboard.TargetName="window">
                 <DiscreteBooleanKeyFrame KeyTime="0" Value="True"/>
-                <DiscreteBooleanKeyFrame KeyTime="0:0:0.5" Value="False"/>
             </BooleanAnimationUsingKeyFrames>
         </Storyboard>
         <Storyboard x:Key="MatchingButtonClick" Completed="matchingButtonClickCompleted">
@@ -453,11 +456,11 @@
             </ColorAnimationUsingKeyFrames>
             <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsHitTestVisible)" Storyboard.TargetName="memberButton">
                 <DiscreteBooleanKeyFrame KeyTime="0" Value="True"/>
-                <DiscreteBooleanKeyFrame KeyTime="0:0:0.5" Value="False"/>
+                <DiscreteBooleanKeyFrame KeyTime="0:0:0.5" Value="True"/>
             </BooleanAnimationUsingKeyFrames>
             <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsHitTestVisible)" Storyboard.TargetName="matchingButton">
-                <DiscreteBooleanKeyFrame KeyTime="0:0:0.2" Value="True"/>
-                <DiscreteBooleanKeyFrame KeyTime="0:0:0.5" Value="False"/>
+                <DiscreteBooleanKeyFrame KeyTime="0" Value="False"/>
+                <DiscreteBooleanKeyFrame KeyTime="0:0:0.5" Value="True"/>
             </BooleanAnimationUsingKeyFrames>
 
         </Storyboard>
@@ -645,17 +648,17 @@
             </Button.RenderTransform>
         </Button>
 
-        
 
-        <Button x:Name="groupAddButton" Template="{DynamicResource GroupAddButton}" FontFamily="{StaticResource 851ゴクチカ}" Content="+" Foreground="#FFF" Background="#0A0" Visibility="Hidden" Click="GroupAdd_Click"/>
-        <Button x:Name="groupDeleteButton" Template="{DynamicResource GroupDeleteButton}" FontFamily="{StaticResource 851ゴクチカ}" Content="削除" Foreground="#FFF" Background="#F00" Visibility="Hidden" Click="GroupDelete_Click"/>
-        <Button x:Name="groupOpenButton" Template="{DynamicResource GroupOpenButton}" FontFamily="{StaticResource 851ゴクチカ}" Content="開ク" Foreground="#FFF" Background="#55A" Visibility="Hidden" Click="GroupOpen_Click"/>
-        <Button x:Name="groupNameChangeButton" Template="{DynamicResource GroupNameChangeButton}" FontFamily="{StaticResource 851ゴクチカ}" Content="ナマエ" Foreground="#FFF" Background="#A0A" Visibility="Hidden" Click="GroupNameChange_Click"/>
+
+        <Button x:Name="groupAddButton" Template="{DynamicResource GroupAddButton}" FontFamily="{StaticResource 851ゴクチカ}" Content="+" Foreground="#FFF" Background="#0A0" Visibility="Hidden" Click="GroupAdd_Click" MouseEnter="GroupAdd_MouseEnter" MouseLeave="GroupAdd_MouseLeave"/>
+        <Button x:Name="groupDeleteButton" Template="{DynamicResource GroupDeleteButton}" FontFamily="{StaticResource 851ゴクチカ}" Content="削除" Foreground="#FFF" Background="#D00" Visibility="Hidden" Click="GroupDelete_Click" MouseEnter="GroupDelete_MouseEnter" MouseLeave="GroupDelete_MouseLeave"/>
+        <Button x:Name="groupOpenButton" Template="{DynamicResource GroupOpenButton}" FontFamily="{StaticResource 851ゴクチカ}" Content="開ク" Foreground="#FFF" Background="#55A" Visibility="Hidden" Click="GroupOpen_Click" MouseEnter="GroupOpen_MouseEnter" MouseLeave="GroupOpen_MouseLeave"/>
+        <Button x:Name="groupNameChangeButton" Template="{DynamicResource GroupNameChangeButton}" FontFamily="{StaticResource 851ゴクチカ}" Content="ナマエ" Foreground="#FFF" Background="#A0A" Visibility="Hidden" Click="GroupNameChange_Click" MouseEnter="GroupNameChange_MouseEnter" MouseLeave="GroupNameChange_MouseLeave"/>
 
         <ListBox Name="groupButtons" Visibility="Hidden" ItemContainerStyle="{StaticResource ContainerStyle}" BorderBrush="Transparent" ItemsSource="{Binding}" Background="Transparent" Height="500" Width="300" FontFamily="{StaticResource 851ゴクチカ}" FontSize="50" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="300,0,0,0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Button Template="{DynamicResource GroupButton}" Content="{Binding Path=Name}" FontSize="{Binding Path=FontSize}" Background="{Binding Path=Color}"  Foreground="#666" Cursor="Hand" Margin="0,0,0,10" Click="Group_Click" MouseEnter="Group_MouseEnter" MouseLeave="Group_MouseLeave">
+                    <Button Template="{DynamicResource GroupButton}" Content="{Binding Path=Name}" FontSize="{Binding Path=FontSize}" Background="{Binding Path=Color}"  Foreground="#FFF" Cursor="Hand" Margin="0,0,0,10" Click="Group_Click" MouseEnter="Group_MouseEnter" MouseLeave="Group_MouseLeave" >
                         <Button.ContextMenu>
                             <ContextMenu IsOpen="False">
                                 <MenuItem Tag="{Binding Path=Name}" Header="この所属の全メンバーを選択" Click="groupButton_Context1_Click"/>
@@ -675,16 +678,18 @@
                 </ListBox.Resources>-->
         </ListBox>
 
-        <Button x:Name="memberAddButton" Visibility="Hidden" Template="{DynamicResource MemberAddButton}" FontFamily="{StaticResource 851ゴクチカ}" Content="+" Foreground="#FFF" Background="#0A0" Click="MemberAdd_Click"/>
+        <Button x:Name="memberAddButton" Visibility="Hidden" Template="{DynamicResource MemberAddButton}" FontFamily="{StaticResource 851ゴクチカ}" Content="+" Foreground="#FFF" Background="#0A0" Click="MemberAdd_Click" MouseEnter="MemberAdd_MouseEnter" MouseLeave="MemberAdd_MouseLeave"/>
         <Label x:Name="memberGroupLabel" Visibility="Hidden" Template="{DynamicResource MemberGroupLabel}"  FontFamily="{StaticResource 851ゴクチカ}" Content="groupName" Foreground="#000" Background="Transparent"/>
         <Button x:Name="memberSortButton" Visibility="Hidden" Template="{DynamicResource MemberSortButton}" FontFamily="{StaticResource 851ゴクチカ}" Content="整列" Foreground="#FFF" Background="#0A8" Click="memberSortButton_Click" MouseEnter="memberSortButton_MouseEnter" MouseLeave="memberSortButton_MouseLeave"/>
         <ListBox Name="memberButtons" Visibility="Hidden" ItemContainerStyle="{StaticResource ContainerStyle}" ItemsSource="{Binding}" BorderBrush="Transparent" Background="Transparent" Height="500" Width="300" FontFamily="{StaticResource 851ゴクチカ}" FontSize="50" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="300,0,0,0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid>
-                        <Button Template="{DynamicResource MemberRankButton}" Tag="{Binding Path=Name}" Content="{Binding Path=Rank}" FontSize="{Binding Path=RankFontSize}" Background="{Binding Path=Color}" Foreground="#FFF" Cursor="Hand" Margin="0,0,0,10" Click="MemberRank_Click" MouseRightButtonUp="MemberRank_RightClick" MouseEnter="Member_MouseEnter" MouseLeave="Member_MouseLeave"/><!-- Click="MemberRank_Click" MouseEnter="MemberRank_MouseEnter" MouseLeave="MemberRank_MouseLeave"/>-->
-                        <Button Template="{DynamicResource MemberNameButton}" Content="{Binding Path=Name}" FontSize="{Binding Path=NameFontSize}" Background="{Binding Path=Color}" Foreground="#FFF" Cursor="Hand" Margin="0,0,0,10" Click="MemberName_Click" MouseEnter="Member_MouseEnter" MouseLeave="Member_MouseLeave"/><!-- Click="MemberName_Click" MouseEnter="MemberName_MouseEnter" MouseLeave="MemberName_MouseLeave"/>-->
-                        <Button Template="{DynamicResource MemberDeleteButton}" Tag="{Binding Path=Name}" Content="削除" FontSize="{Binding Path=DeleteFontSize}" Background="#F00" Foreground="#FFF" Cursor="Hand" Margin="0,0,0,10" Click="MemberDelete_Click" MouseEnter="Member_MouseEnter" MouseLeave="Member_MouseLeave"/>
+                        <Button Template="{DynamicResource MemberRankButton}" Tag="{Binding Path=Name}" Content="{Binding Path=Rank}" FontSize="{Binding Path=RankFontSize}" Background="{Binding Path=Color}" Foreground="#FFF" Cursor="Hand" Margin="0,0,0,10" Click="MemberRank_Click" MouseRightButtonUp="MemberRank_RightClick" MouseEnter="Member_MouseEnter" MouseLeave="Member_MouseLeave"/>
+                        <!-- Click="MemberRank_Click" MouseEnter="MemberRank_MouseEnter" MouseLeave="MemberRank_MouseLeave"/>-->
+                        <Button Template="{DynamicResource MemberNameButton}" Content="{Binding Path=Name}" FontSize="{Binding Path=NameFontSize}" Background="{Binding Path=Color}" Foreground="#FFF" Cursor="Hand" Margin="0,0,0,10" Click="MemberName_Click" MouseEnter="Member_MouseEnter" MouseLeave="Member_MouseLeave"/>
+                        <!-- Click="MemberName_Click" MouseEnter="MemberName_MouseEnter" MouseLeave="MemberName_MouseLeave"/>-->
+                        <Button Template="{DynamicResource MemberDeleteButton}" Tag="{Binding Path=Name}" Content="削除" FontSize="{Binding Path=DeleteFontSize}" Background="#E00" Foreground="#FFF" Cursor="Hand" Margin="0,0,0,10" Click="MemberDelete_Click" MouseEnter="Member_MouseEnter" MouseLeave="Member_MouseLeave"/>
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
@@ -710,14 +715,16 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
+        <Polygon x:Name="participantNamesBackground" Style="{DynamicResource ParticipantNamesBackground}"  Visibility="Hidden" Fill="#99000000" />
         <ScrollViewer x:Name="participantNamesScrollViewer" Visibility="Hidden" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden" PreviewMouseWheel="ParticipantNamesTextBox_MouseWheel" HorizontalAlignment="Left" VerticalAlignment="Top">
-            <TextBox x:Name="participantNamesTextBox" BorderThickness="0"  FontFamily="Meiryo" Foreground="#FFF" Background="#99000000"  TextWrapping="NoWrap" />
+            <TextBox x:Name="participantNamesTextBox" BorderThickness="0"  FontFamily="Meiryo" Foreground="#FFF" Background="Transparent"  TextWrapping="NoWrap" />
         </ScrollViewer>
-        
+
         <Button x:Name="nextButton" Template="{DynamicResource NextButton}" FontFamily="{StaticResource 851ゴクチカ}" Content="→1コマ目" Foreground="#FFF" Background="#053" Visibility="Hidden" MouseEnter="nextButton_MouseEnter" MouseLeave="nextButton_MouseLeave" Click="nextButton_Click"/>
 
-        <Button x:Name="tableButton" Template="{DynamicResource TableButton}" FontFamily="{StaticResource 851ゴクチカ}" Content="台数：" Foreground="#FFF" Background="#90D530" Visibility="Hidden" MouseEnter="TableMouseEnter" MouseLeave="TableMouseLeave" Click="TableClick" MouseRightButtonUp="TableRightClick"/>
-        <Button x:Name="comaButton" Template="{DynamicResource ComaButton}" FontFamily="{StaticResource 851ゴクチカ}"  Content="コマ数：" Foreground="#FFF" Background="#30D590" Visibility="Hidden" MouseEnter="ComaMouseEnter" MouseLeave="ComaMouseLeave" Click="ComaClick" MouseRightButtonUp="ComaRightClick"/>
+        <Button x:Name="tableButton" Template="{DynamicResource TableButton}" FontFamily="{StaticResource 851ゴクチカ}" Content="台数：" Foreground="#FFF" Background="#A0D530" Visibility="Hidden" MouseEnter="TableMouseEnter" MouseLeave="TableMouseLeave" Click="TableClick" MouseRightButtonUp="TableRightClick"/>
+        <Button x:Name="comaButton" Template="{DynamicResource ComaButton}" FontFamily="{StaticResource 851ゴクチカ}"  Content="コマ数：" Foreground="#FFF" Background="#30D5A0" Visibility="Hidden" MouseEnter="ComaMouseEnter" MouseLeave="ComaMouseLeave" Click="ComaClick" MouseRightButtonUp="ComaRightClick"/>
+        <Button x:Name="LINEButton" Template="{DynamicResource LINEButton}" FontFamily="{StaticResource 851ゴクチカ}" Content="LINE" Foreground="#FFF" Background="#30DF30" Visibility="Hidden" MouseEnter="LINEMouseEnter" MouseLeave="LINEMouseLeave" Click="LINEClick" />
         <Label x:Name="algorithmLabel" Template="{DynamicResource AlgorithmLabel}" FontFamily="{StaticResource 851ゴクチカ}" Content="アルゴリズム：" Foreground="#000" Background="Transparent" Visibility="Hidden"/>
         <Label x:Name="algorithmLabel0" Template="{DynamicResource AlgorithmLabel0}" FontFamily="{StaticResource 851ゴクチカ}" Content="遠" Foreground="#000" Background="Transparent" Visibility="Hidden"/>
         <Label x:Name="algorithmLabel1" Template="{DynamicResource AlgorithmLabel1}" FontFamily="{StaticResource 851ゴクチカ}" Content="近" Foreground="#000" Background="Transparent" Visibility="Hidden"/>
@@ -814,6 +821,7 @@
         </Button>
         <Label x:Name="talkLabel" Visibility="Visible" Foreground="White" Background="Transparent" FontFamily="{StaticResource 851ゴクチカ}" FontSize="70" Content="所属選択" HorizontalAlignment="Left" VerticalAlignment="Top" IsHitTestVisible="false" />
 
+        <Button x:Name="LINESendButton" Template="{DynamicResource LINESendButton}" Content="→LINE" FontFamily="{StaticResource 851ゴクチカ}" Foreground="#FFF" Background="#55DD55" MouseEnter="LINESendButton_MouseEnter" MouseLeave="LINESendButton_MouseLeave" Click="LINESendButton_Click" />
 
         <Polygon Style="{DynamicResource InitialBackObject1}" x:Name="initialBackObject1" Fill="#FF2D5182" RenderTransformOrigin="0.5,0.5" >
             <Polygon.RenderTransform>

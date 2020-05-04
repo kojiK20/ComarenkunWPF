@@ -111,7 +111,12 @@ namespace Comarenkun
                 trueHeight = pp[3];
             }
             //Marginは左上右下の順
+            
             double left = rowSize * trueWidth / 2 - fontSize * contentSize / 2;
+            if (name == "LINEButton")
+            {//アルファベットなので他の文字よりもフォントサイズに対して実体が小さい
+                left = left * 1.5;
+            }
             double top;
             if(name == "MemberButton")
             {
@@ -243,33 +248,33 @@ namespace Comarenkun
             Thickness result = new Thickness(left, top, right, bottom);
             return result;
         }
-        public Color Brighten(Color input)//カラーをすこし黄色めに明るくする
+        public Color Brighten(Color input)//カラーをすこし明るくする
         {
             int[] rgb = { input.R, input.G, input.B };
             int r, g, b;
-            if (rgb[0] > 255 - 16 * 3)
+            if (rgb[0] > 255 - 16 * 1)
             {
                 r = 255;
             }
             else
             {
-                r = rgb[0] + 16 * 3;
+                r = rgb[0] + 16 * 1;
             }
-            if (rgb[1] > 255 - 16 * 2)
+            if (rgb[1] > 255 - 16 * 1)
             {
                 g = 255;
             }
             else
             {
-                g = rgb[1] + 16 * 2;
+                g = rgb[1] + 16 * 1;
             }
-            if (rgb[2] < 16 * 1)
+            if (rgb[2] > 255 - 16 * 1)
             {
                 b = 0;
             }
             else
             {
-                b = rgb[2] - 16 * 1;
+                b = rgb[2] + 16 * 1;
             }
             return Color.FromRgb(Convert.ToByte(r), Convert.ToByte(g), Convert.ToByte(b));
         }
@@ -303,33 +308,33 @@ namespace Comarenkun
             }
             return Color.FromRgb(Convert.ToByte(r), Convert.ToByte(g), Convert.ToByte(b));
         }
-        public Color Darken(Color input)//カラーをすこし暗くする(Brighten2回分の真逆)
+        public Color Darken(Color input)//カラーをすこし暗くする(Brighten1回分の真逆)
         {
             int[] rgb = { input.R, input.G, input.B };
             int r, g, b;
-            if (rgb[0] < 16 * 6)
+            if (rgb[0] < 16 * 1)
             {
                 r = 0;
             }
             else
             {
-                r = rgb[0] - 16 * 6;
+                r = rgb[0] - 16 * 1;
             }
-            if (rgb[1] < 16 * 4)
+            if (rgb[1] < 16 * 1)
             {
                 g = 0;
             }
             else
             {
-                g = rgb[1] - 16 * 4;
+                g = rgb[1] - 16 * 1;
             }
-            if (rgb[2] > 255 - 16 * 2)
+            if (rgb[2] < 16 * 1)
             {
-                b = 255;
+                b = 0;
             }
             else
             {
-                b = rgb[2] + 16 * 2;
+                b = rgb[2] - 16 * 1;
             }
             return Color.FromRgb(Convert.ToByte(r), Convert.ToByte(g), Convert.ToByte(b));
         }

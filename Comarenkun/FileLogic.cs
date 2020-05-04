@@ -1002,8 +1002,19 @@ namespace Comarenkun
                 sw.Close();
             }
         }
+        public void AddLINEToken(string token)
+        {
+            if (!Directory.Exists("../../Texts"))
+            {
+                Directory.CreateDirectory("../../Texts");
+            }
+            //ファイルがどんな状況でも上書き
+            sw3 = new StreamWriter(LINEtokenFilePath, false, Encoding.GetEncoding("Shift_JIS"));
+            sw3.WriteLine(token);
+            sw3.Close();
+        }
 
-        public void SendToLINE(string result)
+        public bool SendToLINE(string result)
         {
             sr3 = new StreamReader(LINEtokenFilePath, Encoding.GetEncoding("Shift_JIS"));
 
@@ -1024,25 +1035,36 @@ namespace Comarenkun
             {
                 //foreach (string token in tokens)
                 //{
-                    var content = new FormUrlEncodedContent(new Dictionary<string, string>
+                var content = new FormUrlEncodedContent(new Dictionary<string, string>
                         {
                             { "message", "\n組み合わせたコマよ～↓\n" + result },
                         });
-                    using (var hc = new HttpClient())
-                    {
-                        hc.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokens[0]);
+                using (var hc = new HttpClient())
+                {
+                    hc.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokens[0]);
 
-                        var response = hc.PostAsync(url, content);
-                        response.Wait();
+                    var response = hc.PostAsync(url, content);
+                    response.Wait();
+                    sr3.Close();
+                    if (response.Result.IsSuccessStatusCode)
+                    {//正常に送信できている
+                        return true;
                     }
+                    else
+                    {
+                        return false;
+                    }
+                }
                 //}
             }
             catch
             {
-                MessageBox.Show("送信できませんでした");
+                sr3.Close();
+                //MessageBox.Show("送信できませんでした");
+                return false;
             }
             
-            sr3.Close();
+            
         }
     }
 }

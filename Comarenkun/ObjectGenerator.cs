@@ -525,15 +525,15 @@ namespace Comarenkun
                 SolidColorBrush color;
                 if (name == "部内")
                 {
-                    color = Brushes.LightBlue;
+                    color = bunai;
                 }
                 else if (name == "所属ナシ")
                 {
-                    color = Brushes.Pink;
+                    color = nashi;
                 }
                 else
                 {
-                    color = Brushes.LightGreen;
+                    color = foreign;
                 }
                 //MarginCenter(groupButtonParams, contentSize, "GroupButton");
                 Group n = new Group { Name = name, FontSize = fontSize, Color = color };
@@ -617,19 +617,19 @@ namespace Comarenkun
                 
                 if (nowMatching && coma > 1 && participants[coma -2].IndexOf(member[1]) != -1 && decrease[coma - 1].IndexOf(member[1]) == -1)
                 {//2コマ目以降で，前のコマに参加しており，選択されていないメンバー
-                    c = new SolidColorBrush(Color.FromRgb(100,10,200));
+                    c = decMemberBack;
                 }
                 else if (nowMatching && coma > 1 && participants[coma - 2].IndexOf(member[1]) != -1 && decrease[coma - 1].IndexOf(member[1]) != -1)
                 {//2コマ目以降で，前のコマに参加しており，選択(decrease)されているメンバー
-                    c = new SolidColorBrush(Color.FromRgb(10, 10, 255));
+                    c = selectedDecMemberBack;
                 }
                 else if (nowMatching && participants[coma - 1].IndexOf(member[1]) != -1)
                 {//1コマ目のマッチング画面で，選択されているor2コマ目以降で，前のコマに参加しておらず，選択されているメンバー
-                    c = new SolidColorBrush(Color.FromRgb(255, 55, 100));
+                    c = selectedMemberBack;
                 }
                 else
                 {
-                    c = new SolidColorBrush(Color.FromRgb(255, 128, 34));
+                    c = defaultMemberBack;
                 }
                 Member n = new Member { Rank = member[0], Name = member[1], Color =c, NameFontSize = nameFontSize, RankFontSize = rankFontSize, DeleteFontSize = deleteFontSize };
                 memberList.Add(n);
@@ -644,7 +644,11 @@ namespace Comarenkun
         {//Clickしたメンバの色を[選択済み/キャンセル]として変化させるメソッド
             SolidColorBrush cc = new SolidColorBrush(c);
             Member m = memberList.Find(name);
-            m.Color = cc;
+            if(m != null)
+            {//グループを開いていない状態で右クリック→コンテキストメニューから選択状態を変更した場合mがnullになる
+                m.Color = cc;
+            }
+            
         }
 
         public void MemberFontSizeSet()
