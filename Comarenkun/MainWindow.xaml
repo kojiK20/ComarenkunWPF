@@ -717,7 +717,7 @@
 
         <Polygon x:Name="participantNamesBackground" Style="{DynamicResource ParticipantNamesBackground}"  Visibility="Hidden" Fill="#99000000" />
         <ScrollViewer x:Name="participantNamesScrollViewer" Visibility="Hidden" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden" PreviewMouseWheel="ParticipantNamesTextBox_MouseWheel" HorizontalAlignment="Left" VerticalAlignment="Top">
-            <TextBox x:Name="participantNamesTextBox" BorderThickness="0"  FontFamily="Meiryo" Foreground="#FFF" Background="Transparent"  TextWrapping="NoWrap" />
+            <TextBox x:Name="participantNamesTextBox" BorderThickness="0"  FontFamily="Meiryo" Foreground="#FFF" Background="Transparent"  TextWrapping="NoWrap" IsReadOnly="True" />
         </ScrollViewer>
 
         <Button x:Name="nextButton" Template="{DynamicResource NextButton}" FontFamily="{StaticResource 851ゴクチカ}" Content="→1コマ目" Foreground="#FFF" Background="#053" Visibility="Hidden" MouseEnter="nextButton_MouseEnter" MouseLeave="nextButton_MouseLeave" Click="nextButton_Click"/>
