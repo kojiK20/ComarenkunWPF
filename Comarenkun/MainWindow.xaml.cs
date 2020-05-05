@@ -1461,27 +1461,34 @@ namespace Comarenkun
         }
         private void ComaClick(object sender, RoutedEventArgs e)
         {//コマ数を増やし，ListBoxにも反映する
-            flogic.PlusComa();
-            configs = flogic.ReadConfigFile();
-            string coma = int.Parse(configs[1]).ToString();
-            ((Button)sender).Content = "コマ数：" + coma;
-            ComaSetToListBox();
+            if(int.Parse(configs[1]) < 200)
+            {
+                flogic.PlusComa();
+                configs = flogic.ReadConfigFile();
+                string coma = int.Parse(configs[1]).ToString();
+                ((Button)sender).Content = "コマ数：" + coma;
+                ComaSetToListBox();
 
-            participants.Add(new List<string>());
-            increase.Add(new List<string>());
-            decrease.Add(new List<string>());
+                participants.Add(new List<string>());
+                increase.Add(new List<string>());
+                decrease.Add(new List<string>());
+            } 
         }
         private void ComaRightClick(object sender, RoutedEventArgs e)
         {//コマ数を減らし，ListBoxにも反映する
-            flogic.MinusComa();
-            configs = flogic.ReadConfigFile();
-            string coma = int.Parse(configs[1]).ToString();
-            ((Button)sender).Content = "コマ数：" + coma;
-            ComaSetToListBox();
+            if(int.Parse(configs[1]) > 1)
+                {
+                flogic.MinusComa();
+                configs = flogic.ReadConfigFile();
+                string coma = int.Parse(configs[1]).ToString();
+                ((Button)sender).Content = "コマ数：" + coma;
+                ComaSetToListBox();
 
-            participants.RemoveAt(participants.Count - 1);
-            increase.RemoveAt(increase.Count - 1);
-            decrease.RemoveAt(decrease.Count - 1);
+                participants.RemoveAt(participants.Count - 1);
+                increase.RemoveAt(increase.Count - 1);
+                decrease.RemoveAt(decrease.Count - 1);
+            } 
+            
         }
         private void LINEMouseEnter(object sender, RoutedEventArgs e)
         {
