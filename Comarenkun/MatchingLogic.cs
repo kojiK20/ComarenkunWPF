@@ -19,9 +19,11 @@ namespace Comarenkun
         int leave = 0;
         int resetCounter;//マッチング中に選出状況をリセットした回数．1以上なら指定回数まで組みなおす
         int bridgeCounter;//マッチング中に橋を交換した回数．1以上なら指定回数まで組みなおす
+        int sameGroupCounter;//マッチング中に所属制約を破った回数．1以上なら指定回数まで組みなおす
         int loopCounter;//組みなおした回数
         int maxLoop;//指定回数
         int maxBridge;//指定回数
+        int maxSameGroup;//指定回数
 
         public string Matching(List<List<string>> participants, List<List<string>> increase, List<List<string>> decrease, List<string> configs)
         {//マッチングする
@@ -147,9 +149,11 @@ namespace Comarenkun
             List<Matching> chosenMatchs = new List<Matching>();//選んだ枝を保存，枝のリセットとともにリセット
             resetCounter = 0;//マッチング中に選出状況をリセットした回数．1以上なら指定回数まで組みなおす
             bridgeCounter = 0;
+            sameGroupCounter = 0;
             loopCounter = 0;//組みなおした回数
             maxLoop = 1000;//指定回数
-            maxBridge = 100;
+            maxBridge = 500;
+            maxSameGroup = 100;
             List<Matching> edgesOrigin = new List<Matching>(edges);//組みなおす際に使用する
             if (loopStopper == 0)//組み合わせ生成処理
             {
@@ -225,17 +229,31 @@ namespace Comarenkun
                         }
                         
                     }
-                    if (bridgeCounter > 0 && loopCounter < maxBridge)
+                    if (sameGroupCounter > 0 && loopCounter < maxSameGroup)
+                    {
+                        //所属制約が破られていれば組みなおす
+                        set = new List<ResultSet>();
+                        edges = new List<Matching>(edgesOrigin);
+                        chosenMatchs = new List<Matching>();
+                        loopCounter++;
+                        sameGroupCounter = 0;
+                        bridgeCounter = 0;
+                        resetCounter = 0;
+                        i = -1;
+                        //MessageBox.Show("組みなおし回数：" + loopCounter.ToString() + "\n同所属間のマッチングが検出されたので組みなおしてみたコマ");
+                    }
+                    else if (bridgeCounter > 0 && loopCounter < maxBridge)
                     {
                         //リセットされていれば組みなおす
                         set = new List<ResultSet>();
                         edges = new List<Matching>(edgesOrigin);
                         chosenMatchs = new List<Matching>();
                         loopCounter++;
+                        //sameGroupCounter = 0;
                         bridgeCounter = 0;
                         resetCounter = 0;
                         i = -1;
-                        MessageBox.Show("組みなおし回数：" + loopCounter.ToString() + "\n橋の交換が検出されたので組みなおしてみたコマ");
+                        //MessageBox.Show("組みなおし回数：" + loopCounter.ToString() + "\n橋の交換が検出されたので組みなおしてみたコマ");
                     }
                     else if (resetCounter > 0 && loopCounter < maxLoop)
                     {//リセットされていれば組みなおす
@@ -243,10 +261,11 @@ namespace Comarenkun
                         edges = new List<Matching>(edgesOrigin);
                         chosenMatchs = new List<Matching>();
                         loopCounter++;
+                        //sameGroupCounter = 0;
                         //bridgeCounter = 0;
                         resetCounter = 0;
                         i = -1;
-                        MessageBox.Show("組みなおし回数：" + loopCounter.ToString() + "\nリセットが検出されたので組みなおしてみたコマ");
+                        //MessageBox.Show("組みなおし回数：" + loopCounter.ToString() + "\nリセットが検出されたので組みなおしてみたコマ");
                     }
                     else if(loopCounter >= maxLoop)
                     {
@@ -488,7 +507,7 @@ namespace Comarenkun
                 List<Matching> bridge = IsConnected(nodes, edges);
                 if (bridge != null)
                 {//非連結
-                    MessageBox.Show("出戻りしたコマお");
+                    //MessageBox.Show("出戻りしたコマお");
                     for (int i = now - 1; i >= 0; i--)
                     {//以前のコマで選ばれた枝と入れ替える
                         string bridge0 = bridge[0].Name1 + " - " + bridge[0].Name2;
@@ -567,7 +586,7 @@ namespace Comarenkun
                             }
                             else
                             {//諦めてリセットする
-                                MessageBox.Show("諦めて非連結のまま進行したコマ");
+                                //MessageBox.Show("諦めて非連結のまま進行したコマ");
                                 break;
                             }
                             
@@ -663,7 +682,7 @@ namespace Comarenkun
                         //{
                         if (rankOdd)
                         {
-                            if ((e.Rank1 >= midrank && e.Rank2 <= midrank) || (e.Rank1 <= midrank && e.Rank2 >= midrank)
+                            if (((e.Rank1 >= midrank && e.Rank2 <= midrank) || (e.Rank1 <= midrank && e.Rank2 >= midrank))
                                 && e.DifferentGroup)
                             //条件(上位＜＝＞下位,所属が違う）に合う枝を見つけたら採用)
                             //条件はforループごとに徐々に緩める
@@ -677,7 +696,7 @@ namespace Comarenkun
                         }
                         else
                         {
-                            if ((e.Rank1 >= midrank && e.Rank2 < midrank) || (e.Rank1 < midrank && e.Rank2 >= midrank)
+                            if (((e.Rank1 >= midrank && e.Rank2 < midrank) || (e.Rank1 < midrank && e.Rank2 >= midrank))
                                 && e.DifferentGroup)
                             //条件(上位＜＝＞下位,所属が違う）に合う枝を見つけたら採用)
                             //条件はforループごとに徐々に緩める
@@ -749,6 +768,7 @@ namespace Comarenkun
                         int d2 = Degree(edges, nodes.Find(m => m.Name == e.Name2));//枝eの両端の次数を算出
                         if (d1 == minD || d2 == minD)//枝eが最小次数ならば
                         {
+                            sameGroupCounter++;
                             //if (NodeNumber(edges) > 3 * takyu)//選んだ枝のノードが関与する枝はすべて削除するため,枝を持つノード数=処理していない人数
                             //{
                                 //条件なし
@@ -764,7 +784,7 @@ namespace Comarenkun
                 if (ii == i)//これでも見つからないならば枝の選定状況をリセット(完全グラフから，このコマで既に選んだ枝のみを除いたグラフにedgesを置き換える)
                             //次数の低いノードから選択しているのでこの状況になるのは単純に残る枝数が足りていないときだと思われる
                 {
-                    MessageBox.Show("リセットしたコマ");
+                    //MessageBox.Show("リセットしたコマ");
                     resetCounter++;
                     //完全グラフを作成
                     edges = new List<Matching>();
@@ -901,7 +921,7 @@ namespace Comarenkun
                 List<Matching> bridge = IsConnected(nodes, edges);
                 if (bridge != null)
                 {//非連結
-                    MessageBox.Show("出戻りしたコマお");
+                    //MessageBox.Show("出戻りしたコマお");
                     for (int i = now - 1; i >= 0; i--)
                     {//以前のコマで選ばれた枝と入れ替える
                         string bridge0 = bridge[0].Name1 + " - " + bridge[0].Name2;
@@ -980,7 +1000,7 @@ namespace Comarenkun
                             }
                             else
                             {//諦めてリセットする
-                                MessageBox.Show("諦めて非連結のまま進行したコマ");
+                                //MessageBox.Show("諦めて非連結のまま進行したコマ");
                                 break;
                             }
 
@@ -1074,7 +1094,7 @@ namespace Comarenkun
                     {
                         if (rankOdd)
                         {
-                            if ((e.Rank1 >= midrank && e.Rank2 >= midrank) || (e.Rank1 <= midrank && e.Rank2 <= midrank)
+                            if (((e.Rank1 >= midrank && e.Rank2 >= midrank) || (e.Rank1 <= midrank && e.Rank2 <= midrank))
                             && e.DifferentGroup)
                             //条件(近い人同士,所属が違う）に合う枝を見つけたら採用)
                             //条件はforループごとに徐々に緩める
@@ -1088,7 +1108,7 @@ namespace Comarenkun
                         }
                         else
                         {
-                            if ((e.Rank1 >= midrank && e.Rank2 >= midrank) || (e.Rank1 < midrank && e.Rank2 < midrank)
+                            if (((e.Rank1 >= midrank && e.Rank2 >= midrank) || (e.Rank1 < midrank && e.Rank2 < midrank))
                             && e.DifferentGroup)
                             //条件(近い人同士,所属が違う）に合う枝を見つけたら採用)
                             //条件はforループごとに徐々に緩める
@@ -1133,6 +1153,7 @@ namespace Comarenkun
                         int d2 = Degree(edges, nodes.Find(m => m.Name == e.Name2));//枝eの両端の次数を算出
                         if (d1 == minD || d2 == minD)//枝eが最小次数ならば
                         {
+                            sameGroupCounter++;
                             //条件なし
                             edges.RemoveAll(hoge => hoge.Name1 == e.Name1 || hoge.Name2 == e.Name1
                                             || hoge.Name1 == e.Name2 || hoge.Name2 == e.Name2);//採用された枝の2ノードが関与する枝はすべて削除
@@ -1261,7 +1282,7 @@ namespace Comarenkun
                 List<Matching> bridge = IsConnected(nodes, edges);
                 if (bridge != null)
                 {//非連結
-                    MessageBox.Show("出戻りしたコマお");
+                    //MessageBox.Show("出戻りしたコマお");
                     for (int i = now - 1; i >= 0; i--)
                     {//以前のコマで選ばれた枝と入れ替える
                         string bridge0 = bridge[0].Name1 + " - " + bridge[0].Name2;
@@ -1340,7 +1361,7 @@ namespace Comarenkun
                             }
                             else
                             {//諦めてこのまま進み，たぶんリセットする
-                                MessageBox.Show("諦めて非連結のまま進行したコマ");
+                                //MessageBox.Show("諦めて非連結のまま進行したコマ");
                                 break;
                             }
 
@@ -1435,6 +1456,7 @@ namespace Comarenkun
                         int d2 = Degree(edges, nodes.Find(m => m.Name == e.Name2));//枝eの両端の次数を算出
                         if (d1 == minD || d2 == minD)//枝eが最小次数ならば
                         {
+                            sameGroupCounter++;
                             //条件なし
                             edges.RemoveAll(hoge => hoge.Name1 == e.Name1 || hoge.Name2 == e.Name1
                                             || hoge.Name1 == e.Name2 || hoge.Name2 == e.Name2);//採用された枝の2ノードが関与する枝はすべて削除
