@@ -19,7 +19,7 @@
 
 ### 起動
 
-ReleaseからComarenkun_Binary.zip(https://github.com/kojiK20/ComarenkunWPF/releases/latest/download/Comarenkun_Binary.zip)をダウンロード&解凍して下さい．内部に実行ファイルComarenkun.exeがあります．
+ReleaseからComarenkun_Binary.zipをダウンロード&解凍して下さい．内部に実行ファイルComarenkun.exeがあります．(https://github.com/kojiK20/ComarenkunWPF/releases/latest/download/Comarenkun_Binary.zip)
 
 ### メンバ/所属
 
