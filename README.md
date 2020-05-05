@@ -1,5 +1,5 @@
 # コマ練くん made by WPF
-
+![comarenkun](https://user-images.githubusercontent.com/50648545/81058208-e607c280-8f08-11ea-9a8f-f59947e7fb98.png)
 
 ## 概要
 
