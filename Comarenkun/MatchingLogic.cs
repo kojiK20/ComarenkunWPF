@@ -20,10 +20,12 @@ namespace Comarenkun
         int resetCounter;//マッチング中に選出状況をリセットした回数．1以上なら指定回数まで組みなおす
         int bridgeCounter;//マッチング中に橋を交換した回数．1以上なら指定回数まで組みなおす
         int sameGroupCounter;//マッチング中に所属制約を破った回数．1以上なら指定回数まで組みなおす
+        int ignoreRankCounter;//マッチング中にランク制約を破った回数．1以上なら指定回数まで組みなおす
         int loopCounter;//組みなおした回数
         int maxLoop;//指定回数
         int maxBridge;//指定回数
         int maxSameGroup;//指定回数
+        int maxIgnoreRank;//指定回数
 
         public string Matching(List<List<string>> participants, List<List<string>> increase, List<List<string>> decrease, List<string> configs)
         {//マッチングする
@@ -150,10 +152,12 @@ namespace Comarenkun
             resetCounter = 0;//マッチング中に選出状況をリセットした回数．1以上なら指定回数まで組みなおす
             bridgeCounter = 0;
             sameGroupCounter = 0;
+            ignoreRankCounter = 0;
             loopCounter = 0;//組みなおした回数
             maxLoop = 1000;//指定回数
             maxBridge = 500;
             maxSameGroup = 100;
+            maxIgnoreRank = 50;
             List<Matching> edgesOrigin = new List<Matching>(edges);//組みなおす際に使用する
             if (loopStopper == 0)//組み合わせ生成処理
             {
@@ -229,7 +233,21 @@ namespace Comarenkun
                         }
                         
                     }
-                    if (sameGroupCounter > 0 && loopCounter < maxSameGroup)
+                    if (ignoreRankCounter > 0 && loopCounter < maxIgnoreRank)
+                    {
+                        //ランク制約が破られていれば組みなおす
+                        set = new List<ResultSet>();
+                        edges = new List<Matching>(edgesOrigin);
+                        chosenMatchs = new List<Matching>();
+                        loopCounter++;
+                        ignoreRankCounter = 0;
+                        sameGroupCounter = 0;
+                        bridgeCounter = 0;
+                        resetCounter = 0;
+                        i = -1;
+                        //MessageBox.Show("組みなおし回数：" + loopCounter.ToString() + "\nランク制約を無視したマッチングが検出されたので組みなおしてみたコマ");
+                    }
+                    else if (sameGroupCounter > 0 && loopCounter < maxSameGroup)
                     {
                         //所属制約が破られていれば組みなおす
                         set = new List<ResultSet>();
@@ -267,7 +285,7 @@ namespace Comarenkun
                         i = -1;
                         //MessageBox.Show("組みなおし回数：" + loopCounter.ToString() + "\nリセットが検出されたので組みなおしてみたコマ");
                     }
-                    else if(loopCounter >= maxLoop)
+                    else if (loopCounter >= maxLoop)
                     {
                         MessageBox.Show("あまり良くない組み合わせが出たかもしれないコマ...\n組みなおしを推奨するコマ");
                     }
@@ -746,16 +764,18 @@ namespace Comarenkun
                         {
                             //if (NodeNumber(edges) > 3 * takyu)//選んだ枝のノードが関与する枝はすべて削除するため
                             //{
-                                if (e.DifferentGroup)
-                                //条件(所属が異なる）に合う枝を見つけたら採用)
-                                //条件はforループごとに徐々に緩める
-                                {
-                                    edges.RemoveAll(hoge => hoge.Name1 == e.Name1 || hoge.Name2 == e.Name1
-                                                    || hoge.Name1 == e.Name2 || hoge.Name2 == e.Name2);//採用された枝の2ノードが関与する枝はすべて削除
-                                    matchs.Add(e);
-                                    i++;
-                                    break;
-                                }
+                            if (e.DifferentGroup)
+                            //条件(所属が異なる）に合う枝を見つけたら採用)
+                            //条件はforループごとに徐々に緩める
+                            {
+                                ignoreRankCounter++;
+
+                                edges.RemoveAll(hoge => hoge.Name1 == e.Name1 || hoge.Name2 == e.Name1
+                                                || hoge.Name1 == e.Name2 || hoge.Name2 == e.Name2);//採用された枝の2ノードが関与する枝はすべて削除
+                                matchs.Add(e);
+                                i++;
+                                break;
+                            }
                             //}
                         }
                     }
@@ -1136,6 +1156,8 @@ namespace Comarenkun
                             //条件(所属が異なる）に合う枝を見つけたら採用)
                             //条件はforループごとに徐々に緩める
                             {
+                                ignoreRankCounter++;
+
                                 edges.RemoveAll(hoge => hoge.Name1 == e.Name1 || hoge.Name2 == e.Name1
                                                 || hoge.Name1 == e.Name2 || hoge.Name2 == e.Name2);//採用された枝の2ノードが関与する枝はすべて削除
                                 matchs.Add(e);
