@@ -586,9 +586,10 @@ namespace Comarenkun
                 ranks.Add(s.Rank);
             }
             ranks.Sort();
-            if (ranks.Count % 2 == 1)
+            bool rankOdd = ranks.Count % 2 == 1;
+            if (rankOdd)
             {
-                midrank = ranks[(ranks.Count + 1) / 2];
+                midrank = ranks[(ranks.Count + 1) / 2 - 1];
             }
             else
             {
@@ -660,6 +661,8 @@ namespace Comarenkun
                     {
                         //if (NodeNumber(edges) > 3 * takyu)//選んだ枝のノードが関与する枝はすべて削除するため
                         //{
+                        if (rankOdd)
+                        {
                             if ((e.Rank1 >= midrank && e.Rank2 <= midrank) || (e.Rank1 <= midrank && e.Rank2 >= midrank)
                                 && e.DifferentGroup)
                             //条件(上位＜＝＞下位,所属が違う）に合う枝を見つけたら採用)
@@ -671,6 +674,21 @@ namespace Comarenkun
                                 i++;
                                 break;
                             }
+                        }
+                        else
+                        {
+                            if ((e.Rank1 >= midrank && e.Rank2 < midrank) || (e.Rank1 < midrank && e.Rank2 >= midrank)
+                                && e.DifferentGroup)
+                            //条件(上位＜＝＞下位,所属が違う）に合う枝を見つけたら採用)
+                            //条件はforループごとに徐々に緩める
+                            {
+                                edges.RemoveAll(hoge => hoge.Name1 == e.Name1 || hoge.Name2 == e.Name1
+                                                || hoge.Name1 == e.Name2 || hoge.Name2 == e.Name2);//採用された枝の2ノードが関与する枝はすべて削除
+                                matchs.Add(e);
+                                i++;
+                                break;
+                            }
+                        }
                         //}
                     }
                 }
@@ -981,9 +999,10 @@ namespace Comarenkun
                 ranks.Add(s.Rank);
             }
             ranks.Sort();
-            if (ranks.Count % 2 == 1)
+            bool rankOdd = ranks.Count % 2 == 1;
+            if (rankOdd)
             {
-                midrank = ranks[(ranks.Count + 1) / 2];
+                midrank = ranks[(ranks.Count + 1) / 2 - 1];
             }
             else
             {
@@ -1053,17 +1072,35 @@ namespace Comarenkun
                     int d2 = Degree(edges, nodes.Find(m => m.Name == e.Name2));//枝eの両端の次数を算出
                     if (d1 == minD || d2 == minD)//枝eが最小次数ならば
                     {
-                        if ((e.Rank1 >= midrank && e.Rank2 >= midrank) || (e.Rank1 <= midrank && e.Rank2 <= midrank)
-                            && e.DifferentGroup)
-                        //条件(近い人同士,所属が違う）に合う枝を見つけたら採用)
-                        //条件はforループごとに徐々に緩める
+                        if (rankOdd)
                         {
-                            edges.RemoveAll(hoge => hoge.Name1 == e.Name1 || hoge.Name2 == e.Name1
-                                            || hoge.Name1 == e.Name2 || hoge.Name2 == e.Name2);//採用された枝の2ノードが関与する枝はすべて削除
-                            matchs.Add(e);
-                            i++;
-                            break;
+                            if ((e.Rank1 >= midrank && e.Rank2 >= midrank) || (e.Rank1 <= midrank && e.Rank2 <= midrank)
+                            && e.DifferentGroup)
+                            //条件(近い人同士,所属が違う）に合う枝を見つけたら採用)
+                            //条件はforループごとに徐々に緩める
+                            {
+                                edges.RemoveAll(hoge => hoge.Name1 == e.Name1 || hoge.Name2 == e.Name1
+                                                || hoge.Name1 == e.Name2 || hoge.Name2 == e.Name2);//採用された枝の2ノードが関与する枝はすべて削除
+                                matchs.Add(e);
+                                i++;
+                                break;
+                            }
                         }
+                        else
+                        {
+                            if ((e.Rank1 >= midrank && e.Rank2 >= midrank) || (e.Rank1 < midrank && e.Rank2 < midrank)
+                            && e.DifferentGroup)
+                            //条件(近い人同士,所属が違う）に合う枝を見つけたら採用)
+                            //条件はforループごとに徐々に緩める
+                            {
+                                edges.RemoveAll(hoge => hoge.Name1 == e.Name1 || hoge.Name2 == e.Name1
+                                                || hoge.Name1 == e.Name2 || hoge.Name2 == e.Name2);//採用された枝の2ノードが関与する枝はすべて削除
+                                matchs.Add(e);
+                                i++;
+                                break;
+                            }
+                        }
+                        
                     }
                 }
 

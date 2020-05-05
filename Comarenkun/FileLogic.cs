@@ -25,10 +25,10 @@ namespace Comarenkun
     public class FileLogic
     {
         private MainWindow window;
-        private string memberFilePath = "../../Texts/members.txt";//絶対パスは"pack://application:,,,/Comarenkun;component//"
-        private string foreignerFilePath = "../../Texts/foreigners.txt";
-        private string configFilePath = "../../Texts/config.txt";
-        private string LINEtokenFilePath = "../../Texts/LINEtoken.txt";
+        private string memberFilePath = "Texts/members.txt";//絶対パスは"pack://application:,,,/Comarenkun;component//"
+        private string foreignerFilePath = "Texts/foreigners.txt";
+        private string configFilePath = "Texts/config.txt";
+        private string LINEtokenFilePath = "Texts/LINEtoken.txt";
         StreamReader sr;//config
         StreamReader sr1;//member
         StreamReader sr2;//foreigner
@@ -45,13 +45,13 @@ namespace Comarenkun
 
         public void CreateIfNotExistsConfig()
         {
-            if (!Directory.Exists("../../Texts"))
+            if (!Directory.Exists("Texts"))
             {
-                Directory.CreateDirectory("../../Texts");
+                Directory.CreateDirectory("Texts");
             }
-            if (!File.Exists("../../Texts/config.txt"))
+            if (!File.Exists("Texts/config.txt"))
             {
-                //File.Create("../../Texts/members.txt");
+                //File.Create("Texts/members.txt");
                 sw = new StreamWriter(configFilePath, false, Encoding.GetEncoding("Shift_JIS"));
                 sw.WriteLine("table:10\ncoma:5\n1\n1\n2\n1\n0");
                 sw.Close();
@@ -117,19 +117,19 @@ namespace Comarenkun
                 string path = "";
                 for (int i = 1; true; i++)
                 {
-                    if (File.Exists("../../Texts/config_copy.txt") && File.Exists("../../Texts/config_copy" + i.ToString() + ".txt"))
+                    if (File.Exists("Texts/config_copy.txt") && File.Exists("Texts/config_copy" + i.ToString() + ".txt"))
                     {//コピー先ファイル名が重複しているとき連番にする
                     }
-                    else if (File.Exists("../../Texts/config_copy.txt"))
+                    else if (File.Exists("Texts/config_copy.txt"))
                     {
                         path = "config_copy" + i.ToString() + ".txt";
-                        File.Copy(configFilePath, "../../Texts/" + path);
+                        File.Copy(configFilePath, "Texts/" + path);
                         break;
                     }
                     else
                     {
                         path = "config_copy.txt";
-                        File.Copy(configFilePath, "../../Texts/" + path);
+                        File.Copy(configFilePath, "Texts/" + path);
                         break;
                     }
                 }
@@ -147,20 +147,20 @@ namespace Comarenkun
 
         public void CreateIfNotExists()
         {
-            if (!Directory.Exists("../../Texts"))
+            if (!Directory.Exists("Texts"))
             {
-                Directory.CreateDirectory("../../Texts");
+                Directory.CreateDirectory("Texts");
             }
-            if (!File.Exists("../../Texts/members.txt"))
+            if (!File.Exists("Texts/members.txt"))
             {
-                //File.Create("../../Texts/members.txt");
+                //File.Create("Texts/members.txt");
                 sw1 = new StreamWriter(memberFilePath, false, Encoding.GetEncoding("Shift_JIS"));
                 sw1.WriteLine("1:sample:");
                 sw1.Close();
             }
-            if (!File.Exists("../../Texts/foreigners.txt"))
+            if (!File.Exists("Texts/foreigners.txt"))
             {
-                //File.Create("../../Texts/foreigners.txt");
+                //File.Create("Texts/foreigners.txt");
                 sw2 = new StreamWriter(foreignerFilePath, false, Encoding.GetEncoding("Shift_JIS"));
                 sw2.WriteLine(":sample:");
                 sw2.Close();
@@ -292,19 +292,19 @@ namespace Comarenkun
                 string path = "";
                 for (int i = 1; true; i++)
                 {
-                    if (File.Exists("../../Texts/members_copy.txt") && File.Exists("../../Texts/members_copy" + i.ToString() + ".txt"))
+                    if (File.Exists("Texts/members_copy.txt") && File.Exists("Texts/members_copy" + i.ToString() + ".txt"))
                     {//コピー先ファイル名が重複しているとき連番にする
                     }
-                    else if (File.Exists("../../Texts/members_copy.txt"))
+                    else if (File.Exists("Texts/members_copy.txt"))
                     {
                         path = "members_copy" + i.ToString() + ".txt";
-                        File.Copy(memberFilePath, "../../Texts/" + path);
+                        File.Copy(memberFilePath, "Texts/" + path);
                         break;
                     }
                     else
                     {
                         path = "members_copy.txt";
-                        File.Copy(memberFilePath, "../../Texts/" + path);
+                        File.Copy(memberFilePath, "Texts/" + path);
                         break;
                     }
                 }
@@ -349,19 +349,19 @@ namespace Comarenkun
                 string path = "";
                 for (int i = 1; true; i++)
                 {
-                    if (File.Exists("../../Texts/foreigners_copy.txt") && File.Exists("../../Texts/foreigners_copy" + i.ToString() + ".txt"))
+                    if (File.Exists("Texts/foreigners_copy.txt") && File.Exists("Texts/foreigners_copy" + i.ToString() + ".txt"))
                     {//コピー先ファイル名が重複しているとき連番にする
                     }
-                    else if (File.Exists("../../Texts/foreigners_copy.txt"))
+                    else if (File.Exists("Texts/foreigners_copy.txt"))
                     {
                         path = "foreigners_copy" + i.ToString() + ".txt";
-                        File.Copy(foreignerFilePath, "../../Texts/" + path);
+                        File.Copy(foreignerFilePath, "Texts/" + path);
                         break;
                     }
                     else
                     {
                         path = "foreigners_copy.txt";
-                        File.Copy(foreignerFilePath, "../../Texts/" + path);
+                        File.Copy(foreignerFilePath, "Texts/" + path);
                         break;
                     }
                 }
@@ -1004,9 +1004,9 @@ namespace Comarenkun
         }
         public void AddLINEToken(string token)
         {
-            if (!Directory.Exists("../../Texts"))
+            if (!Directory.Exists("Texts"))
             {
-                Directory.CreateDirectory("../../Texts");
+                Directory.CreateDirectory("Texts");
             }
             //ファイルがどんな状況でも上書き
             sw3 = new StreamWriter(LINEtokenFilePath, false, Encoding.GetEncoding("Shift_JIS"));

@@ -937,7 +937,7 @@ namespace Comarenkun
                 }
                 else
                 {
-                    string rank;
+                    /*string rank;
                     if (preSelectedGroup.Content.ToString() == "部内")
                     {//部内者はランクの変更も受け付ける
                         rank = Interaction.InputBox("変更後のランクを入力して下さい．\nランクの変更が不要なら空文字を入力もしくはキャンセルして下さい．", "Comarenkun", preRank);
@@ -968,9 +968,9 @@ namespace Comarenkun
                             MembersSetToListBox(preSelectedGroup.Content.ToString());
                         }
 
-                    }
-                    else
-                    {//foreigner
+                    }*/
+                    //else
+                    //{//foreigner
                         name = name.Replace(":", "");//:はファイル処理に使用しているので消す
                         if (name.Length > 30)
                         {
@@ -985,7 +985,7 @@ namespace Comarenkun
                         flogic.ChangeMember(preRank, preName, name, preSelectedGroup.Content.ToString());
                         memberNames = flogic.AllGroups();
                         MembersSetToListBox(preSelectedGroup.Content.ToString());
-                    }
+                    //}
 
                 }
             }else if (nowMatching)
