@@ -178,7 +178,7 @@ namespace Comarenkun
                         edges = set[i].Edges;//残っている枝
                         takyuChosen = set[i].TakyuChosen;//多球に選ばれた人
                     }
-                    if (set[i].Result == "error台が足りません")
+                    if (set[i].Result == "ERROR:台が足りませんコマ")
                     {
                         MessageBox.Show(set[i].Result);
                         loopStopper = 1;
