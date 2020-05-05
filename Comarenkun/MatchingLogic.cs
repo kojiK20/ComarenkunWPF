@@ -17,6 +17,11 @@ namespace Comarenkun
         }
 
         int leave = 0;
+        int resetCounter;//マッチング中に選出状況をリセットした回数．1以上なら指定回数まで組みなおす
+        int bridgeCounter;//マッチング中に橋を交換した回数．1以上なら指定回数まで組みなおす
+        int loopCounter;//組みなおした回数
+        int maxLoop;//指定回数
+        int maxBridge;//指定回数
 
         public string Matching(List<List<string>> participants, List<List<string>> increase, List<List<string>> decrease, List<string> configs)
         {//マッチングする
@@ -140,6 +145,12 @@ namespace Comarenkun
             }
 
             List<Matching> chosenMatchs = new List<Matching>();//選んだ枝を保存，枝のリセットとともにリセット
+            resetCounter = 0;//マッチング中に選出状況をリセットした回数．1以上なら指定回数まで組みなおす
+            bridgeCounter = 0;
+            loopCounter = 0;//組みなおした回数
+            maxLoop = 1000;//指定回数
+            maxBridge = 100;
+            List<Matching> edgesOrigin = new List<Matching>(edges);//組みなおす際に使用する
             if (loopStopper == 0)//組み合わせ生成処理
             {
                 List<string> takyuChosen = new List<string>();
@@ -212,8 +223,36 @@ namespace Comarenkun
                         {
                             edges.RemoveAll(pyo => pyo.Name1 == dc || pyo.Name2 == dc);
                         }
+                        
                     }
-                    
+                    if (bridgeCounter > 0 && loopCounter < maxBridge)
+                    {
+                        //リセットされていれば組みなおす
+                        set = new List<ResultSet>();
+                        edges = new List<Matching>(edgesOrigin);
+                        chosenMatchs = new List<Matching>();
+                        loopCounter++;
+                        bridgeCounter = 0;
+                        resetCounter = 0;
+                        i = -1;
+                        MessageBox.Show("組みなおし回数：" + loopCounter.ToString() + "\n橋の交換が検出されたので組みなおしてみたコマ");
+                    }
+                    else if (resetCounter > 0 && loopCounter < maxLoop)
+                    {//リセットされていれば組みなおす
+                        set = new List<ResultSet>();
+                        edges = new List<Matching>(edgesOrigin);
+                        chosenMatchs = new List<Matching>();
+                        loopCounter++;
+                        //bridgeCounter = 0;
+                        resetCounter = 0;
+                        i = -1;
+                        MessageBox.Show("組みなおし回数：" + loopCounter.ToString() + "\nリセットが検出されたので組みなおしてみたコマ");
+                    }
+                    else if(loopCounter >= maxLoop)
+                    {
+                        MessageBox.Show("あまり良くない組み合わせが出たかもしれないコマ...\n組みなおしを推奨するコマ");
+                    }
+
                 }
             }
             //throw new System.ArgumentException("error", "original");
@@ -522,11 +561,13 @@ namespace Comarenkun
                                 set[i].Edges.RemoveAll(e => e.Equal(exchangeNeighborToBridge1));
                                 edges.Add(exchangeNeighbor);
                                 edges.RemoveAll(e => e.Equal(exchangeNeighborToBridge1));
+
+                                bridgeCounter++;
                                 break;
                             }
                             else
                             {//諦めてリセットする
-                                MessageBox.Show("諦めてリセットしたコマ");
+                                MessageBox.Show("諦めて非連結のまま進行したコマ");
                                 break;
                             }
                             
@@ -705,6 +746,8 @@ namespace Comarenkun
                 if (ii == i)//これでも見つからないならば枝の選定状況をリセット(完全グラフから，このコマで既に選んだ枝のみを除いたグラフにedgesを置き換える)
                             //次数の低いノードから選択しているのでこの状況になるのは単純に残る枝数が足りていないときだと思われる
                 {
+                    MessageBox.Show("リセットしたコマ");
+                    resetCounter++;
                     //完全グラフを作成
                     edges = new List<Matching>();
                     chosenMatchs = new List<Matching>();
@@ -913,11 +956,13 @@ namespace Comarenkun
                                 set[i].Edges.RemoveAll(e => e.Equal(exchangeNeighborToBridge1));
                                 edges.Add(exchangeNeighbor);
                                 edges.RemoveAll(e => e.Equal(exchangeNeighborToBridge1));
+
+                                bridgeCounter++;
                                 break;
                             }
                             else
                             {//諦めてリセットする
-                                MessageBox.Show("諦めてリセットしたコマ");
+                                MessageBox.Show("諦めて非連結のまま進行したコマ");
                                 break;
                             }
 
@@ -1063,6 +1108,8 @@ namespace Comarenkun
                 if (ii == i)//これでも見つからないならば枝の選定状況をリセット(完全グラフから，このコマで既に選んだ枝のみを除いたグラフにedgesを置き換える)
                             //次数の低いノードから選択しているのでこの状況になるのは単純に残る枝数が足りていないときだと思われる
                 {
+                    MessageBox.Show("リセットしたコマ");
+                    resetCounter++;
                     //完全グラフを作成
                     edges = new List<Matching>();
                     chosenMatchs = new List<Matching>();
@@ -1250,11 +1297,13 @@ namespace Comarenkun
                                 set[i].Edges.RemoveAll(e => e.Equal(exchangeNeighborToBridge1));
                                 edges.Add(exchangeNeighbor);
                                 edges.RemoveAll(e => e.Equal(exchangeNeighborToBridge1));
+
+                                bridgeCounter++;
                                 break;
                             }
                             else
-                            {//諦めてリセットする
-                                MessageBox.Show("諦めてリセットしたコマ");
+                            {//諦めてこのまま進み，たぶんリセットする
+                                MessageBox.Show("諦めて非連結のまま進行したコマ");
                                 break;
                             }
 
@@ -1361,6 +1410,8 @@ namespace Comarenkun
                 if (ii == i)//これでも見つからないならば枝の選定状況をリセット(完全グラフから，このコマで既に選んだ枝のみを除いたグラフにedgesを置き換える)
                             //次数の低いノードから選択しているのでこの状況になるのは単純に残る枝数が足りていないときだと思われる
                 {
+                    MessageBox.Show("リセットしたコマ");
+                    resetCounter++;
                     //完全グラフを作成
                     edges = new List<Matching>();
                     chosenMatchs = new List<Matching>();

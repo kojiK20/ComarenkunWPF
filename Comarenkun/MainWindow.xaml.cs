@@ -200,7 +200,7 @@ namespace Comarenkun
                 increase.Add(new List<string>());
                 decrease.Add(new List<string>());
             }
-            increase[0] = participants[0];//参照渡し
+            //increase[0] = participants[0];//参照渡し
         }
         public void Window_Loaded(object sender, RoutedEventArgs e)
         {//このタイミングでバインディングする必要がある（ない）
@@ -1011,6 +1011,7 @@ namespace Comarenkun
             if (participants[coma - 1].IndexOf(name) == -1)
             {//まだ選ばれていない場合→選択
                 participants[coma - 1].Add(name);
+                increase[coma - 1].Add(name);
                 
                 if (this.participantNamesTextBox.Text.EndsWith("："))
                 {
@@ -1027,6 +1028,7 @@ namespace Comarenkun
             else
             {//選択済み→キャンセル
                 participants[coma -1].Remove(name);
+                increase[coma - 1].Remove(name);
                 this.participantNamesTextBox.Text = this.participantNamesTextBox.Text.Replace("/ " + name, "");
                 this.participantNamesTextBox.Text = this.participantNamesTextBox.Text.Replace(name + "/ ", "");
                 this.participantNamesTextBox.Text = this.participantNamesTextBox.Text.Replace(name, "");
