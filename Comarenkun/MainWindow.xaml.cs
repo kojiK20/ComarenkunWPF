@@ -813,6 +813,7 @@ namespace Comarenkun
             else
             {
                 string rank = "";
+                int val = 0;
                 if (preSelectedGroup.Content.ToString() == "部内")
                 {
                     rank = Interaction.InputBox("新しく作成するメンバーのランクを入力して下さい．");
@@ -820,10 +821,10 @@ namespace Comarenkun
                     if (!int.TryParse(rank, out rankNum))
                     {//ランクが整数値ではない
                         MessageBox.Show("ランクは整数値にして下さい．");
+                        val = 1;
                     }
                 }
-                
-                else
+                if(val == 0)
                 {//ランクが整数値なら進める
                     string name = Interaction.InputBox("新しく作成するメンバーの名前を入力して下さい．");
                     name = name.Replace(":", "");//:はファイル処理に使用しているので消す
@@ -838,7 +839,7 @@ namespace Comarenkun
                         memberNames = flogic.AllMemberNames();//更新
                         MembersSetToListBox(preSelectedGroup.Content.ToString());//members.txtファイル読んで指定のグループ名のメンバーをリストボックスにセット
                     }
-                }   
+                } 
             }
         }
         private void memberSortButton_Click(object sender, RoutedEventArgs e)
