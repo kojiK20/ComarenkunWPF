@@ -190,7 +190,7 @@ namespace Comarenkun
         {//コンテンツが縦書きの場合
          //縦方向のマージンに文字数contentSizeが必要
             double fontSize = 1;
-            if (name == "GroupNameChangeButton" || name == "GroupAddButton" || name == "MemberAddButton")
+            if (name == "GroupNameChangeButton")
             {
                 fontSize = columnSize * p[3] * 1.0 / contentSize * 0.4;
             }
@@ -217,6 +217,10 @@ namespace Comarenkun
             //Marginは左上右下の順
             double left = rowSize * trueWidth / 2 - fontSize / 2;
             double top = columnSize * trueHeight / 2 - fontSize * contentSize / 2;//縦のマージンはy座標の中央値-フォントサイズ/2(WPFではwindowの座標もフォントサイズもピクセル),ボタンが右上がりなためy座標1つぶん上に配置
+            if(name == "GroupAddButton" || name == "GroupDeleteButton" || name == "MemberAddButton")
+            {
+                top = top * 0.8;
+            }
             double right = -windowWidth + rowSize * p[2];
             double bottom = -windowHeight + columnSize * p[3];//右と下のマージンがないと画面一杯に範囲が広がってしまう
             Thickness result = new Thickness(left, top, right, bottom);

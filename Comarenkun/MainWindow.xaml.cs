@@ -19,6 +19,7 @@ using System.Runtime.CompilerServices;
 using Microsoft.VisualBasic;
 using System.Net;
 using System.Web;
+using System.Threading;
 
 namespace Comarenkun
 {
@@ -54,9 +55,9 @@ namespace Comarenkun
         string format = "F2";//double->stringの丸めオプション
 
         SolidColorBrush bunai = new SolidColorBrush(Color.FromRgb(100, 200, 234));
-        SolidColorBrush nashi = new SolidColorBrush(Color.FromRgb(234, 150, 200));
+        SolidColorBrush nashi = new SolidColorBrush(Color.FromRgb(234, 184, 200));
         SolidColorBrush foreign = new SolidColorBrush(Color.FromRgb(50, 234, 100));
-        SolidColorBrush defaultFore = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+        SolidColorBrush defaultGroupFore = new SolidColorBrush(Color.FromRgb(32,32,32));
         SolidColorBrush selectedGroupFore = new SolidColorBrush(Color.FromRgb(96, 96, 96));
         SolidColorBrush selectedGroupBack = new SolidColorBrush(Color.FromRgb(255, 255, 255));
         SolidColorBrush defaultMemberBack = new SolidColorBrush(Color.FromRgb(234, 150, 50));
@@ -65,8 +66,23 @@ namespace Comarenkun
         SolidColorBrush decMemberBack = new SolidColorBrush(Color.FromRgb(50, 150, 200));//あおめ
         SolidColorBrush selectedDecMemberBack = new SolidColorBrush(Color.FromRgb(100, 50, 234));
 
+        SolidColorBrush groupAddBack = new SolidColorBrush(Color.FromRgb(0, 176, 0));
 
-
+        //以下，Storyboardの呼び出しに使用
+        string GroupAddButtonMouseEnter = "GroupAddButtonMouseEnter";
+        string GroupAddButtonMouseLeave = "GroupAddButtonMouseLeave";
+        string GroupAddButtonClick = "GroupAddButtonClick";
+        string GroupAddMotion = "GroupAddMotion";
+        string GroupDeleteButtonMouseEnter = "GroupDeleteButtonMouseEnter";
+        string GroupDeleteButtonMouseLeave = "GroupDeleteButtonMouseLeave";
+        string GroupDeleteButtonClick = "GroupDeleteButtonClick";
+        string GroupOpenButtonMouseEnter = "GroupOpenButtonMouseEnter";
+        string GroupOpenButtonMouseLeave = "GroupOpenButtonMouseLeave";
+        string GroupOpenButtonClick = "GroupOpenButtonClick";
+        string GroupNameChangeButtonMouseEnter = "GroupNameChangeButtonMouseEnter";
+        string GroupNameChangeButtonMouseLeave = "GroupNameChangeButtonMouseLeave";
+        string GroupNameChangeButtonClick = "GroupNameChangeButtonClick";
+        string GroupButtonClickInGroup = "GroupButtonClickInGroup";
 
         //params配列は<座標列(x座標)><座標行(y座標)><列数(横幅)><行数(縦幅)>を格納
         //さらに多角形ならば，その長方形に対し，左上を基準とした
@@ -82,7 +98,7 @@ namespace Comarenkun
         double[] backObjectParams5 = { 11.5, 0, 5, 30, 0, 0, 0, 0, 0, 0 };//中央白線
         double[] headerParams = { 0, 0, 30, 3, 0, 0, 0, 0, 0, -2 };//ヘッダの傾き2/30
         double[] headerAccentParams = { 0, 0, 30, 3.75, 0, 0, 0, 0, 0, -2.2 };
-        double[] footerParams = { 0, 21 - 1 / 15, 30, 9, 0, 0, 0, 1, 0, 0 };
+        double[] footerParams = { 0, 21 - 1 / 15, 30, 9, 0, 0, 0, 1, 0, 0 };//フッタの傾き1/30
         double[] footerBottomParams = { 0, 22.2 - 1 / 15, 30 };//footerのテンプレートを利用するので座標のみでよい
         double[] footerAccentParams = { 0, 21.8 - 1 / 15, 30, 0.6, 0, 0.2, 0, 1, 0, 0.8 };
         double[] footerCircleParams = { 24, 19, 14, 18 };
@@ -94,17 +110,17 @@ namespace Comarenkun
         
         double[] toMenuButtonParams = { 0, 0, 5, 24, 0, 0, -2, 0, 0, 0 };
 
-        double[] groupAddButtonParams = { 25.5, 1.5, 4.5, 20, 1, 0, 0, 0, 0, 0 };//groupNameChangeButtonの表示に合わせてパラメータを変える
-        double[] groupAddButtonParams2 = { 26, 11.5, 4.5, 10, 0.5, 0, 0, 0, 0, 0 };//groupNameChangeButtonが表示されてるとき用
-        double[] groupAddButtonParamsCopy = { 25.5, 1.5, 4.5, 20, 1, 0, 0, 0, 0, 0 };//↑から戻すとき用
+        double[] groupAddButtonParams = { 25.5, 2.5, 3.5, 17.5, 1, 0, 0, -4.0/15, 0, -1.5 };//groupNameChangeButtonの表示に合わせてパラメータを変える
+        double[] groupAddButtonParams2 = { 26, 11.5, 3, 8.5, 0.5, 0, 0, -5.0 / 15, 0, -1.5 };//groupNameChangeButtonが表示されてるとき用
+        double[] groupAddButtonParamsCopy = { 25.5, 2.5, 3.5, 17.5, 1, 0, 0, -4.0 / 15, 0, -1.5 };//↑から戻すとき用
         double[] groupNameChangeButtonParams = { 5.1, 13.5, 6.5, 6.5 };
-        double[] groupDeleteButtonParams = { 25.5, 1.5, 4.5, 10, 0.5, 0, 0, 0, 0, 0 };
+        double[] groupDeleteButtonParams = { 25.5, 2.5, 3.5, 8.5, 0.5, 0, 0, -4.0/15, 0, -5.0/15 };
         double[] groupOpenButtonParams = { 4.2, 4, 7.5, 7.5 };
         double[] groupButtonsParams = { 11, 3.1, 14.5, 19 };
         double[] groupButtonParams = { 0, 0, 13, 3, 1, 0, 0, 0, 0, 0 };//メンバ画面で所属を選択するボタン
 
-        double[] memberAddButtonParams = { 25.6, 1.5, 4.4, 20, 1, 0, 0, 0, 0, 0 };
-        double[] memberGroupLabelParams = { 23, 3.75, 3, 13.25, 0, 0, 0, 0, 0, 0 };//メンバ画面で所属名を表示
+        double[] memberAddButtonParams = { 25.5, 2.5, 3.5, 17.5, 1, 0, 0, -4.0 / 15, 0, -1.5 };//{ 25.6, 1.5, 4.4, 20, 1, 0, 0, 0, 0, 0 };
+        double[] memberGroupLabelParams = { 22.5, 3.75, 3, 13.25, 0, 0, 0, 0, 0, 0 };//メンバ画面で所属名を表示
         double[] memberSortButtonParams = { 22.5, 17, 3.5, 3, 0, 0, 0, 0, 3.0/20, 0 };
         double[] memberButtonsParams = { 7, 5, 15, 16};//所属選択後にメンバ編集するためのボタン
         double[] memberRankButtonParams = { 0, 0, 2.2, 2, 0, 0, 0, 0, -0.2, 0 };
@@ -117,9 +133,9 @@ namespace Comarenkun
         double[] participantMemberButtonsParams = { 15, 5, 10.5, 17.75 };//マッチング画面でのメンバーListBox
         double[] participantRankLabelParams = { 0, 0, 1, 2, 0, 0, 1.4, 0, 1, 0.5, 0.6, 0 };
         double[] participantMemberButtonParams = { 2, 0, 7.5, 2, 0, 0, 0, 0, 0, 0 };
-        double[] nextButtonParams = { 26, 1, 4, 20, 0.5, 0, 0, 0, 0, 0 };
+        double[] nextButtonParams = { 25.5, 1, 4.5, 20, 1, 0, 0, 0, 0, 0 };
         double[] participantNamesBackgroundParams = { 0, 3.6, 30, 1.2, 0, 0, 0, 0, 0, 0 };
-        double[] participantNamesSumBackgroundParams = { 4, 4, 21.5, 16.5, 4.0/3, 0, 0, -7.0/5, 0.4, 21.5/30 };
+        double[] participantNamesSumBackgroundParams = { 4, 4, 21, 16.5, 4.0/3, 0, 0, -7.0/5, 21.0/20, 21.5/30 };
         double[] participantNamesTextBoxparams = { 4, 3.6, 22, 1.2 };//選択された参加者を表示
         double[] participantNamesSumTextBoxParams = { 5.5, 4, 20, 16.5 };//選択された参加者のまとめを表示
         double[] LINESendButtonParams = { 22, 0, 8, 3, 0, 0, 0, 0, 0, 0 };
@@ -378,6 +394,17 @@ namespace Comarenkun
             removeClickEffect();
         }
 
+        public void StoryBegin(string name)
+        {
+            Storyboard story = (Storyboard)this.FindResource(name);
+            story.Begin();
+        }
+        public void StoryStop(string name)
+        {
+            Storyboard story = (Storyboard)this.FindResource(name);
+            story.Stop();
+        }
+
         private void memberButton_MouseEnter(object sender, RoutedEventArgs e)
         {
             Storyboard enter = (Storyboard)this.FindResource("MemberButtonMouseEnter");
@@ -434,8 +461,9 @@ namespace Comarenkun
         }
 
         bool isGroupSelected = false;
-        Button preSelectedGroup = new Button();//選択済みのボタン(1つのみ保持)
-        private void Group_Click(object sender, RoutedEventArgs e)
+        Button preSelectedGroup = null;//選択済みのボタン(1つのみ保持)
+        bool storyFlag = false;//InGroup
+        private async void Group_Click(object sender, RoutedEventArgs e)
         {
             //senderに押されたボタンが格納される
             Button button = (Button)sender;
@@ -443,9 +471,10 @@ namespace Comarenkun
             //MessageBox.Show(o);
 
             //色の変更処理//
-            if (!isGroupSelected)
+            if (preSelectedGroup == null)
             {//どのボタンも押していない
                 isGroupSelected = true;
+                storyFlag = true;
                 //ButtonDarken(button);
                 button.Background = selectedGroupBack;
                 button.Foreground = selectedGroupFore;
@@ -460,17 +489,17 @@ namespace Comarenkun
                 if (name == "部内")
                 {
                     preSelectedGroup.Background = bunai;
-                    preSelectedGroup.Foreground = defaultFore;
+                    preSelectedGroup.Foreground = defaultGroupFore;
                 }
                 else if (name == "所属ナシ")
                 {
                     preSelectedGroup.Background = nashi;
-                    preSelectedGroup.Foreground = defaultFore;
+                    preSelectedGroup.Foreground = defaultGroupFore;
                 }
                 else
                 {
                     preSelectedGroup.Background = foreign;
-                    preSelectedGroup.Foreground = defaultFore;
+                    preSelectedGroup.Foreground = defaultGroupFore;
                 }
                 //ButtonDarken(button);//同じボタンを選択した際は打ち消される
                 button.Background = selectedGroupBack;
@@ -482,12 +511,21 @@ namespace Comarenkun
 
             if (nowGroup)
             {
+                StoryStop(GroupDeleteButtonClick);
+
                 this.groupDeleteButton.Visibility = Visibility.Visible;
                 this.groupOpenButton.Visibility = Visibility.Visible;
                 this.groupAddButton.Content = "追\n加";
+                this.groupNameChangeButton.Visibility = Visibility.Visible;//3つのGroup操作ボタンを出現させる
+                if(storyFlag)
+                {
+                    StoryStop(GroupButtonClickInGroup);
+                    storyFlag = false;
+                    StoryBegin(GroupButtonClickInGroup);
+                    await Task.Delay(100);
+                }
                 groupAddButtonParams = groupAddButtonParams2;
                 PolygonButtonSet("GroupAddButton", this.groupAddButton, groupAddButtonParams, noShadow);//形が変わるのでテンプレート更新
-                this.groupNameChangeButton.Visibility = Visibility.Visible;//3つのGroup操作ボタンを出現させる
             }
             else if (nowMatching)
             {
@@ -603,13 +641,18 @@ namespace Comarenkun
         private void GroupAdd_MouseEnter(object sender, RoutedEventArgs e)
         {
             ButtonBrighten((Button)sender);
+            StoryBegin(GroupAddButtonMouseEnter);
         }
         private void GroupAdd_MouseLeave(object sender, RoutedEventArgs e)
         {
             ButtonDarken((Button)sender);
+            StoryStop(GroupAddButtonMouseEnter);
+            StoryBegin(GroupAddButtonMouseLeave);
         }
         private void GroupAdd_Click(object sender, RoutedEventArgs e)
         {
+            
+            
             if (groups.Count >= 100)
             {
                 MessageBox.Show("所属が多すぎます．");
@@ -628,16 +671,22 @@ namespace Comarenkun
                     flogic.AddGroup(name);
                     groups = flogic.AllGroups();
                     GroupsSetToListBox();
+
+                    StoryBegin(GroupAddButtonClick);
                 }
             }
+            StoryStop(GroupAddButtonMouseEnter);
         }
         private void GroupNameChange_MouseEnter(object sender, RoutedEventArgs e)
         {
             ButtonBrighten((Button)sender);
+            StoryBegin(GroupNameChangeButtonMouseEnter);
         }
         private void GroupNameChange_MouseLeave(object sender, RoutedEventArgs e)
         {
             ButtonDarken((Button)sender);
+            StoryStop(GroupNameChangeButtonMouseEnter);
+            StoryBegin(GroupNameChangeButtonMouseLeave);
         }
         private void GroupNameChange_Click(object sender, RoutedEventArgs e)
         {
@@ -692,12 +741,15 @@ namespace Comarenkun
         private void GroupDelete_MouseEnter(object sender, RoutedEventArgs e)
         {
             ButtonBrighten((Button)sender);
+            StoryBegin(GroupDeleteButtonMouseEnter);
         }
         private void GroupDelete_MouseLeave(object sender, RoutedEventArgs e)
         {
             ButtonDarken((Button)sender);
+            StoryStop(GroupDeleteButtonMouseEnter);
+            StoryBegin(GroupDeleteButtonMouseLeave);
         }
-        private void GroupDelete_Click(object sender, RoutedEventArgs e)
+        private async void GroupDelete_Click(object sender, RoutedEventArgs e)
         {
             if(preSelectedGroup.Content.ToString() == "部内" || preSelectedGroup.Content.ToString() == "所属ナシ")
             {
@@ -715,11 +767,16 @@ namespace Comarenkun
                     preSelectedGroup = null;
                     isGroupSelected = false;
                     //グループ選択状態がなくなる
-                    this.groupDeleteButton.Visibility = Visibility.Hidden;
-                    this.groupNameChangeButton.Visibility = Visibility.Hidden;
-                    this.groupOpenButton.Visibility = Visibility.Hidden;
+
+                    StoryStop(GroupDeleteButtonMouseEnter);
+                    StoryBegin(GroupDeleteButtonClick);
+
+                    //this.groupDeleteButton.Visibility = Visibility.Hidden;
+                    //this.groupNameChangeButton.Visibility = Visibility.Hidden;
+                    //this.groupOpenButton.Visibility = Visibility.Hidden;
                     this.groupAddButton.Content = "追\n加\n＋";
                     groupAddButtonParams = groupAddButtonParamsCopy;
+                    await Task.Delay(100);//アニメーションの関係
                     PolygonButtonSet("GroupAddButton", this.groupAddButton, groupAddButtonParams, noShadow);//形を戻しておく
 
                 }
@@ -733,10 +790,13 @@ namespace Comarenkun
         private void GroupOpen_MouseEnter(object sender, RoutedEventArgs e)
         {
             ButtonBrighten((Button)sender);
+            StoryBegin(GroupOpenButtonMouseEnter);
         }
         private void GroupOpen_MouseLeave(object sender, RoutedEventArgs e)
         {
             ButtonDarken((Button)sender);
+            StoryStop(GroupOpenButtonMouseEnter);
+            StoryBegin(GroupOpenButtonMouseLeave);
         }
         private void GroupOpen_Click(object sender, RoutedEventArgs e)
         {
@@ -753,17 +813,17 @@ namespace Comarenkun
             if (name == "部内")
             {
                 preSelectedGroup.Background = bunai;
-                preSelectedGroup.Foreground = defaultFore;
+                preSelectedGroup.Foreground = defaultGroupFore;
             }
             else if (name == "所属ナシ")
             {
                 preSelectedGroup.Background = nashi;
-                preSelectedGroup.Foreground = defaultFore;
+                preSelectedGroup.Foreground = defaultGroupFore;
             }
             else
             {
                 preSelectedGroup.Background = foreign;
-                preSelectedGroup.Foreground = defaultFore;
+                preSelectedGroup.Foreground = defaultGroupFore;
             }
 
             MakeButtonsVisible();
@@ -1648,6 +1708,8 @@ namespace Comarenkun
             if (nowGroup || nowMatching && coma == 1)
             {
                 SetMode(menu);
+                StoryStop(GroupDeleteButtonClick);
+                StoryStop(GroupButtonClickInGroup);
                 this.groupAddButton.Visibility = Visibility.Hidden;
                 this.groupNameChangeButton.Visibility = Visibility.Hidden;
                 this.groupDeleteButton.Visibility = Visibility.Hidden;
@@ -1667,10 +1729,11 @@ namespace Comarenkun
                 toMenuButtonPush = true;
                 memberButtonPush = false;
                 matchingButtonPush = false;
+                preSelectedGroup = null;
                 Storyboard enter = (Storyboard)this.FindResource("ToMenuButtonMouseEnter");
                 enter.Stop();
 
-                Storyboard click = (Storyboard)this.FindResource("ToMenuButtonClick");
+                Storyboard click = (Storyboard)this.FindResource("ToMenuButtonClickToMenu");
                 click.Begin();
                 this.talkLabel.Content = "Hello,Comarenkun";
                 TransParentLabelSet("talkLabel", this.talkLabel, talkLabelParams, noShadow);
