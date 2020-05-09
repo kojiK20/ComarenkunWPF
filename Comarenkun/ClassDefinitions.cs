@@ -44,14 +44,24 @@ namespace Comarenkun
                 OnPropertyChanged("FontSize");
             }
         }
-        private SolidColorBrush _Color;
-        public SolidColorBrush Color
+        private SolidColorBrush _BackColor;
+        public SolidColorBrush BackColor
         {
-            get { return _Color; }
+            get { return _BackColor; }
             set
             {
-                _Color = value;
-                OnPropertyChanged("Color");
+                _BackColor = value;
+                OnPropertyChanged("BackColor");
+            }
+        }
+        private SolidColorBrush _ForeColor;
+        public SolidColorBrush ForeColor
+        {
+            get { return _ForeColor; }
+            set
+            {
+                _ForeColor = value;
+                OnPropertyChanged("ForeColor");
             }
         }
 
@@ -81,6 +91,17 @@ namespace Comarenkun
         public void Clear()
         {
             List.Clear();
+        }
+        public Group Find(string name)
+        {//nameで探す
+            foreach (Group g in List)
+            {
+                if (g.Name == name)
+                {
+                    return g;
+                }
+            }
+            return null;
         }
     }
 

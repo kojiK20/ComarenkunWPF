@@ -206,13 +206,13 @@ namespace Comarenkun
           
             if (name == "talkLabel")
             {
-                if(rowSize * p[2] / 16 < columnSize * p[3] / 2 - 5)
+                if(rowSize * p[2] / 16 < columnSize * p[3] / 2 * 0.8)
                 {
                     label.FontSize = rowSize * p[2] / 16;//セリフによらず一定の割合の大きさの方がよい？
                 }
                 else
                 {
-                    label.FontSize = columnSize * p[3] / 2 - 5;//セリフによらず一定の割合の大きさの方がよい？
+                    label.FontSize = columnSize * p[3] / 2 * 0.8;//セリフによらず一定の割合の大きさの方がよい？
                 }
                 
             }
@@ -515,30 +515,43 @@ namespace Comarenkun
         }
 
         
-        public void GroupsSetToListBox()
+        public void GroupsSetToListBox(string preSelectedName)
         {//グループリストの更新(フォントサイズも更新している！)
             groupList.Clear();
             foreach (string name in groups)
             {
                 double contentSize = name.Replace("\n", "").Length;
                 double fontSize = GroupFontSize(name,"Group");
-                SolidColorBrush color;
-                if (name == "部内")
+                SolidColorBrush backColor;
+                SolidColorBrush foreColor = defaultGroupFore;
+                
+                if(name == preSelectedName)
                 {
-                    color = bunai;
+                    backColor = selectedGroupBack;
+                    foreColor = selectedGroupFore;
+                }
+                else if (name == "部内")
+                {
+                    backColor = bunai;
                 }
                 else if (name == "所属ナシ")
                 {
-                    color = nashi;
+                    backColor = nashi;
                 }
                 else
                 {
-                    color = foreign;
+                    backColor = foreign;
                 }
+
                 //MarginCenter(groupButtonParams, contentSize, "GroupButton");
-                Group n = new Group { Name = name, FontSize = fontSize, Color = color };
+                Group n = new Group { Name = name, FontSize = fontSize, BackColor = backColor, ForeColor = foreColor };
                 groupList.Add(n);
             }
+        }
+        public void GroupSetColor(string name, Color c) 
+        {//ListBoxのItemのBackColorを更新する
+            Group g = groupList.Find(name);
+            g.BackColor = new SolidColorBrush(c);
         }
         public void GroupFontSizeSet()
         {//グループリストのフォントサイズのみを更新　WindowSizeChanged用
@@ -555,7 +568,8 @@ namespace Comarenkun
                 }
                 if (groupList.List[i].Name == n)
                 {//このメソッドはWindowSizeChange時に行うが，選択しているグループの色は白色になっているのでこのタイミングでリストに反映しておく
-                    groupList.List[i].Color = Brushes.White;
+                    groupList.List[i].BackColor = selectedGroupBack;
+                    groupList.List[i].ForeColor = selectedGroupFore;
                 }
                 groupList.List[i].FontSize = GroupFontSize(g.Name,"Group");
             }

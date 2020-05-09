@@ -66,16 +66,22 @@ namespace Comarenkun
         SolidColorBrush decMemberBack = new SolidColorBrush(Color.FromRgb(50, 150, 200));//あおめ
         SolidColorBrush selectedDecMemberBack = new SolidColorBrush(Color.FromRgb(100, 50, 234));
 
-        SolidColorBrush groupAddBack = new SolidColorBrush(Color.FromRgb(0, 176, 0));
+        SolidColorBrush AddBack = new SolidColorBrush(Color.FromRgb(0, 176, 0));
+        SolidColorBrush SortBack = new SolidColorBrush(Color.FromRgb(0,170,136));
 
         //以下，Storyboardの呼び出しに使用
+        string HeaderToMember = "HeaderToMember";
+        string MemberButtonMouseLeave = "MemberButtonMouseLeave";
+        string MemberButtonMouseEnter = "MemberButtonMouseEnter";
+        string MemberButtonClick = "MemberButtonClick";
         string GroupAddButtonMouseEnter = "GroupAddButtonMouseEnter";
         string GroupAddButtonMouseLeave = "GroupAddButtonMouseLeave";
         string GroupAddButtonClick = "GroupAddButtonClick";
-        string GroupAddMotion = "GroupAddMotion";
+        string GroupAddButtonClickEffect = "GroupAddButtonClickEffect";
         string GroupDeleteButtonMouseEnter = "GroupDeleteButtonMouseEnter";
         string GroupDeleteButtonMouseLeave = "GroupDeleteButtonMouseLeave";
         string GroupDeleteButtonClick = "GroupDeleteButtonClick";
+        string GroupDeleteButtonClickEffect = "GroupDeleteButtonClickEffect";
         string GroupOpenButtonMouseEnter = "GroupOpenButtonMouseEnter";
         string GroupOpenButtonMouseLeave = "GroupOpenButtonMouseLeave";
         string GroupOpenButtonClick = "GroupOpenButtonClick";
@@ -83,6 +89,108 @@ namespace Comarenkun
         string GroupNameChangeButtonMouseLeave = "GroupNameChangeButtonMouseLeave";
         string GroupNameChangeButtonClick = "GroupNameChangeButtonClick";
         string GroupButtonClickInGroup = "GroupButtonClickInGroup";
+        string AppearObjectsInGroup = "AppearObjectsInGroup";
+        string DisappearObjectsInGroup = "DisappearObjectsInGroup";
+        string MemberAddButtonMouseEnter = "MemberAddButtonMouseEnter";
+        string MemberAddButtonMouseLeave = "MemberAddButtonMouseLeave";
+        string MemberAddButtonClick = "MemberAddButtonClick";
+        string MemberAddButtonClickEffect = "MemberAddButtonClickEffect";
+        string MemberDeleteButtonClickEffect = "MemberDeleteButtonClickEffect";
+        string MemberSortButtonMouseEnter = "MemberSortButtonMouseEnter";
+        string MemberSortButtonMouseLeave = "MemberSortButtonMouseLeave";
+        string MemberSortButtonClick = "MemberSortButtonClick";
+        string AppearObjectsInMember = "AppearObjectsInMember";
+        string DisappearObjectsInMember = "DisappearObjectsInMember";
+        
+
+        string storyChain = "";
+
+        private void StoryboardCompleted(object sender, EventArgs e)
+        {
+            string name = ((Storyboard)((ClockGroup)sender).Timeline).Name;
+            StoryStop(name);
+            //nameの値によってはチェーンして他のストーリーボードや処理を開始する
+            if(storyChain == MemberButtonClick)
+            {
+                this.memberButton.Visibility = Visibility.Hidden;
+                this.matchingButton.Visibility = Visibility.Hidden;
+                memberButtonPush = false;
+                ButtonDarken(this.memberButton);
+            }else if(storyChain == GroupOpenButtonClick)
+            {
+                MakeButtonsVisible();
+                string label = "";
+                foreach (char c in preSelectedGroup.Content.ToString())
+                {
+                    string cc = c.ToString();
+                    if (c == 'ー' || c == '-')
+                    {
+                        cc = " |";
+                    }
+                    label = label + cc + "\n";
+                }
+                this.memberGroupLabel.Content = label;//選択している所属名の縦書き
+                LabelSet("MemberGroupLabel", this.memberGroupLabel, memberGroupLabelParams, noShadow);
+                MembersSetToListBox(preSelectedGroup.Content.ToString());
+                PolygonButtonSet("MemberRankButton", null, memberRankButtonParams, noShadow);
+                PolygonButtonSet("MemberNameButton", null, memberNameButtonParams, noShadow);
+                PolygonButtonSet("MemberDeleteButton", null, memberDeleteButtonParams, noShadow);
+                StoryBegin(AppearObjectsInMember);
+
+                this.talkLabel.Content = "変更したい部分を押せば編集\nできるコマ";
+                TransParentLabelSet("talkLabel", this.talkLabel, talkLabelParams, noShadow);
+            }else if (storyChain == MemberAddButtonClick)
+            {
+                StoryBegin(MemberAddButtonMouseLeave);
+                this.memberAddButton.Background = AddBack;
+            }else if(name == DisappearObjectsInMember)
+            {
+                MakeButtonsVisible();
+
+               this.groupDeleteButton.Visibility = Visibility.Visible;
+               this.groupOpenButton.Visibility = Visibility.Visible;
+               this.groupNameChangeButton.Visibility = Visibility.Visible;
+               this.memberAddButton.Visibility = Visibility.Hidden;
+               this.memberGroupLabel.Visibility = Visibility.Hidden;
+               this.memberButtons.Visibility = Visibility.Hidden;
+               this.rankNameLabel.Visibility = Visibility.Hidden;
+               this.memberSortButton.Visibility = Visibility.Hidden;
+
+                StoryBegin(AppearObjectsInGroup);
+            }
+            storyChain = "";
+        }
+        public bool IsStoryFinish(string name)
+        {
+            Storyboard s = (Storyboard)this.FindResource(name);
+            try
+            {//ストーリーボードがbeginされていない場合，エラーが発生する
+                ClockState state = s.GetCurrentState();
+                if (state == ClockState.Active)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            catch
+            {
+                return true;
+            }
+            
+        }
+        public void StoryBegin(string name)
+        {
+            Storyboard story = (Storyboard)this.FindResource(name);
+            story.Begin();
+        }
+        public void StoryStop(string name)
+        {
+            Storyboard story = (Storyboard)this.FindResource(name);
+            story.Stop();
+        }
 
         //params配列は<座標列(x座標)><座標行(y座標)><列数(横幅)><行数(縦幅)>を格納
         //さらに多角形ならば，その長方形に対し，左上を基準とした
@@ -165,6 +273,7 @@ namespace Comarenkun
         bool matchingButtonPush = false;
         bool toMenuButtonPush = false;
 
+
         string menu = "Menu";
         bool nowMenu = false;
         string group = "Group";
@@ -199,7 +308,7 @@ namespace Comarenkun
             this.tableButton.Content = "台数：" + tableNum.ToString();
             this.comaButton.Content = "コマ数：" + comaNum.ToString();
             this.talkLabel.Content = "Hello,Comarenkun";
-           
+            
 
             groupList = new GroupList();
             this.groupButtons.DataContext = groupList.List;
@@ -394,71 +503,59 @@ namespace Comarenkun
             removeClickEffect();
         }
 
-        public void StoryBegin(string name)
-        {
-            Storyboard story = (Storyboard)this.FindResource(name);
-            story.Begin();
-        }
-        public void StoryStop(string name)
-        {
-            Storyboard story = (Storyboard)this.FindResource(name);
-            story.Stop();
-        }
+       
+        
 
         private void memberButton_MouseEnter(object sender, RoutedEventArgs e)
         {
-            Storyboard enter = (Storyboard)this.FindResource("MemberButtonMouseEnter");
-            if (!memberButtonPush && !matchingButtonPush)
-            {//ボタンをクリックした際にはエンターイベントは発生させない
+            
+            if (IsStoryFinish(MemberButtonClick))
+            {
+                StoryBegin(MemberButtonMouseEnter);
                 ButtonBrighten(this.memberButton);
-                enter.Begin();
             }
             else
             {
-                enter.Stop();
             }
 
         }
         private void memberButton_MouseLeave(object sender, RoutedEventArgs e)
         {
-            if (!memberButtonPush && !matchingButtonPush)
-            {//ボタンをクリックした際にはリーブイベントは発生させない
-                Storyboard enter = (Storyboard)this.FindResource("MemberButtonMouseEnter");
-                enter.Stop();
-                Storyboard leave = (Storyboard)this.FindResource("MemberButtonMouseLeave");
-                leave.Begin();
+            if (IsStoryFinish(MemberButtonClick))
+            {
+                StoryStop(MemberButtonMouseLeave);
+                StoryBegin(MemberButtonMouseLeave);
+                ButtonDarken(this.memberButton);
             }
-
+            else
+            {
+            }
         }
 
-        private void memberButton_Click(object sender, RoutedEventArgs e)
+        private async void memberButton_Click(object sender, RoutedEventArgs e)
         {
             SetMode(group);//Groupモードへ
             memberButtonPush = true;
-            Storyboard enter = (Storyboard)this.FindResource("MemberButtonMouseEnter");
-            enter.Stop();
-            Storyboard click = (Storyboard)this.FindResource("MemberButtonClick");
-            click.Begin();
-            //PolygonButtonSet("ToMenuButton", this.toMenuButton, toMenuButtonParams);
+            storyChain = MemberButtonClick;
+            StoryStop(MemberButtonMouseEnter);
+            StoryBegin(HeaderToMember);
+            StoryBegin(MemberButtonClick);
+            
 
+            await Task.Delay(200);
             ListBoxSet("GroupButtons", this.groupButtons, groupButtonsParams);
             PolygonButtonSet("GroupButton", null, groupButtonParams, noShadow);
             ListBoxSet("MemberButtons", this.memberButtons, memberButtonsParams);
-            
-            MakeButtonsVisible();
-            GroupsSetToListBox();
-            //GroupFontSizeSet();
 
+            MakeButtonsVisible();
+            StoryBegin(AppearObjectsInGroup);
+            GroupsSetToListBox(null);
+
+            //GroupFontSizeSet();
             this.talkLabel.Content = "所属を選択するコマ";
             TransParentLabelSet("talkLabel", this.talkLabel, talkLabelParams, noShadow);
         }
-        private void memberButtonClickCompleted(object sender, EventArgs e)
-        {   //MemberButtonClidkストーリーボードが終了したときに発生するイベント
-            memberButtonPush = false;
-            //ストーリーボード実行中にウィンドウサイズが変わった時にはまだサイズ変更を反映するのでストーリーボード終了時にSetModeする
-            
-            //ストーリーボード実行中にウィンドウサイズが変わった時，出てきたメニューボタンのサイズが反映できないので一度再描写しておく←隣接モードのコントロールの更新はし続けることで解決？
-        }
+        
 
         bool isGroupSelected = false;
         Button preSelectedGroup = null;//選択済みのボタン(1つのみ保持)
@@ -467,6 +564,7 @@ namespace Comarenkun
         {
             //senderに押されたボタンが格納される
             Button button = (Button)sender;
+            Group bg = groupList.Find(button.Content.ToString());
             //var o = (string)((Button)sender).Content;
             //MessageBox.Show(o);
 
@@ -476,34 +574,34 @@ namespace Comarenkun
                 isGroupSelected = true;
                 storyFlag = true;
                 //ButtonDarken(button);
-                button.Background = selectedGroupBack;
-                button.Foreground = selectedGroupFore;
+                bg.BackColor = selectedGroupBack;
+                bg.ForeColor = selectedGroupFore;
                 //button.Foreground = Brushes.Black;
                 preSelectedGroup = button;
                 //this.groupDeleteButton.Visibility = Visibility.Visible;
                 //this.groupOpenButton.Visibility = Visibility.Visible;
             }
             else
-            {//いずれかのボタンを既に選択している
+            {//いずれかのボタンを既に選択しているとき，そのボタンの色を戻す
                 string name = preSelectedGroup.Content.ToString();
+                Group pg = groupList.Find(name);
+                pg.ForeColor = defaultGroupFore;
                 if (name == "部内")
                 {
-                    preSelectedGroup.Background = bunai;
-                    preSelectedGroup.Foreground = defaultGroupFore;
+                    pg.BackColor = foreign;
+                    pg.BackColor = bunai;
                 }
                 else if (name == "所属ナシ")
                 {
-                    preSelectedGroup.Background = nashi;
-                    preSelectedGroup.Foreground = defaultGroupFore;
+                    pg.BackColor = nashi;
                 }
                 else
                 {
-                    preSelectedGroup.Background = foreign;
-                    preSelectedGroup.Foreground = defaultGroupFore;
+                    pg.BackColor = foreign;
                 }
                 //ButtonDarken(button);//同じボタンを選択した際は打ち消される
-                button.Background = selectedGroupBack;
-                button.Foreground = selectedGroupFore; ;
+                bg.BackColor = selectedGroupBack;
+                bg.ForeColor = selectedGroupFore; ;
                 //preSelectedGroup.Foreground = new SolidColorBrush(Color.FromRgb(96, 96, 96));
                 //button.Foreground = Brushes.Black;  
                 preSelectedGroup = button;
@@ -519,7 +617,7 @@ namespace Comarenkun
                 this.groupNameChangeButton.Visibility = Visibility.Visible;//3つのGroup操作ボタンを出現させる
                 if(storyFlag)
                 {
-                    StoryStop(GroupButtonClickInGroup);
+                    //StoryStop(GroupButtonClickInGroup);
                     storyFlag = false;
                     StoryBegin(GroupButtonClickInGroup);
                     await Task.Delay(100);
@@ -544,10 +642,19 @@ namespace Comarenkun
         private void Group_MouseEnter(object sender, RoutedEventArgs e)
         {
             Button button = (Button)sender;
-            if(button != preSelectedGroup)
-            {//選択していないボタンの場合
-                ButtonBrighten(button);
+            if(preSelectedGroup != null)
+            {
+                if (button != preSelectedGroup && button.Content.ToString() != preSelectedGroup.Content.ToString())
+                {//選択していないボタンの場合
+                    ////Contentでのバリデーションは，ListBoxをAdd等で更新した場合にボタンは一度消滅するため，Contentのみを複製する処理をしているので
+                    GroupSetColor(button.Content.ToString(),Brighten(((SolidColorBrush)button.Background).Color));
+                }
             }
+            else
+            {
+                GroupSetColor(button.Content.ToString(), Brighten(((SolidColorBrush)button.Background).Color));
+            }
+            
             if (nowGroup)
             {//マッチングモード以外ではコンテキストメニューを表示しない(MouseLeaveするまでnullにかえておく)
                 c = button.ContextMenu;
@@ -558,23 +665,31 @@ namespace Comarenkun
         private void Group_MouseLeave(object sender, RoutedEventArgs e)
         {//選択されていなければボタンの色を戻す
             Button button = (Button)sender;
-            if(button != preSelectedGroup)
+            if(preSelectedGroup != null)
             {
-                ButtonDarken(button);
-                /*string name = button.Content.ToString();
-                if (name == "部内")
-                {
-                    button.Background = Brushes.LightBlue;
+                if (button != preSelectedGroup && button.Content.ToString() != preSelectedGroup.Content.ToString())
+                {//Contentでのバリデーションは，ListBoxをAdd等で更新した場合にボタンは一度消滅するため，Contentのみを複製する処理をしているので
+                    GroupSetColor(button.Content.ToString(), Darken(((SolidColorBrush)button.Background).Color));
+                    /*string name = button.Content.ToString();
+                    if (name == "部内")
+                    {
+                        button.Background = Brushes.LightBlue;
+                    }
+                    else if (name == "所属ナシ")
+                    {
+                        button.Background = Brushes.Pink;
+                    }
+                    else
+                    {
+                        button.Background = Brushes.LightGreen;
+                    }*/
                 }
-                else if (name == "所属ナシ")
-                {
-                    button.Background = Brushes.Pink;
-                }
-                else
-                {
-                    button.Background = Brushes.LightGreen;
-                }*/
             }
+            else
+            {
+                GroupSetColor(button.Content.ToString(), Darken(((SolidColorBrush)button.Background).Color));
+            }
+            
             if (nowGroup)
             {
                 button.ContextMenu = c;
@@ -659,6 +774,7 @@ namespace Comarenkun
             }
             else
             {
+                StoryBegin(GroupAddButtonClickEffect);
                 string name = Interaction.InputBox("新しく作成する所属の名前を入力して下さい．");
                 name = name.Replace(":", "");//:はファイル処理に使用しているので消す
                 if (name.Length > 30)
@@ -670,7 +786,18 @@ namespace Comarenkun
                 {
                     flogic.AddGroup(name);
                     groups = flogic.AllGroups();
-                    GroupsSetToListBox();
+                    if(preSelectedGroup != null)
+                    {
+                        string tmpName = preSelectedGroup.Content.ToString();
+                        GroupsSetToListBox(tmpName);
+                        preSelectedGroup = new Button();
+                        preSelectedGroup.Content = tmpName;
+                    }
+                    else
+                    {
+                        GroupsSetToListBox(null);
+                    }
+                    
 
                     StoryBegin(GroupAddButtonClick);
                 }
@@ -711,7 +838,9 @@ namespace Comarenkun
                     {//ユニークな所属名
                         flogic.ChangeGroup(pre, name);
                         groups = flogic.AllGroups();
-                        GroupsSetToListBox();
+                        GroupsSetToListBox(name);
+                        preSelectedGroup = new Button();
+                        preSelectedGroup.Content = name;
                     }
                     else
                     {//既に同盟の所属がある
@@ -721,7 +850,9 @@ namespace Comarenkun
                             {//既に存在する所属名のときは連番にする
                                 flogic.ChangeGroup(pre, name + i.ToString());
                                 groups = flogic.AllGroups();
-                                GroupsSetToListBox();
+                                GroupsSetToListBox(name + 1.ToString());
+                                preSelectedGroup = new Button();
+                                preSelectedGroup.Content = (name + i.ToString());
                                 break;
                             }
                             if (i > 30)
@@ -757,13 +888,14 @@ namespace Comarenkun
             }
             else
             {
+                StoryBegin(GroupDeleteButtonClickEffect);
                 MessageBoxResult dr = MessageBox.Show("この所属を削除しますか?\n(メンバーは所属ナシに移動します．)", "確認", MessageBoxButton.YesNo);
 
                 if (dr == MessageBoxResult.Yes)
                 {
                     flogic.DeleteGroup((string)preSelectedGroup.Content);
                     groups = flogic.AllGroups();
-                    GroupsSetToListBox();
+                    GroupsSetToListBox(null);
                     preSelectedGroup = null;
                     isGroupSelected = false;
                     //グループ選択状態がなくなる
@@ -789,44 +921,39 @@ namespace Comarenkun
         }
         private void GroupOpen_MouseEnter(object sender, RoutedEventArgs e)
         {
-            ButtonBrighten((Button)sender);
-            StoryBegin(GroupOpenButtonMouseEnter);
+            if (IsStoryFinish(DisappearObjectsInGroup))
+            {
+                ButtonBrighten((Button)sender);
+                StoryBegin(GroupOpenButtonMouseEnter);
+            }
         }
         private void GroupOpen_MouseLeave(object sender, RoutedEventArgs e)
         {
-            ButtonDarken((Button)sender);
+            
             StoryStop(GroupOpenButtonMouseEnter);
-            StoryBegin(GroupOpenButtonMouseLeave);
+            if (IsStoryFinish(DisappearObjectsInGroup))
+            {
+                ButtonDarken((Button)sender);
+                StoryBegin(GroupOpenButtonMouseLeave);
+            }
         }
         private void GroupOpen_Click(object sender, RoutedEventArgs e)
         {
             SetMode(member);//Memberモードへ
+
+            storyChain = GroupOpenButtonClick;
+            StoryBegin(GroupOpenButtonClick);
+            StoryBegin(DisappearObjectsInGroup);  
+
             this.groupAddButton.Visibility = Visibility.Hidden;
             this.groupNameChangeButton.Visibility = Visibility.Hidden;
             this.groupDeleteButton.Visibility = Visibility.Hidden;
             this.groupButtons.Visibility = Visibility.Hidden;
-            this.groupOpenButton.Visibility = Visibility.Hidden;//この辺はストーリーボードで後々
-            this.groupAddButton.Content = "追\n加\n＋";
-            groupAddButtonParams = groupAddButtonParamsCopy;
-            PolygonButtonSet("GroupAddButton", this.groupAddButton, groupAddButtonParams, noShadow);//形を戻しておく
-            string name = preSelectedGroup.Content.ToString();
-            if (name == "部内")
-            {
-                preSelectedGroup.Background = bunai;
-                preSelectedGroup.Foreground = defaultGroupFore;
-            }
-            else if (name == "所属ナシ")
-            {
-                preSelectedGroup.Background = nashi;
-                preSelectedGroup.Foreground = defaultGroupFore;
-            }
-            else
-            {
-                preSelectedGroup.Background = foreign;
-                preSelectedGroup.Foreground = defaultGroupFore;
-            }
+            this.groupOpenButton.Visibility = Visibility.Hidden;
+           
+            //以下の処理はストーリーボードとチェーンして行うのでStoryboardCompleted内に記述
 
-            MakeButtonsVisible();
+            /*MakeButtonsVisible();
             string label = "";
             foreach (char c in preSelectedGroup.Content.ToString())
             {
@@ -843,26 +970,32 @@ namespace Comarenkun
             PolygonButtonSet("MemberRankButton", null, memberRankButtonParams, noShadow);
             PolygonButtonSet("MemberNameButton", null, memberNameButtonParams, noShadow);
             PolygonButtonSet("MemberDeleteButton", null, memberDeleteButtonParams, noShadow);
-            //MemberFontSizeSet();
 
             this.talkLabel.Content = "変更したい部分を押せば編集\nできるコマ";
-            TransParentLabelSet("talkLabel", this.talkLabel, talkLabelParams, noShadow);
-            //this.memberButtons.Visibility = Visibility.Visible;
-            //選択されているボタンの所属名を渡してその所属に属するメンバー集合をmemberListに格納等諸々する
+            TransParentLabelSet("talkLabel", this.talkLabel, talkLabelParams, noShadow);*/
 
-            //this.rankNameLabel.Visibility = Visibility.Visible;
-        
-
+            
 
 
         }
         private void MemberAdd_MouseEnter(object sender, RoutedEventArgs e)
         {
-            ButtonBrighten((Button)sender);
+            if (IsStoryFinish(MemberAddButtonClick))
+            {
+                ButtonBrighten((Button)sender);
+                StoryBegin(MemberAddButtonMouseEnter);
+            }
+            
         }
         private void MemberAdd_MouseLeave(object sender, RoutedEventArgs e)
         {
-            ButtonDarken((Button)sender);
+            if (IsStoryFinish(MemberAddButtonClick))
+            {
+                ButtonDarken((Button)sender);
+                StoryStop(MemberAddButtonMouseEnter);
+                StoryBegin(MemberAddButtonMouseLeave);
+            }
+            
         }
         private void MemberAdd_Click(object sender, RoutedEventArgs e)
         {
@@ -872,6 +1005,8 @@ namespace Comarenkun
             }
             else
             {
+                storyChain = MemberAddButtonClick;
+                StoryBegin(MemberAddButtonClick);
                 string rank = "";
                 int val = 0;
                 if (preSelectedGroup.Content.ToString() == "部内")
@@ -898,6 +1033,8 @@ namespace Comarenkun
                         flogic.AddMember(rank, name, preSelectedGroup.Content.ToString());//members.txtファイル更新
                         memberNames = flogic.AllMemberNames();//更新
                         MembersSetToListBox(preSelectedGroup.Content.ToString());//members.txtファイル読んで指定のグループ名のメンバーをリストボックスにセット
+
+                        StoryBegin(MemberAddButtonClickEffect);
                     }
                 } 
             }
@@ -905,14 +1042,24 @@ namespace Comarenkun
         private void memberSortButton_Click(object sender, RoutedEventArgs e)
         {
             memberList.Sort();
+            StoryBegin(MemberSortButtonClick);
         }
         private void memberSortButton_MouseEnter(object sender, RoutedEventArgs e)
         {
-            ButtonBrighten((Button)sender);
+            if (IsStoryFinish(MemberSortButtonClick))
+            {
+                ButtonBrighten((Button)sender);
+                StoryBegin(MemberSortButtonMouseEnter);
+            }
+            
         }
         private void memberSortButton_MouseLeave(object sender, RoutedEventArgs e)
         {
-            ButtonDarken((Button)sender);
+            if (IsStoryFinish(MemberSortButtonClick))
+            {
+                ButtonDarken((Button)sender);
+                StoryBegin(MemberSortButtonMouseLeave);
+            }
         }
 
         private void MemberRank_Click(object sender, RoutedEventArgs e)
@@ -929,6 +1076,7 @@ namespace Comarenkun
                     minus = 0;
                 }
                 memberList.Find(name).Rank = minus.ToString();
+                memberList.Find(name).RankFontSize = GroupFontSize(minus.ToString(), "MemberRank");
                 //((Button)sender).Content = minus.ToString();
             }
             else
@@ -963,6 +1111,7 @@ namespace Comarenkun
                     plus = 1000;
                 }
                 memberList.Find(name).Rank = plus.ToString();
+                memberList.Find(name).RankFontSize = GroupFontSize(plus.ToString(), "MemberRank");
                 //((Button)sender).Content = plus.ToString();
             }
             else
@@ -1193,6 +1342,8 @@ namespace Comarenkun
                     flogic.DeleteMember(((Button)sender).Tag.ToString(), preSelectedGroup.Content.ToString());
                     memberNames = flogic.AllMemberNames();
                     MembersSetToListBox(preSelectedGroup.Content.ToString());
+
+                    StoryBegin(MemberDeleteButtonClickEffect);
                 }
                 else if (dr == MessageBoxResult.No)
                 { }
@@ -1202,6 +1353,7 @@ namespace Comarenkun
         }
         private void Member_MouseEnter(object sender, RoutedEventArgs e)
         {
+            
             Button button = (Button)sender;
             if (nowMember)
             {
@@ -1297,7 +1449,7 @@ namespace Comarenkun
             PolygonButtonSet("GroupButton", null, participantGroupButtonParams, noShadow);
             //GroupFontSizeSet();
             ListBoxSet("MemberButtons", this.participantMemberButtons, participantMemberButtonsParams);
-            GroupsSetToListBox();
+            GroupsSetToListBox(null);
 
             coma = 1;
             if(int.Parse(configs[1]) > 1)
@@ -1432,7 +1584,7 @@ namespace Comarenkun
             ListBoxSet("GroupButtons", this.groupButtons, participantGroupButtonsParams);
             PolygonButtonSet("GroupButton", null, participantGroupButtonParams, noShadow);
             ListBoxSet("MemberButtons", this.participantMemberButtons, participantMemberButtonsParams);
-            GroupsSetToListBox();
+            GroupsSetToListBox(null);
 
             //PolygonButtonSet("NextButton", this.nextButton, nextButtonParams, shadow);
             
@@ -1707,6 +1859,10 @@ namespace Comarenkun
         {//1階層モードを戻る
             if (nowGroup || nowMatching && coma == 1)
             {
+                if (nowGroup)
+                {
+                    StoryBegin(DisappearObjectsInGroup);
+                }
                 SetMode(menu);
                 StoryStop(GroupDeleteButtonClick);
                 StoryStop(GroupButtonClickInGroup);
@@ -1714,7 +1870,7 @@ namespace Comarenkun
                 this.groupNameChangeButton.Visibility = Visibility.Hidden;
                 this.groupDeleteButton.Visibility = Visibility.Hidden;
                 this.groupOpenButton.Visibility = Visibility.Hidden;
-                this.groupButtons.Visibility = Visibility.Hidden;//この辺はストーリーボードで後々
+                this.groupButtons.Visibility = Visibility.Hidden;
                 this.groupAddButton.Content = "追\n加\n＋";
                 this.configButton.Visibility = Visibility.Hidden;
                 this.participantMemberButtons.Visibility = Visibility.Hidden;
@@ -1735,22 +1891,28 @@ namespace Comarenkun
 
                 Storyboard click = (Storyboard)this.FindResource("ToMenuButtonClickToMenu");
                 click.Begin();
+
                 this.talkLabel.Content = "Hello,Comarenkun";
                 TransParentLabelSet("talkLabel", this.talkLabel, talkLabelParams, noShadow);
             } else if (nowMember)
             {
                 SetMode(group);
-                MakeButtonsVisible();
+
+                StoryBegin(DisappearObjectsInMember);
+                //以下の処理はStoryboardCompletedに記述
+
+                /*MakeButtonsVisible();
+                this.groupDeleteButton.Visibility = Visibility.Visible;
+                this.groupOpenButton.Visibility = Visibility.Visible;
+                this.groupNameChangeButton.Visibility = Visibility.Visible;
                 this.memberAddButton.Visibility = Visibility.Hidden;
                 this.memberGroupLabel.Visibility = Visibility.Hidden;
                 this.memberButtons.Visibility = Visibility.Hidden;
                 this.rankNameLabel.Visibility = Visibility.Hidden;
-                this.memberSortButton.Visibility = Visibility.Hidden;
-                preSelectedGroup = null;
-                isGroupSelected = false;
-                //this.groupOpenButton.Visibility = Visibility.Hidden;
-                //this.groupButtons.Visibility = Visibility.Hidden;//この辺はストーリーボードで後々
-            } else if (nowMatching && coma > 1)
+                this.memberSortButton.Visibility = Visibility.Hidden;*/
+
+            }
+            else if (nowMatching && coma > 1)
             {
                 if((string)this.nextButton.Content != "G\nO\n!" && (string)this.nextButton.Content != "オ\nカ\nワ\nリ")
                 {
@@ -1802,7 +1964,7 @@ namespace Comarenkun
                 }
 
                 PolygonButtonSet("NextButton", this.nextButton, nextButtonParams, shadow);
-                GroupsSetToListBox();
+                GroupsSetToListBox(null);
                 preSelectedGroup = null;
                 isGroupSelected = false;
             }
@@ -1829,7 +1991,7 @@ namespace Comarenkun
                 this.algorithmLabel2.Visibility = Visibility.Hidden;
                 this.comaListBox.Visibility = Visibility.Hidden;
 
-                GroupsSetToListBox();
+                GroupsSetToListBox(null);
                 preSelectedGroup = null;
                 isGroupSelected = false;
             }
