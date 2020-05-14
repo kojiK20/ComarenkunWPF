@@ -2065,15 +2065,22 @@ namespace Comarenkun
 
         private void configButton_MouseEnter(object sender, RoutedEventArgs e)
         {
-            this.talkLabel.Content = talkOnConfig;
-            Button button = (Button)sender;
-            ButtonBrighten(button);
+            if (IsStoryFinish(DisappearObjectsInMatching2r))
+            {
+                this.talkLabel.Content = talkOnConfig;
+                Button button = (Button)sender;
+                ButtonBrighten(button);
+            }
         }
         private void configButton_MouseLeave(object sender, RoutedEventArgs e)
         {
-            this.talkLabel.Content = talkInMatching1;
-            Button button = (Button)sender;
-            ButtonDarken(button);//Brighten1回分
+            if (IsStoryFinish(DisappearObjectsInMatching2r))
+            {
+                this.talkLabel.Content = talkInMatching1;
+                Button button = (Button)sender;
+                ButtonDarken(button);//Brighten1回分
+            }
+            
         }
         private void configButton_Click(object sender, RoutedEventArgs e)
         {
