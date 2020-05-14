@@ -1027,6 +1027,11 @@ namespace Comarenkun
 
         public bool SendToLINE(string result)
         {
+            if (!File.Exists(LINEtokenFilePath))
+            {
+                return false;
+            }
+
             sr3 = new StreamReader(LINEtokenFilePath, Encoding.GetEncoding("Shift_JIS"));
 
             List<string> tokens = new List<string>();
