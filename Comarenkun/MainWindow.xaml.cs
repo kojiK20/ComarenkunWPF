@@ -84,7 +84,7 @@ namespace Comarenkun
         string talkInGroup = "編集したいグループを\n選択するコマ";
         string talkInMember = "編集したいメンバーを\n選択するコマ";
         string talkInMatching1 = "1コマ目の参加者を\n選ぶコマ";
-        string talkInMatching2 = "途中参加者(赤)と途中脱退者(青)を\n選ぶコマ";
+        string talkInMatching2 = "途中参加者(赤)と途中退出者(青)を\n選ぶコマ";
         string talkInConfig = "各種設定ができるコマ";
         string talkInResult = "マッチングしたコマ！";
         string talkOnGroupAdd = "グループの追加ができるコマ";
@@ -289,11 +289,11 @@ namespace Comarenkun
             {
                 this.nextButton.Background = nextBack;
                 ButtonBrighten(this.nextButton);
-                StoryBegin(NextButtonMouseEnter);
+                //StoryBegin(NextButtonMouseEnter);
             }else if(name == DisappearObjectsInMatching1 || name == DisappearObjectsInMatching2)
             {
                 MakeButtonsVisible();
-                this.toMenuButton.IsHitTestVisible = true;
+                
                 this.participantMemberButtons.Visibility = Visibility.Hidden;
                 
                 if (storyChain == ToMenuInMatching)
@@ -348,10 +348,12 @@ namespace Comarenkun
                 preSelectedGroup = null;
                 isGroupSelected = false;
 
+                this.toMenuButton.IsHitTestVisible = true;
+
             }
             else if (name == DisappearObjectsInMatching1r || name == DisappearObjectsInMatching2r)
             {
-                this.nextButton.IsHitTestVisible = true;
+                
                 if (storyChain == NextToGo)
                 {
                     this.participantMemberButtons.Visibility = Visibility.Hidden;
@@ -438,6 +440,8 @@ namespace Comarenkun
                 PolygonButtonSet("GroupButton", null, participantGroupButtonParams, noShadow);
                 ListBoxSet("MemberButtons", this.participantMemberButtons, participantMemberButtonsParams);
                 GroupsSetToListBox(null);
+
+                this.nextButton.IsHitTestVisible = true;
             }
             else if(name == DisappearObjectsInConfig)
             {
@@ -1905,18 +1909,19 @@ namespace Comarenkun
                 {
                     this.talkLabel.Content = talkInMatching1;
                 }
-                else if (coma < int.Parse(configs[1]))
-                {
-                    this.talkLabel.Content = talkInMatching2;
-                }
                 else if (next == "G\nO\n!")
                 {
                     this.talkLabel.Content = talkInCer;
                 }
-                else if(next == "オ\nカ\nワ\nリ")
+                else if (next == "オ\nカ\nワ\nリ")
                 {
                     this.talkLabel.Content = talkInResult;
                 }
+                else if (coma <= int.Parse(configs[1]))
+                {
+                    this.talkLabel.Content = talkInMatching2;
+                }
+                
             }
             
         }
@@ -1961,6 +1966,7 @@ namespace Comarenkun
                         tmpResult = result;
                         storyChain = NextInGo;
                         StoryBegin(DisappearObjectsInMatching1r); //以下はStoryboardCompletedに記述
+                        //StoryBegin(NextButtonMouseLeave);
 
                         /*this.participantNamesTextBox.Text = result;//マッチングする
                         TextBoxSet("ParticipantNamesSumTextBox", this.participantNamesTextBox, participantNamesSumTextBoxParams);
@@ -1985,12 +1991,15 @@ namespace Comarenkun
                         this.talkLabel.Content = talkInCer;
                         TransParentLabelSet("talkLabel", this.talkLabel, talkLabelParams, noShadow);
                         this.nextButton.Content = "G\nO\n!";//GOボタンを別にellipseで作るかも
+                        this.nextButton.IsHitTestVisible = true;
+                        //StoryBegin(NextButtonMouseLeave);
                     }
                 }
                 catch
                 {
                     MessageBox.Show("申し訳ないコマ\nエラーが発生したコマ...\nもう一度組んでみてほしいコマ");
                     this.nextButton.IsHitTestVisible = true;
+                    //StoryBegin(NextButtonMouseLeave);
                 }
                 
             }
@@ -2130,7 +2139,10 @@ namespace Comarenkun
             configs = flogic.ReadConfigFile();
             string table = int.Parse(configs[0]).ToString();
             ((Button)sender).Content = "台数：" + table;
-            
+
+            PolygonButtonSet("TableButton", this.tableButton, tableButtonParams, noShadow);
+
+
         }
         private void TableRightClick(object sender, RoutedEventArgs e)
         {//1減らす
@@ -2138,6 +2150,9 @@ namespace Comarenkun
             configs = flogic.ReadConfigFile();
             string table = int.Parse(configs[0]).ToString();
             ((Button)sender).Content = "台数：" + table;
+
+            PolygonButtonSet("TableButton", this.tableButton, tableButtonParams, noShadow);
+
         }
         private void ComaMouseEnter(object sender, RoutedEventArgs e)
         {
@@ -2173,6 +2188,8 @@ namespace Comarenkun
                 increase.Add(new List<string>());
                 decrease.Add(new List<string>());
 
+                PolygonButtonSet("ComaButton", this.comaButton, comaButtonParams, noShadow);
+
                 /*for (int i = 1; i < int.Parse(configs[1]); i++)
                 {//コマ数に変更があった場合2コマ目以降のコマの参加者情報はリセット
                     participants[i].Clear();
@@ -2195,6 +2212,8 @@ namespace Comarenkun
                 participants.RemoveAt(participants.Count - 1);
                 increase.RemoveAt(increase.Count - 1);
                 decrease.RemoveAt(decrease.Count - 1);
+
+                PolygonButtonSet("ComaButton", this.comaButton, comaButtonParams, noShadow);
 
                 /*for (int i = 1; i < int.Parse(configs[1]); i++)
                 {//コマ数に変更があった場合2コマ目以降のコマの参加者情報はリセット
@@ -2339,6 +2358,7 @@ namespace Comarenkun
         {
             if (IsStoryFinish(LINESendButtonClick))
             {
+                this.talkLabel.Content = talkOnLINESend;
                 ButtonBrighten((Button)sender);
                 StoryBegin(LINESendButtonMouseEnter);
             }
@@ -2352,6 +2372,7 @@ namespace Comarenkun
         {
             if (IsStoryFinish(LINESendButtonClick))
             {
+                this.talkLabel.Content = talkInResult;
                 ButtonDarken((Button)sender);
                 StoryBegin(LINESendButtonMouseLeave);
             }

@@ -278,7 +278,7 @@ namespace Comarenkun
                         //MessageBox.Show("組みなおし回数：" + loopCounter.ToString() + "\n橋の交換が検出されたので組みなおしてみたコマ");
                     }
                     else if (resetCounter > 0 && loopCounter < maxLoop)
-                    {//リセットされていれば組みなおす
+                    {//リセットされていれば組みなおす←絶対リセットが起こる(コマ数が多いなど)ときに，理想よりも早いリセットかどうか判別しないと時間の無駄(強制1000回ループがおきてる)
                         set = new List<ResultSet>();
                         edges = new List<Matching>(edgesOrigin);
                         chosenMatchs = new List<Matching>();
@@ -402,6 +402,24 @@ namespace Comarenkun
                 }
             }
             return degree;
+        }
+        public List<MemberNode> HaveEdgeList(List<Matching> edges, List<MemberNode> nodes)
+        {//枝を持つノード集合を返す
+            List<MemberNode> result = new List<MemberNode>();
+            foreach(Matching e in edges)
+            {
+                MemberNode m1 = nodes.Find(m => m.Name == e.Name1);
+                MemberNode m2 = nodes.Find(m => m.Name == e.Name2);
+                if(result.IndexOf(m1) == -1)
+                {
+                    result.Add(m1);
+                }
+                if(result.IndexOf(m2) == -1)
+                {
+                    result.Add(m2);
+                }
+            }
+            return result;
         }
         public List<Matching> IsConnected(List<MemberNode> nodes, List<Matching> edges)
         {//現在のグラフが連結かどうか判定する(n^2で妥協)
@@ -644,6 +662,7 @@ namespace Comarenkun
             edges = edges.OrderBy(e => r.Next(edges.Count)).ToList();//edgesをシャッフル
             nodes = nodes.OrderBy(n => r.Next(nodes.Count)).ToList();//nodesをシャッフル
             List<Matching> origin = new List<Matching>(edges);//もとのedgesを値コピー->あとでmatchsの枝を消して返り値へ
+            List<MemberNode> haveEdgeNodes = HaveEdgeList(edges, nodes);//開始時点で枝を持つノード，無駄なく選べたかの判定に使用 
             List<Matching> matchs = new List<Matching>();//得られたマッチングを格納->resultへ
             List<string[]> takyuMatchs = new List<string[]>();//得られた多球マッチングを格納->resultへ 
             takyuChosen = takyuChosen;//今までに多球に選ばれた人たち．↑の列挙版を加える
@@ -686,6 +705,8 @@ namespace Comarenkun
                 foreach (string s in current)
                 {//選んだ人の枝を消す
                     edges.RemoveAll(ee => ee.Name1 == s || ee.Name2 == s);
+                    //nodesも消す
+                    haveEdgeNodes.RemoveAll(nn => nn.Name == s);
                 }
             }
             
@@ -712,6 +733,8 @@ namespace Comarenkun
                             {
                                 edges.RemoveAll(hoge => hoge.Name1 == e.Name1 || hoge.Name2 == e.Name1
                                                 || hoge.Name1 == e.Name2 || hoge.Name2 == e.Name2);//採用された枝の2ノードが関与する枝はすべて削除
+
+                                haveEdgeNodes.RemoveAll(nn => nn.Name == e.Name1 || nn.Name == e.Name2);
                                 matchs.Add(e);
                                 i++;
                                 break;
@@ -726,6 +749,7 @@ namespace Comarenkun
                             {
                                 edges.RemoveAll(hoge => hoge.Name1 == e.Name1 || hoge.Name2 == e.Name1
                                                 || hoge.Name1 == e.Name2 || hoge.Name2 == e.Name2);//採用された枝の2ノードが関与する枝はすべて削除
+                                haveEdgeNodes.RemoveAll(nn => nn.Name == e.Name1 || nn.Name == e.Name2);
                                 matchs.Add(e);
                                 i++;
                                 break;
@@ -777,6 +801,7 @@ namespace Comarenkun
 
                                 edges.RemoveAll(hoge => hoge.Name1 == e.Name1 || hoge.Name2 == e.Name1
                                                 || hoge.Name1 == e.Name2 || hoge.Name2 == e.Name2);//採用された枝の2ノードが関与する枝はすべて削除
+                                haveEdgeNodes.RemoveAll(nn => nn.Name == e.Name1 || nn.Name == e.Name2);
                                 matchs.Add(e);
                                 i++;
                                 break;
@@ -799,6 +824,7 @@ namespace Comarenkun
                                 //条件なし
                                 edges.RemoveAll(hoge => hoge.Name1 == e.Name1 || hoge.Name2 == e.Name1
                                                 || hoge.Name1 == e.Name2 || hoge.Name2 == e.Name2);//採用された枝の2ノードが関与する枝はすべて削除
+                                haveEdgeNodes.RemoveAll(nn => nn.Name == e.Name1 || nn.Name == e.Name2);
                                 matchs.Add(e);
                                 i++;
                                 break;
@@ -810,7 +836,11 @@ namespace Comarenkun
                             //次数の低いノードから選択しているのでこの状況になるのは単純に残る枝数が足りていないときだと思われる
                 {
                     //MessageBox.Show("リセットしたコマ");
-                    resetCounter++;
+                    if(haveEdgeNodes.Count > 0)
+                    {//開始時点で枝を持っていたノードが全て選択されている(Count==0)ならば無駄なく選んだうえでリセットせざるを得ないので許容
+                        resetCounter++;
+                    }
+                    
                     //完全グラフを作成
                     edges = new List<Matching>();
                     chosenMatchs = new List<Matching>();
@@ -1067,6 +1097,7 @@ namespace Comarenkun
             edges = edges.OrderBy(e => r.Next(edges.Count)).ToList();//edgesをシャッフル
             nodes = nodes.OrderBy(n => r.Next(nodes.Count)).ToList();//nodesをシャッフル
             List<Matching> origin = new List<Matching>(edges);//もとのedgesを値コピー->あとでmatchsの枝を消して返り値へ
+            List<MemberNode> haveEdgeNodes = HaveEdgeList(edges, nodes);
             List<Matching> matchs = new List<Matching>();//得られたマッチングを格納->resultへ
             List<string[]> takyuMatchs = new List<string[]>();//得られた多球マッチングを格納->resultへ 
             takyuChosen = takyuChosen;//今までに多球に選ばれた人たち．↑の列挙版を加える
@@ -1109,6 +1140,8 @@ namespace Comarenkun
                 foreach (string s in current)
                 {//選んだ人の枝を消す
                     edges.RemoveAll(ee => ee.Name1 == s || ee.Name2 == s);
+
+                    haveEdgeNodes.RemoveAll(nn => nn.Name == s);
                 }
             }
 
@@ -1133,6 +1166,7 @@ namespace Comarenkun
                             {
                                 edges.RemoveAll(hoge => hoge.Name1 == e.Name1 || hoge.Name2 == e.Name1
                                                 || hoge.Name1 == e.Name2 || hoge.Name2 == e.Name2);//採用された枝の2ノードが関与する枝はすべて削除
+                                haveEdgeNodes.RemoveAll(nn => nn.Name == e.Name1 || nn.Name == e.Name2);
                                 matchs.Add(e);
                                 i++;
                                 break;
@@ -1147,6 +1181,7 @@ namespace Comarenkun
                             {
                                 edges.RemoveAll(hoge => hoge.Name1 == e.Name1 || hoge.Name2 == e.Name1
                                                 || hoge.Name1 == e.Name2 || hoge.Name2 == e.Name2);//採用された枝の2ノードが関与する枝はすべて削除
+                                haveEdgeNodes.RemoveAll(nn => nn.Name == e.Name1 || nn.Name == e.Name2);
                                 matchs.Add(e);
                                 i++;
                                 break;
@@ -1172,6 +1207,7 @@ namespace Comarenkun
 
                                 edges.RemoveAll(hoge => hoge.Name1 == e.Name1 || hoge.Name2 == e.Name1
                                                 || hoge.Name1 == e.Name2 || hoge.Name2 == e.Name2);//採用された枝の2ノードが関与する枝はすべて削除
+                                haveEdgeNodes.RemoveAll(nn => nn.Name == e.Name1 || nn.Name == e.Name2);
                                 matchs.Add(e);
                                 i++;
                                 break;
@@ -1191,6 +1227,7 @@ namespace Comarenkun
                             //条件なし
                             edges.RemoveAll(hoge => hoge.Name1 == e.Name1 || hoge.Name2 == e.Name1
                                             || hoge.Name1 == e.Name2 || hoge.Name2 == e.Name2);//採用された枝の2ノードが関与する枝はすべて削除
+                            haveEdgeNodes.RemoveAll(nn => nn.Name == e.Name1 || nn.Name == e.Name2);
                             matchs.Add(e);
                             i++;
                             break;
@@ -1201,7 +1238,11 @@ namespace Comarenkun
                             //次数の低いノードから選択しているのでこの状況になるのは単純に残る枝数が足りていないときだと思われる
                 {
                     //MessageBox.Show("リセットしたコマ");
-                    resetCounter++;
+                    if(haveEdgeNodes.Count > 0)
+                    {
+                        resetCounter++;
+                    }
+                    
                     //完全グラフを作成
                     edges = new List<Matching>();
                     chosenMatchs = new List<Matching>();
@@ -1422,6 +1463,7 @@ namespace Comarenkun
             edges = edges.OrderBy(e => r.Next(edges.Count)).ToList();//edgesをシャッフル
             nodes = nodes.OrderBy(n => r.Next(nodes.Count)).ToList();//nodesをシャッフル
             List<Matching> origin = new List<Matching>(edges);//もとのedgesを値コピー->あとでmatchsの枝を消して返り値へ
+            List<MemberNode> haveEdgeNodes = HaveEdgeList(edges, nodes);
             List<Matching> matchs = new List<Matching>();//得られたマッチングを格納->resultへ
             List<string[]> takyuMatchs = new List<string[]>();//得られた多球マッチングを格納->resultへ 
             takyuChosen = takyuChosen;//今までに多球に選ばれた人たち．↑の列挙版を加える
@@ -1464,6 +1506,8 @@ namespace Comarenkun
                 foreach (string s in current)
                 {//選んだ人の枝を消す
                     edges.RemoveAll(ee => ee.Name1 == s || ee.Name2 == s);
+
+                    haveEdgeNodes.RemoveAll(nn => nn.Name == s);
                 }
             }
 
@@ -1485,6 +1529,7 @@ namespace Comarenkun
                         {
                             edges.RemoveAll(hoge => hoge.Name1 == e.Name1 || hoge.Name2 == e.Name1
                                             || hoge.Name1 == e.Name2 || hoge.Name2 == e.Name2);//採用された枝の2ノードが関与する枝はすべて削除
+                            haveEdgeNodes.RemoveAll(nn => nn.Name == e.Name1 || nn.Name == e.Name2);
                             matchs.Add(e);
                             i++;
                             break;
@@ -1503,6 +1548,7 @@ namespace Comarenkun
                             //条件なし
                             edges.RemoveAll(hoge => hoge.Name1 == e.Name1 || hoge.Name2 == e.Name1
                                             || hoge.Name1 == e.Name2 || hoge.Name2 == e.Name2);//採用された枝の2ノードが関与する枝はすべて削除
+                            haveEdgeNodes.RemoveAll(nn => nn.Name == e.Name1 || nn.Name == e.Name2);
                             matchs.Add(e);
                             i++;
                             break;
@@ -1513,7 +1559,11 @@ namespace Comarenkun
                             //次数の低いノードから選択しているのでこの状況になるのは単純に残る枝数が足りていないときだと思われる
                 {
                     //MessageBox.Show("リセットしたコマ");
-                    resetCounter++;
+                    if(haveEdgeNodes.Count > 0)
+                    {
+                        resetCounter++;
+                    }
+                    
                     //完全グラフを作成
                     edges = new List<Matching>();
                     chosenMatchs = new List<Matching>();

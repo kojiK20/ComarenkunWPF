@@ -14,81 +14,81 @@
     <Window.Resources>
         <Storyboard x:Key="InitialBall">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)" Storyboard.TargetName="initialBall">
-                <EasingDoubleKeyFrame KeyTime="0:0:0.8" Value="0">
+                <EasingDoubleKeyFrame KeyTime="0:0:1" Value="0">
                     <EasingDoubleKeyFrame.EasingFunction>
                         <CircleEase EasingMode="EaseOut"/>
                     </EasingDoubleKeyFrame.EasingFunction>
                 </EasingDoubleKeyFrame>
-                <EasingDoubleKeyFrame KeyTime="0:0:1" Value="144">
+                <EasingDoubleKeyFrame KeyTime="0:0:1.2" Value="144">
                     <EasingDoubleKeyFrame.EasingFunction>
                         <CircleEase EasingMode="EaseOut"/>
                     </EasingDoubleKeyFrame.EasingFunction>
                 </EasingDoubleKeyFrame>
-                <EasingDoubleKeyFrame KeyTime="0:0:1.5" Value="-100">
+                <EasingDoubleKeyFrame KeyTime="0:0:1.7" Value="-100">
                     <EasingDoubleKeyFrame.EasingFunction>
                         <CircleEase EasingMode="EaseOut"/>
                     </EasingDoubleKeyFrame.EasingFunction>
                 </EasingDoubleKeyFrame>
             </DoubleAnimationUsingKeyFrames>
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)" Storyboard.TargetName="initialBall">
-                <EasingDoubleKeyFrame KeyTime="0:0:0.8" Value="0">
+                <EasingDoubleKeyFrame KeyTime="0:0:1" Value="0">
                     <EasingDoubleKeyFrame.EasingFunction>
                         <CircleEase EasingMode="EaseOut"/>
                     </EasingDoubleKeyFrame.EasingFunction>
                 </EasingDoubleKeyFrame>
-                <EasingDoubleKeyFrame KeyTime="0:0:1" Value="410">
+                <EasingDoubleKeyFrame KeyTime="0:0:1.2" Value="410">
                     <EasingDoubleKeyFrame.EasingFunction>
                         <CircleEase EasingMode="EaseOut"/>
                     </EasingDoubleKeyFrame.EasingFunction>
                 </EasingDoubleKeyFrame>
-                <EasingDoubleKeyFrame KeyTime="0:0:1.5" Value="1000">
+                <EasingDoubleKeyFrame KeyTime="0:0:1.7" Value="1000">
                     <EasingDoubleKeyFrame.EasingFunction>
                         <CircleEase EasingMode="EaseOut"/>
                     </EasingDoubleKeyFrame.EasingFunction>
                 </EasingDoubleKeyFrame>
             </DoubleAnimationUsingKeyFrames>
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)" Storyboard.TargetName="initialBackObject1">
-                <EasingDoubleKeyFrame KeyTime="0:0:1.1" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:1.3" Value="0"/>
             </DoubleAnimationUsingKeyFrames>
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)" Storyboard.TargetName="initialBackObject2">
-                <EasingDoubleKeyFrame KeyTime="0:0:1.1" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:1.3" Value="0"/>
             </DoubleAnimationUsingKeyFrames>
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)" Storyboard.TargetName="initialBackObject1">
-                <EasingDoubleKeyFrame KeyTime="0:0:1.1" Value="0">
+                <EasingDoubleKeyFrame KeyTime="0:0:1.3" Value="0">
                     <EasingDoubleKeyFrame.EasingFunction>
                         <CircleEase EasingMode="EaseOut"/>
                     </EasingDoubleKeyFrame.EasingFunction>
                 </EasingDoubleKeyFrame>
-                <EasingDoubleKeyFrame KeyTime="0:0:1.3" Value="-24">
+                <EasingDoubleKeyFrame KeyTime="0:0:1.5" Value="-24">
                     <EasingDoubleKeyFrame.EasingFunction>
                         <CircleEase EasingMode="EaseOut"/>
                     </EasingDoubleKeyFrame.EasingFunction>
                 </EasingDoubleKeyFrame>
-                <EasingDoubleKeyFrame KeyTime="0:0:1.5" Value="-408"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:1.7" Value="-408"/>
             </DoubleAnimationUsingKeyFrames>
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.Y)" Storyboard.TargetName="initialBackObject2">
-                <EasingDoubleKeyFrame KeyTime="0:0:1.1" Value="0">
+                <EasingDoubleKeyFrame KeyTime="0:0:1.3" Value="0">
                     <EasingDoubleKeyFrame.EasingFunction>
                         <CircleEase EasingMode="EaseOut"/>
                     </EasingDoubleKeyFrame.EasingFunction>
                 </EasingDoubleKeyFrame>
-                <EasingDoubleKeyFrame KeyTime="0:0:1.3" Value="24">
+                <EasingDoubleKeyFrame KeyTime="0:0:1.5" Value="24">
                     <EasingDoubleKeyFrame.EasingFunction>
                         <CircleEase EasingMode="EaseOut"/>
                     </EasingDoubleKeyFrame.EasingFunction>
                 </EasingDoubleKeyFrame>
-                <EasingDoubleKeyFrame KeyTime="0:0:1.5" Value="480"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:1.7" Value="480"/>
             </DoubleAnimationUsingKeyFrames>
             <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="initialBackObject1">
-                <DiscreteObjectKeyFrame KeyTime="0:0:1.3" Value="{x:Static Visibility.Visible}"/>
-                <DiscreteObjectKeyFrame KeyTime="0:0:1.5" Value="{x:Static Visibility.Collapsed}"/>
+                <DiscreteObjectKeyFrame KeyTime="0:0:1.5" Value="{x:Static Visibility.Visible}"/>
+                <DiscreteObjectKeyFrame KeyTime="0:0:1.7" Value="{x:Static Visibility.Collapsed}"/>
             </ObjectAnimationUsingKeyFrames>
             <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="initialBackObject2">
-                <DiscreteObjectKeyFrame KeyTime="0:0:1.3" Value="{x:Static Visibility.Visible}"/>
-                <DiscreteObjectKeyFrame KeyTime="0:0:1.5" Value="{x:Static Visibility.Hidden}"/>
+                <DiscreteObjectKeyFrame KeyTime="0:0:1.5" Value="{x:Static Visibility.Visible}"/>
+                <DiscreteObjectKeyFrame KeyTime="0:0:1.7" Value="{x:Static Visibility.Hidden}"/>
             </ObjectAnimationUsingKeyFrames>
             <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="initialBall">
-                <DiscreteObjectKeyFrame KeyTime="0:0:1.5" Value="{x:Static Visibility.Collapsed}"/>
+                <DiscreteObjectKeyFrame KeyTime="0:0:1.7" Value="{x:Static Visibility.Collapsed}"/>
             </ObjectAnimationUsingKeyFrames>
         </Storyboard>
         <Storyboard x:Key="ClickEffect">
@@ -1248,6 +1248,10 @@
                 <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
                 <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
             </DoubleAnimationUsingKeyFrames>
+            <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsHitTestVisible)" Storyboard.TargetName="window">
+                <DiscreteBooleanKeyFrame KeyTime="0" Value="False"/>
+                <DiscreteBooleanKeyFrame KeyTime="0:0:0.2" Value="True"/>
+            </BooleanAnimationUsingKeyFrames>
         </Storyboard>
         <Storyboard x:Key="AppearObjectsInMatching2" Name="AppearObjectsInMatching2" Completed="StoryboardCompleted">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="participantNamesBackground">
@@ -1294,6 +1298,10 @@
                 <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
                 <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
             </DoubleAnimationUsingKeyFrames>
+            <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsHitTestVisible)" Storyboard.TargetName="window">
+                <DiscreteBooleanKeyFrame KeyTime="0" Value="False"/>
+                <DiscreteBooleanKeyFrame KeyTime="0:0:0.2" Value="True"/>
+            </BooleanAnimationUsingKeyFrames>
         </Storyboard>
         <Storyboard x:Key="AppearObjectsInMatching1r" Name="AppearObjectsInMatching1r" Completed="StoryboardCompleted">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="participantNamesScrollViewer">
@@ -1333,6 +1341,10 @@
                 <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
                 <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
             </DoubleAnimationUsingKeyFrames>
+            <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsHitTestVisible)" Storyboard.TargetName="window">
+                <DiscreteBooleanKeyFrame KeyTime="0" Value="False"/>
+                <DiscreteBooleanKeyFrame KeyTime="0:0:0.2" Value="True"/>
+            </BooleanAnimationUsingKeyFrames>
         </Storyboard>
         <Storyboard x:Key="AppearObjectsInMatching2r" Name="AppearObjectsInMatching2r" Completed="StoryboardCompleted">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="participantNamesBackground">
@@ -1379,6 +1391,10 @@
                 <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
                 <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
             </DoubleAnimationUsingKeyFrames>
+            <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsHitTestVisible)" Storyboard.TargetName="window">
+                <DiscreteBooleanKeyFrame KeyTime="0" Value="False"/>
+                <DiscreteBooleanKeyFrame KeyTime="0:0:0.2" Value="True"/>
+            </BooleanAnimationUsingKeyFrames>
         </Storyboard>
         <Storyboard x:Key="NextButtonMouseEnter" Name="NextButtonMouseEnter">
 
@@ -1464,6 +1480,10 @@
             <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="participantMemberButtons">
                 <EasingPointKeyFrame KeyTime="0:0:0.2" Value="2,0.5"/>
             </PointAnimationUsingKeyFrames>
+            <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsHitTestVisible)" Storyboard.TargetName="window">
+                <DiscreteBooleanKeyFrame KeyTime="0" Value="False"/>
+                <DiscreteBooleanKeyFrame KeyTime="0:0:0.2" Value="True"/>
+            </BooleanAnimationUsingKeyFrames>
         </Storyboard>
         <Storyboard x:Key="DisappearObjectsInMatching2" Name="DisappearObjectsInMatching2" Completed="StoryboardCompleted">
             <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="groupButtons">
@@ -1512,6 +1532,10 @@
             <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="participantMemberButtons">
                 <EasingPointKeyFrame KeyTime="0:0:0.2" Value="2,0.5"/>
             </PointAnimationUsingKeyFrames>
+            <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsHitTestVisible)" Storyboard.TargetName="window">
+                <DiscreteBooleanKeyFrame KeyTime="0" Value="False"/>
+                <DiscreteBooleanKeyFrame KeyTime="0:0:0.2" Value="True"/>
+            </BooleanAnimationUsingKeyFrames>
         </Storyboard>
         <Storyboard x:Key="DisappearObjectsInMatching1r" Name="DisappearObjectsInMatching1r" Completed="StoryboardCompleted">
             <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="groupButtons">
@@ -1550,6 +1574,10 @@
             <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="participantMemberButtons">
                 <EasingPointKeyFrame KeyTime="0:0:0.2" Value="-3,0.5"/>
             </PointAnimationUsingKeyFrames>
+            <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsHitTestVisible)" Storyboard.TargetName="window">
+                <DiscreteBooleanKeyFrame KeyTime="0" Value="False"/>
+                <DiscreteBooleanKeyFrame KeyTime="0:0:0.2" Value="True"/>
+            </BooleanAnimationUsingKeyFrames>
         </Storyboard>
         <Storyboard x:Key="DisappearObjectsInMatching2r" Name="DisappearObjectsInMatching2r" Completed="StoryboardCompleted">
             <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="groupButtons">
@@ -1598,6 +1626,10 @@
             <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="participantMemberButtons">
                 <EasingPointKeyFrame KeyTime="0:0:0.2" Value="-3,0.5"/>
             </PointAnimationUsingKeyFrames>
+            <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsHitTestVisible)" Storyboard.TargetName="window">
+                <DiscreteBooleanKeyFrame KeyTime="0" Value="False"/>
+                <DiscreteBooleanKeyFrame KeyTime="0:0:0.2" Value="True"/>
+            </BooleanAnimationUsingKeyFrames>
         </Storyboard>
         <Storyboard x:Key="HeaderToMatching" Name="HeaderToMatching">
             <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(ContentControl.Content)" Storyboard.TargetName="header">
@@ -1906,7 +1938,6 @@
             </DoubleAnimationUsingKeyFrames>
             <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="LINESendButton">
                 <EasingPointKeyFrame KeyTime="0" Value="0.1,0.1"/>
-                <EasingPointKeyFrame KeyTime="0:0:0.2" Value="0.5,0.5"/>
             </PointAnimationUsingKeyFrames>
         </Storyboard>
         <Storyboard x:Key="LINESendButtonMouseLeave" Name="LineSendButtonMouseEnter">

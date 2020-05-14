@@ -211,7 +211,7 @@ namespace Comarenkun
                 }
             }
             sr1.Close();
-            names = new List<string>();
+            //names = new List<string>();
             while((line = sr2.ReadLine()) != null)
             {//ランクが↑↓空以外の場合空に置き換え
                 if(line != "")
