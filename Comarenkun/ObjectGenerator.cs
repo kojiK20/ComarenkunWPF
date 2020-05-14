@@ -206,13 +206,13 @@ namespace Comarenkun
           
             if (name == "talkLabel")
             {
-                if(rowSize * p[2] / 16 < columnSize * p[3] / 2 * 0.8)
+                if(rowSize * p[2] / 16 < columnSize * p[3] / 2 * 0.5)
                 {
                     label.FontSize = rowSize * p[2] / 16;//セリフによらず一定の割合の大きさの方がよい？
                 }
                 else
                 {
-                    label.FontSize = columnSize * p[3] / 2 * 0.8;//セリフによらず一定の割合の大きさの方がよい？
+                    label.FontSize = columnSize * p[3] / 2 * 0.5;//セリフによらず一定の割合の大きさの方がよい？
                 }
                 
             }

@@ -193,6 +193,7 @@ namespace Comarenkun
                         break;
                         //フラグ等を立てて処理を終了させる
                     }
+                    
 
                     if(i < coma - 1)
                     {
@@ -239,6 +240,7 @@ namespace Comarenkun
                         set = new List<ResultSet>();
                         edges = new List<Matching>(edgesOrigin);
                         chosenMatchs = new List<Matching>();
+                        takyuChosen = new List<string>();
                         loopCounter++;
                         ignoreRankCounter = 0;
                         sameGroupCounter = 0;
@@ -253,6 +255,7 @@ namespace Comarenkun
                         set = new List<ResultSet>();
                         edges = new List<Matching>(edgesOrigin);
                         chosenMatchs = new List<Matching>();
+                        takyuChosen = new List<string>();
                         loopCounter++;
                         sameGroupCounter = 0;
                         bridgeCounter = 0;
@@ -266,6 +269,7 @@ namespace Comarenkun
                         set = new List<ResultSet>();
                         edges = new List<Matching>(edgesOrigin);
                         chosenMatchs = new List<Matching>();
+                        takyuChosen = new List<string>();
                         loopCounter++;
                         //sameGroupCounter = 0;
                         bridgeCounter = 0;
@@ -278,6 +282,7 @@ namespace Comarenkun
                         set = new List<ResultSet>();
                         edges = new List<Matching>(edgesOrigin);
                         chosenMatchs = new List<Matching>();
+                        takyuChosen = new List<string>();
                         loopCounter++;
                         //sameGroupCounter = 0;
                         //bridgeCounter = 0;
@@ -285,7 +290,7 @@ namespace Comarenkun
                         i = -1;
                         //MessageBox.Show("組みなおし回数：" + loopCounter.ToString() + "\nリセットが検出されたので組みなおしてみたコマ");
                     }
-                    else if (loopCounter >= maxLoop)
+                    else if (loopCounter >= maxLoop && i == coma - 1)
                     {
                         MessageBox.Show("あまり良くない組み合わせが出たかもしれないコマ...\n組みなおしを推奨するコマ");
                     }
@@ -341,7 +346,7 @@ namespace Comarenkun
             }
             return nodes.Count;
         }
-        //最小の次数を返す(同所属間の枝はないものとみなす)
+        //最小の次数を返す
         public int MinDegree(List<Matching> edges, List<MemberNode> nodes)
         {
             int degree = nodes.Count - 1;//最小の次数
@@ -350,7 +355,7 @@ namespace Comarenkun
             {
                 foreach (Matching e in edges)
                 {
-                    if ((e.Name1 == n.Name || e.Name2 == n.Name) && e.DifferentGroup)
+                    if (e.Name1 == n.Name || e.Name2 == n.Name)
                     {
                         degreePre++;
                     }
@@ -363,7 +368,7 @@ namespace Comarenkun
             }
             return degree;
         }
-        //最大の次数を返す(同所属間の枝はないものとみなす)
+        //最大の次数を返す
         public int MaxDegree(List<Matching> edges, List<MemberNode> nodes)
         {
             int degree = 0;//最大の次数
@@ -372,7 +377,7 @@ namespace Comarenkun
             {
                 foreach (Matching e in edges)
                 {
-                    if ((e.Name1 == n.Name || e.Name2 == n.Name) && e.DifferentGroup)
+                    if (e.Name1 == n.Name || e.Name2 == n.Name)
                     {
                         degreePre++;
                     }
@@ -385,13 +390,13 @@ namespace Comarenkun
             }
             return degree;
         }
-        //memberノードの次数を返す(同所属間の枝はないものとみなす)
+        //memberノードの次数を返す
         public int Degree(List<Matching> edges, MemberNode member)
         {
             int degree = 0;
             foreach (Matching e in edges)
             {
-                if ((e.Name1 == member.Name || e.Name2 == member.Name) && e.DifferentGroup)
+                if (e.Name1 == member.Name || e.Name2 == member.Name)
                 {
                     degree++;
                 }
@@ -661,7 +666,7 @@ namespace Comarenkun
                             flag++;
                         }
                         if(takyuChosen.Count == nodes.Count)
-                        {
+                        {//多球でに全員が選ばれたら
                             takyuChosen = new List<string>();
                             foreach(string s in t)
                             {
@@ -840,7 +845,14 @@ namespace Comarenkun
                         chosenMatchs.Add(m);
                     }
                     //多球の選出状況もリセット
-                    //takyuChosen = new List<string>();
+                    takyuChosen = new List<string>();
+                    foreach(string[] t in takyuMatchs)
+                    {
+                        foreach(string tt in t)
+                        {
+                            takyuChosen.Add(tt);
+                        }
+                    }
                 }
             }
             //nodesとorigin(返り値に使用)からマッチングしたメンバーを消す
@@ -1188,7 +1200,7 @@ namespace Comarenkun
                 if (ii == i)//これでも見つからないならば枝の選定状況をリセット(完全グラフから，このコマで既に選んだ枝のみを除いたグラフにedgesを置き換える)
                             //次数の低いノードから選択しているのでこの状況になるのは単純に残る枝数が足りていないときだと思われる
                 {
-                    MessageBox.Show("リセットしたコマ");
+                    //MessageBox.Show("リセットしたコマ");
                     resetCounter++;
                     //完全グラフを作成
                     edges = new List<Matching>();
@@ -1222,6 +1234,15 @@ namespace Comarenkun
                             }
                         }
                         chosenMatchs.Add(m);
+                    }
+                    //多球の選出状況もリセット
+                    takyuChosen = new List<string>();
+                    foreach (string[] t in takyuMatchs)
+                    {
+                        foreach (string tt in t)
+                        {
+                            takyuChosen.Add(tt);
+                        }
                     }
                 }
             }
@@ -1491,7 +1512,7 @@ namespace Comarenkun
                 if (ii == i)//これでも見つからないならば枝の選定状況をリセット(完全グラフから，このコマで既に選んだ枝のみを除いたグラフにedgesを置き換える)
                             //次数の低いノードから選択しているのでこの状況になるのは単純に残る枝数が足りていないときだと思われる
                 {
-                    MessageBox.Show("リセットしたコマ");
+                    //MessageBox.Show("リセットしたコマ");
                     resetCounter++;
                     //完全グラフを作成
                     edges = new List<Matching>();
@@ -1525,6 +1546,15 @@ namespace Comarenkun
                             }
                         }
                         chosenMatchs.Add(m);
+                    }
+                    //多球の選出状況もリセット
+                    takyuChosen = new List<string>();
+                    foreach (string[] t in takyuMatchs)
+                    {
+                        foreach (string tt in t)
+                        {
+                            takyuChosen.Add(tt);
+                        }
                     }
                 }
             }

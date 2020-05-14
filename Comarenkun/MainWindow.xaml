@@ -124,7 +124,7 @@
                 <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0"/>
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
-        <Storyboard x:Key="ComarenkunMouseOver">
+        <Storyboard x:Key="ComarenkunMouseOver" Name="ComarenkunMouseOver">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="comarenkunButton">
                 <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1">
                     <EasingDoubleKeyFrame.EasingFunction>
@@ -178,7 +178,7 @@
                 <EasingPointKeyFrame KeyTime="0:0:0.5" Value="1.1,1.1"/>
             </PointAnimationUsingKeyFrames>
         </Storyboard>
-        <Storyboard x:Key="ComarenkunMouseLeave">
+        <Storyboard x:Key="ComarenkunMouseLeave" Name="ComarenkunMouseLeave">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)" Storyboard.TargetName="comarenkunButton">
                 <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0"/>
             </DoubleAnimationUsingKeyFrames>
@@ -197,7 +197,7 @@
                 <EasingPointKeyFrame KeyTime="0:0:0.3" Value="1.1,1.1"/>
             </PointAnimationUsingKeyFrames>
         </Storyboard>
-        <Storyboard x:Key="ComarenkunClicked">
+        <Storyboard x:Key="ComarenkunClicked" Name="ComarenkunClicked">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="comarenkunButton">
                 <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="1"/>
             </DoubleAnimationUsingKeyFrames>
@@ -216,7 +216,7 @@
                 </EasingDoubleKeyFrame>
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
-        <Storyboard x:Key="MemberButtonMouseEnter">
+        <Storyboard x:Key="MemberButtonMouseEnter" Name="MemberButtonMouseEnter">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="memberButton">
                 <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1.15">
                     <EasingDoubleKeyFrame.EasingFunction>
@@ -245,7 +245,7 @@
                 <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="-4"/>
             </DoubleAnimationUsingKeyFrames>-->
         </Storyboard>
-        <Storyboard x:Key="MemberButtonMouseLeave">
+        <Storyboard x:Key="MemberButtonMouseLeave" Name="MemberButtonMouseLeave">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="memberButton">
                 <EasingDoubleKeyFrame KeyTime="0" Value="1.15"/>
                 <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="1.15"/>
@@ -265,7 +265,7 @@
                 <EasingPointKeyFrame KeyTime="0:0:0.3" Value="0.27,0.2"/>
             </PointAnimationUsingKeyFrames>
         </Storyboard>
-        <Storyboard x:Key="MatchingButtonMouseEnter">
+        <Storyboard x:Key="MatchingButtonMouseEnter" Name="MatchingButtonMouseEnter">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="matchingButton">
                 <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
                 <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1.15">
@@ -287,7 +287,7 @@
                 <EasingPointKeyFrame KeyTime="0:0:0.3" Value="0.15,0.2"/>
             </PointAnimationUsingKeyFrames>
         </Storyboard>
-        <Storyboard x:Key="MatchingButtonMouseLeave">
+        <Storyboard x:Key="MatchingButtonMouseLeave" Name="MatchingButtonMouseLeave">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="matchingButton">
                 <EasingDoubleKeyFrame KeyTime="0" Value="1.15"/>
                 <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="1.15"/>
@@ -309,27 +309,27 @@
         <Storyboard x:Key="MemberButtonClick" Name="MemberButtonClick" Completed="StoryboardCompleted">
             <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="memberButton">
                 <EasingPointKeyFrame KeyTime="0" Value="0.27,0.29"/>
-                <SplinePointKeyFrame KeyTime="0:0:0.5" Value="-0.05,0.2" KeySpline="1,0,0,1"/>
+                <SplinePointKeyFrame KeyTime="0:0:0.4" Value="-0.05,0.2" KeySpline="1,0,0,1"/>
             </PointAnimationUsingKeyFrames>
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="memberButton">
-                <SplineDoubleKeyFrame KeyTime="0:0:0.5" Value="0" KeySpline="1,0,0,1"/>
+                <SplineDoubleKeyFrame KeyTime="0:0:0.4" Value="0" KeySpline="1,0,0,1"/>
             </DoubleAnimationUsingKeyFrames>
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" Storyboard.TargetName="memberButton">
-                <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="1"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="1"/>
             </DoubleAnimationUsingKeyFrames>
             <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="matchingButton">
                 <EasingPointKeyFrame KeyTime="0" Value="0.2,0.2"/>
-                <SplinePointKeyFrame KeyTime="0:0:0.5" Value="0.9,0.2" KeySpline="1,0,0,1"/>
+                <SplinePointKeyFrame KeyTime="0:0:0.4" Value="0.9,0.2" KeySpline="1,0,0,1"/>
             </PointAnimationUsingKeyFrames>
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="matchingButton">
-                <SplineDoubleKeyFrame KeyTime="0:0:0.5" Value="0" KeySpline="1,0,0,1"/>
+                <SplineDoubleKeyFrame KeyTime="0:0:0.4" Value="0" KeySpline="1,0,0,1"/>
             </DoubleAnimationUsingKeyFrames>
 
             <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="toMenuButton">
-                <DiscreteObjectKeyFrame KeyTime="0:0:0.4" Value="{x:Static Visibility.Visible}"/>
+                <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="{x:Static Visibility.Visible}"/>
             </ObjectAnimationUsingKeyFrames>
             <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="toMenuButton">
-                <EasingPointKeyFrame KeyTime="0:0:0.4" Value="-0.05,0.5"/>
+                <EasingPointKeyFrame KeyTime="0:0:0.3" Value="-0.05,0.5"/>
             </PointAnimationUsingKeyFrames>
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="toMenuButton">
                 <EasingDoubleKeyFrame KeyTime="0" Value="0">
@@ -337,7 +337,7 @@
                         <CircleEase EasingMode="EaseOut"/>
                     </EasingDoubleKeyFrame.EasingFunction>
                 </EasingDoubleKeyFrame>
-                <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="0">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0">
                     <EasingDoubleKeyFrame.EasingFunction>
                         <CircleEase EasingMode="EaseOut"/>
                     </EasingDoubleKeyFrame.EasingFunction>
@@ -350,51 +350,44 @@
             </DoubleAnimationUsingKeyFrames>
             <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)" Storyboard.TargetName="memberButton">
                 <EasingColorKeyFrame KeyTime="0" Value="White"/>
-                <EasingColorKeyFrame KeyTime="0:0:0.2" Value="#FFA0E540"/>
+                <EasingColorKeyFrame KeyTime="0:0:0.1" Value="#FFA0E540"/>
             </ColorAnimationUsingKeyFrames>
 
             <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsHitTestVisible)" Storyboard.TargetName="memberButton">
                 <DiscreteBooleanKeyFrame KeyTime="0" Value="False"/>
-                <DiscreteBooleanKeyFrame KeyTime="0:0:0.5" Value="True"/>
+                <DiscreteBooleanKeyFrame KeyTime="0:0:0.4" Value="True"/>
             </BooleanAnimationUsingKeyFrames>
             <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsHitTestVisible)" Storyboard.TargetName="matchingButton">
                 <DiscreteBooleanKeyFrame KeyTime="0" Value="False"/>
-                <DiscreteBooleanKeyFrame KeyTime="0:0:0.5" Value="True"/>
+                <DiscreteBooleanKeyFrame KeyTime="0:0:0.4" Value="True"/>
             </BooleanAnimationUsingKeyFrames>
             <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsHitTestVisible)" Storyboard.TargetName="window">
                 <DiscreteBooleanKeyFrame KeyTime="0" Value="True"/>
             </BooleanAnimationUsingKeyFrames>
         </Storyboard>
-        <Storyboard x:Key="MatchingButtonClick" Completed="matchingButtonClickCompleted">
+        <Storyboard x:Key="MatchingButtonClick" Name="MatchingButtonClick">
             <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="memberButton">
                 <EasingPointKeyFrame KeyTime="0" Value="0.27,0.29"/>
-                <SplinePointKeyFrame KeyTime="0:0:0.5" Value="-0.05,0.2" KeySpline="1,0,0,1"/>
+                <SplinePointKeyFrame KeyTime="0:0:0.4" Value="-0.05,0.2" KeySpline="1,0,0,1"/>
             </PointAnimationUsingKeyFrames>
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="memberButton">
-                <SplineDoubleKeyFrame KeyTime="0:0:0.5" Value="0" KeySpline="1,0,0,1"/>
+                <SplineDoubleKeyFrame KeyTime="0:0:0.4" Value="0" KeySpline="1,0,0,1"/>
             </DoubleAnimationUsingKeyFrames>
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" Storyboard.TargetName="memberButton">
-                <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="1"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="1"/>
             </DoubleAnimationUsingKeyFrames>
             <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="matchingButton">
                 <EasingPointKeyFrame KeyTime="0" Value="0.15,0.2"/>
-                <SplinePointKeyFrame KeyTime="0:0:0.5" Value="0.9,0.2" KeySpline="1,0,0,1"/>
+                <SplinePointKeyFrame KeyTime="0:0:0.4" Value="0.9,0.2" KeySpline="1,0,0,1"/>
             </PointAnimationUsingKeyFrames>
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="matchingButton">
-                <SplineDoubleKeyFrame KeyTime="0:0:0.5" Value="0" KeySpline="1,0,0,1"/>
+                <SplineDoubleKeyFrame KeyTime="0:0:0.4" Value="0" KeySpline="1,0,0,1"/>
             </DoubleAnimationUsingKeyFrames>
-            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(ContentControl.Content)" Storyboard.TargetName="header">
-                <DiscreteObjectKeyFrame KeyTime="0" Value="マ"/>
-                <DiscreteObjectKeyFrame KeyTime="0:0:0.1" Value="マッ"/>
-                <DiscreteObjectKeyFrame KeyTime="0:0:0.2" Value="マッチ"/>
-                <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="マッチン"/>
-                <DiscreteObjectKeyFrame KeyTime="0:0:0.4" Value="マッチング"/>
-            </ObjectAnimationUsingKeyFrames>
             <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="toMenuButton">
-                <DiscreteObjectKeyFrame KeyTime="0:0:0.4" Value="{x:Static Visibility.Visible}"/>
+                <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="{x:Static Visibility.Visible}"/>
             </ObjectAnimationUsingKeyFrames>
             <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="toMenuButton">
-                <EasingPointKeyFrame KeyTime="0:0:0.4" Value="-0.05,0.5"/>
+                <EasingPointKeyFrame KeyTime="0:0:0.3" Value="-0.05,0.5"/>
             </PointAnimationUsingKeyFrames>
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="toMenuButton">
                 <EasingDoubleKeyFrame KeyTime="0" Value="0">
@@ -402,7 +395,7 @@
                         <CircleEase EasingMode="EaseOut"/>
                     </EasingDoubleKeyFrame.EasingFunction>
                 </EasingDoubleKeyFrame>
-                <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="0">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0">
                     <EasingDoubleKeyFrame.EasingFunction>
                         <CircleEase EasingMode="EaseOut"/>
                     </EasingDoubleKeyFrame.EasingFunction>
@@ -417,29 +410,17 @@
                 <EasingColorKeyFrame KeyTime="0" Value="White"/>
                 <EasingColorKeyFrame KeyTime="0:0:0.2" Value="#FF40E5A0"/>
             </ColorAnimationUsingKeyFrames>
-            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(GradientBrush.GradientStops)[1].(GradientStop.Color)" Storyboard.TargetName="header">
-                <EasingColorKeyFrame KeyTime="0:0:0.5" Value="#FF2D8182"/>
-                <!--G:+16*3-->
-            </ColorAnimationUsingKeyFrames>
-            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(GradientBrush.GradientStops)[0].(GradientStop.Color)" Storyboard.TargetName="header">
-                <EasingColorKeyFrame KeyTime="0:0:0.5" Value="#FF0D6162"/>
-                <!--G:+16*3-->
-            </ColorAnimationUsingKeyFrames>
-            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[1].(GradientStop.Color)" Storyboard.TargetName="headerAccent">
-                <EasingColorKeyFrame KeyTime="0:0:0.5" Value="#FFFF54D4"/>
-                <!--B:+16*8-->
-            </ColorAnimationUsingKeyFrames>
-            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[0].(GradientStop.Color)" Storyboard.TargetName="headerAccent">
-                <EasingColorKeyFrame KeyTime="0:0:0.5" Value="#FFFF0383"/>
-                <!--B:+16*8-->
-            </ColorAnimationUsingKeyFrames>
             <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsHitTestVisible)" Storyboard.TargetName="memberButton">
                 <DiscreteBooleanKeyFrame KeyTime="0" Value="True"/>
-                <DiscreteBooleanKeyFrame KeyTime="0:0:0.5" Value="True"/>
+                <DiscreteBooleanKeyFrame KeyTime="0:0:0.4" Value="True"/>
             </BooleanAnimationUsingKeyFrames>
             <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsHitTestVisible)" Storyboard.TargetName="matchingButton">
                 <DiscreteBooleanKeyFrame KeyTime="0" Value="False"/>
-                <DiscreteBooleanKeyFrame KeyTime="0:0:0.5" Value="True"/>
+                <DiscreteBooleanKeyFrame KeyTime="0:0:0.4" Value="True"/>
+            </BooleanAnimationUsingKeyFrames>
+            <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsHitTestVisible)" Storyboard.TargetName="window">
+                <DiscreteBooleanKeyFrame KeyTime="0" Value="False"/>
+                <DiscreteBooleanKeyFrame KeyTime="0:0:0.3" Value="True"/>
             </BooleanAnimationUsingKeyFrames>
 
         </Storyboard>
@@ -540,10 +521,9 @@
             <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(ContentControl.Content)" Storyboard.TargetName="header">
                 <DiscreteObjectKeyFrame KeyTime="0" Value="コ"/>
                 <DiscreteObjectKeyFrame KeyTime="0:0:0.1" Value="コマ"/>
-                <DiscreteObjectKeyFrame KeyTime="0:0:0.2" Value="コマれ"/>
-                <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="コマれん"/>
-                <DiscreteObjectKeyFrame KeyTime="0:0:0.4" Value="コマれんく"/>
-                <DiscreteObjectKeyFrame KeyTime="0:0:0.5" Value="コマれんくん"/>
+                <DiscreteObjectKeyFrame KeyTime="0:0:0.2" Value="コマ練"/>
+                <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="コマ練く"/>
+                <DiscreteObjectKeyFrame KeyTime="0:0:0.4" Value="コマ練くん"/>
             </ObjectAnimationUsingKeyFrames>
             <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(GradientBrush.GradientStops)[1].(GradientStop.Color)" Storyboard.TargetName="header">
                 <EasingColorKeyFrame KeyTime="0" Value="#FF2D8182"/>
@@ -837,13 +817,18 @@
                 <DiscreteBooleanKeyFrame KeyTime="0:0:0.2" Value="True"/>
             </BooleanAnimationUsingKeyFrames>
         </Storyboard>
-        <Storyboard x:Key="GroupOpenButtonClick">
+        <Storyboard x:Key="GroupOpenButtonClick" Name="GroupOpenButtonClick" Completed="StoryboardCompleted">
             <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)" Storyboard.TargetName="groupOpenButton">
                 <EasingColorKeyFrame KeyTime="0" Value="White"/>
-                <EasingColorKeyFrame KeyTime="0:0:0.2" Value="#FF5555AA"/>
+                <EasingColorKeyFrame KeyTime="0:0:0.1" Value="#FFEE7744"/>
             </ColorAnimationUsingKeyFrames>
         </Storyboard>
-        <Storyboard x:Key="GroupNameChangeButtonClick"/>
+        <Storyboard x:Key="GroupNameChangeButtonClick" Name="GroupNameChangeButtonClick" Completed="StoryboardCompleted">
+            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)" Storyboard.TargetName="groupNameChangeButton">
+                <EasingColorKeyFrame KeyTime="0" Value="White"/>
+                <EasingColorKeyFrame KeyTime="0:0:0.2" Value="#FFAA00AA"/>
+            </ColorAnimationUsingKeyFrames>
+        </Storyboard>
         <Storyboard x:Key="GroupButtonClickInGroup">
             <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="groupDeleteButton">
                 <EasingPointKeyFrame KeyTime="0" Value="1,0.5"/>
@@ -900,7 +885,6 @@
             </PointAnimationUsingKeyFrames>
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="groupDeleteButton">
                 <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
-                <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="1"/>
                 <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0"/>
             </DoubleAnimationUsingKeyFrames>
             <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="groupAddButton">
@@ -908,15 +892,16 @@
             </PointAnimationUsingKeyFrames>
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="groupAddButton">
                 <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="0.95"/>
                 <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0"/>
             </DoubleAnimationUsingKeyFrames>
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="groupNameChangeButton">
                 <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="1"/>
                 <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0"/>
             </DoubleAnimationUsingKeyFrames>
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="groupOpenButton">
                 <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
-                <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="1"/>
                 <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0"/>
             </DoubleAnimationUsingKeyFrames>
             <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="groupOpenButton">
@@ -989,7 +974,7 @@
                 <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
             </DoubleAnimationUsingKeyFrames>
             <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="groupNameChangeButton">
-                <EasingPointKeyFrame KeyTime="0" Value="0,0.5"/>
+                <EasingPointKeyFrame KeyTime="0" Value="-0.5,0.5"/>
             </PointAnimationUsingKeyFrames>
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="groupOpenButton">
                 <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
@@ -1029,19 +1014,19 @@
                 <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="メンバー"/>
             </ObjectAnimationUsingKeyFrames>
             <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(GradientBrush.GradientStops)[1].(GradientStop.Color)" Storyboard.TargetName="header">
-                <EasingColorKeyFrame KeyTime="0:0:0.5" Value="#FF2D8182"/>
+                <EasingColorKeyFrame KeyTime="0:0:0.5" Value="#FFFF8454"/>
                 <!--G:+16*3-->
             </ColorAnimationUsingKeyFrames>
             <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(GradientBrush.GradientStops)[0].(GradientStop.Color)" Storyboard.TargetName="header">
-                <EasingColorKeyFrame KeyTime="0:0:0.5" Value="#FF0D6162"/>
+                <EasingColorKeyFrame KeyTime="0:0:0.5" Value="#FFFF3303"/>
                 <!--G:+16*3-->
             </ColorAnimationUsingKeyFrames>
             <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[1].(GradientStop.Color)" Storyboard.TargetName="headerAccent">
-                <EasingColorKeyFrame KeyTime="0:0:0.5" Value="#FFFF54D4"/>
+                <EasingColorKeyFrame KeyTime="0:0:0.5" Value="#FF2DC182"/>
                 <!--B:+16*8-->
             </ColorAnimationUsingKeyFrames>
             <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[0].(GradientStop.Color)" Storyboard.TargetName="headerAccent">
-                <EasingColorKeyFrame KeyTime="0:0:0.5" Value="#FFFF0383"/>
+                <EasingColorKeyFrame KeyTime="0:0:0.5" Value="#FF0DA162"/>
                 <!--B:+16*8-->
             </ColorAnimationUsingKeyFrames>
         </Storyboard>
@@ -1219,6 +1204,728 @@
                 <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0"/>
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
+        <Storyboard x:Key="ToMenuButtonClickEffect" Name="ToMenuButtonClickEffect" Completed="StoryboardCompleted">
+            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)" Storyboard.TargetName="toMenuButton">
+                <EasingColorKeyFrame KeyTime="0" Value="White"/>
+                <EasingColorKeyFrame KeyTime="0:0:0.2" Value="#FF2D5182"/>
+            </ColorAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="AppearObjectsInMatching1" Name="AppearObjectsInMatching1" Completed="StoryboardCompleted">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="participantNamesScrollViewer">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="participantNamesScrollViewer">
+                <EasingPointKeyFrame KeyTime="0" Value="0,0.5"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="groupButtons">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="groupButtons">
+                <EasingPointKeyFrame KeyTime="0" Value="0,0.5"/>
+            </PointAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="configButton">
+                <EasingPointKeyFrame KeyTime="0" Value="0.5,0"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" Storyboard.TargetName="configButton">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="AppearObjectsInMatching2" Name="AppearObjectsInMatching2" Completed="StoryboardCompleted">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="participantNamesBackground">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="participantNamesBackground">
+                <EasingPointKeyFrame KeyTime="0" Value="0,0.5"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="participantNamesScrollViewer">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="participantNamesScrollViewer">
+                <EasingPointKeyFrame KeyTime="0" Value="0,0.5"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="groupButtons">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="groupButtons">
+                <EasingPointKeyFrame KeyTime="0" Value="0,0.5"/>
+            </PointAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="configButton">
+                <EasingPointKeyFrame KeyTime="0" Value="0.5,0"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" Storyboard.TargetName="configButton">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="AppearObjectsInMatching1r" Name="AppearObjectsInMatching1r" Completed="StoryboardCompleted">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="participantNamesScrollViewer">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="participantNamesScrollViewer">
+                <EasingPointKeyFrame KeyTime="0" Value="3,0.5"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="groupButtons">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="groupButtons">
+                <EasingPointKeyFrame KeyTime="0" Value="3,0.5"/>
+            </PointAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="configButton">
+                <EasingPointKeyFrame KeyTime="0" Value="0.5,0"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" Storyboard.TargetName="configButton">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="AppearObjectsInMatching2r" Name="AppearObjectsInMatching2r" Completed="StoryboardCompleted">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="participantNamesBackground">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="participantNamesBackground">
+                <EasingPointKeyFrame KeyTime="0" Value="1,0.5"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="participantNamesScrollViewer">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="participantNamesScrollViewer">
+                <EasingPointKeyFrame KeyTime="0" Value="3,0.5"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="groupButtons">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="groupButtons">
+                <EasingPointKeyFrame KeyTime="0" Value="3,0.5"/>
+            </PointAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="configButton">
+                <EasingPointKeyFrame KeyTime="0" Value="0.5,0"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" Storyboard.TargetName="configButton">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="NextButtonMouseEnter" Name="NextButtonMouseEnter">
+
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" Storyboard.TargetName="nextButton">
+                <EasingDoubleKeyFrame KeyTime="0" Value="1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1.03">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="nextButton">
+                <EasingPointKeyFrame KeyTime="0" Value="0.2,0.25"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="nextButton">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1.2">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="NextButtonMouseLeave" Name="NextButtonMouseLeave">
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="nextButton">
+                <EasingPointKeyFrame KeyTime="0" Value="0.2,0.25"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="nextButton">
+                <EasingDoubleKeyFrame KeyTime="0" Value="1.2"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" Storyboard.TargetName="nextButton">
+                <EasingDoubleKeyFrame KeyTime="0" Value="1.03"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)" Storyboard.TargetName="nextButton">
+                <EasingColorKeyFrame KeyTime="0:0:0.1" Value="#FF005533"/>
+            </ColorAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="NextButtonClick" Name="NextButtonClick" Completed="StoryboardCompleted">
+            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)" Storyboard.TargetName="nextButton">
+                <EasingColorKeyFrame KeyTime="0" Value="White"/>
+                <EasingColorKeyFrame KeyTime="0:0:0.1" Value="#FF005533"/>
+            </ColorAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="DisappearObjectsInMatching1" Name="DisappearObjectsInMatching1" Completed="StoryboardCompleted">
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="groupButtons">
+                <EasingPointKeyFrame KeyTime="0:0:0.2" Value="3,0.5"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="groupButtons">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="-0.05">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseIn"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="participantNamesScrollViewer">
+                <EasingPointKeyFrame KeyTime="0:0:0.2" Value="3,0.5"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="participantNamesScrollViewer">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseIn"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="participantMemberButtons">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseIn"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" Storyboard.TargetName="configButton">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="configButton">
+                <EasingPointKeyFrame KeyTime="0" Value="0.5,0"/>
+            </PointAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="participantMemberButtons">
+                <EasingPointKeyFrame KeyTime="0:0:0.2" Value="2,0.5"/>
+            </PointAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="DisappearObjectsInMatching2" Name="DisappearObjectsInMatching2" Completed="StoryboardCompleted">
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="groupButtons">
+                <EasingPointKeyFrame KeyTime="0:0:0.2" Value="3,0.5"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="groupButtons">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="-0.05">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseIn"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="participantNamesScrollViewer">
+                <EasingPointKeyFrame KeyTime="0:0:0.2" Value="3,0.5"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="participantNamesScrollViewer">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseIn"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="participantNamesBackground">
+                <EasingPointKeyFrame KeyTime="0:0:0.2" Value="1,0.5"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="participantNamesBackground">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseIn"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="participantMemberButtons">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseIn"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" Storyboard.TargetName="configButton">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="configButton">
+                <EasingPointKeyFrame KeyTime="0" Value="0.5,0"/>
+            </PointAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="participantMemberButtons">
+                <EasingPointKeyFrame KeyTime="0:0:0.2" Value="2,0.5"/>
+            </PointAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="DisappearObjectsInMatching1r" Name="DisappearObjectsInMatching1r" Completed="StoryboardCompleted">
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="groupButtons">
+                <EasingPointKeyFrame KeyTime="0:0:0.2" Value="0,0.5"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="groupButtons">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="-0.05">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseIn"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="participantNamesScrollViewer">
+                <EasingPointKeyFrame KeyTime="0:0:0.2" Value="0,0.5"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="participantNamesScrollViewer">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseIn"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="participantMemberButtons">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseIn"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" Storyboard.TargetName="configButton">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="configButton">
+                <EasingPointKeyFrame KeyTime="0" Value="0.5,0"/>
+            </PointAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="participantMemberButtons">
+                <EasingPointKeyFrame KeyTime="0:0:0.2" Value="-3,0.5"/>
+            </PointAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="DisappearObjectsInMatching2r" Name="DisappearObjectsInMatching2r" Completed="StoryboardCompleted">
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="groupButtons">
+                <EasingPointKeyFrame KeyTime="0:0:0.2" Value="0,0.5"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="groupButtons">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="-0.05">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseIn"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="participantNamesScrollViewer">
+                <EasingPointKeyFrame KeyTime="0:0:0.2" Value="0,0.5"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="participantNamesScrollViewer">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseIn"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="participantNamesBackground">
+                <EasingPointKeyFrame KeyTime="0:0:0.2" Value="0,0.5"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="participantNamesBackground">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseIn"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="participantMemberButtons">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseIn"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" Storyboard.TargetName="configButton">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="configButton">
+                <EasingPointKeyFrame KeyTime="0" Value="0.5,0"/>
+            </PointAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="participantMemberButtons">
+                <EasingPointKeyFrame KeyTime="0:0:0.2" Value="-3,0.5"/>
+            </PointAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="HeaderToMatching" Name="HeaderToMatching">
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(ContentControl.Content)" Storyboard.TargetName="header">
+                <DiscreteObjectKeyFrame KeyTime="0" Value="マ"/>
+                <DiscreteObjectKeyFrame KeyTime="0:0:0.1" Value="マッ"/>
+                <DiscreteObjectKeyFrame KeyTime="0:0:0.2" Value="マッチ"/>
+                <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="マッチン"/>
+                <DiscreteObjectKeyFrame KeyTime="0:0:0.4" Value="マッチング"/>
+            </ObjectAnimationUsingKeyFrames>
+            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(GradientBrush.GradientStops)[1].(GradientStop.Color)" Storyboard.TargetName="header">
+                <EasingColorKeyFrame KeyTime="0:0:0.5" Value="#FF2D8182"/>
+                <!--G:+16*3-->
+            </ColorAnimationUsingKeyFrames>
+            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(GradientBrush.GradientStops)[0].(GradientStop.Color)" Storyboard.TargetName="header">
+                <EasingColorKeyFrame KeyTime="0:0:0.5" Value="#FF0D6162"/>
+                <!--G:+16*3-->
+            </ColorAnimationUsingKeyFrames>
+            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[1].(GradientStop.Color)" Storyboard.TargetName="headerAccent">
+                <EasingColorKeyFrame KeyTime="0:0:0.5" Value="#FFFF54D4"/>
+                <!--B:+16*8-->
+            </ColorAnimationUsingKeyFrames>
+            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[0].(GradientStop.Color)" Storyboard.TargetName="headerAccent">
+                <EasingColorKeyFrame KeyTime="0:0:0.5" Value="#FFFF0383"/>
+                <!--B:+16*8-->
+            </ColorAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="HeaderToConfig">
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(ContentControl.Content)" Storyboard.TargetName="header">
+                <DiscreteObjectKeyFrame KeyTime="0" Value="オ"/>
+                <DiscreteObjectKeyFrame KeyTime="0:0:0.1" Value="オプ"/>
+                <DiscreteObjectKeyFrame KeyTime="0:0:0.2" Value="オプシ"/>
+                <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="オプショ"/>
+                <DiscreteObjectKeyFrame KeyTime="0:0:0.4" Value="オプション"/>
+            </ObjectAnimationUsingKeyFrames>
+            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(GradientBrush.GradientStops)[1].(GradientStop.Color)" Storyboard.TargetName="header">
+                <EasingColorKeyFrame KeyTime="0:0:0.5" Value="#FF8484FF"/>
+                <!--G:+16*3-->
+            </ColorAnimationUsingKeyFrames>
+            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(GradientBrush.GradientStops)[0].(GradientStop.Color)" Storyboard.TargetName="header">
+                <EasingColorKeyFrame KeyTime="0:0:0.5" Value="#FF3333FF"/>
+                <!--G:+16*3-->
+            </ColorAnimationUsingKeyFrames>
+            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[1].(GradientStop.Color)" Storyboard.TargetName="headerAccent">
+                <EasingColorKeyFrame KeyTime="0:0:0.5" Value="#FF2DE182"/>
+                <!--B:+16*8-->
+            </ColorAnimationUsingKeyFrames>
+            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[0].(GradientStop.Color)" Storyboard.TargetName="headerAccent">
+                <EasingColorKeyFrame KeyTime="0:0:0.5" Value="#FF0DA162"/>
+                <!--B:+16*8-->
+            </ColorAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="HeaderToGroup">
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(ContentControl.Content)" Storyboard.TargetName="header">
+                <DiscreteObjectKeyFrame KeyTime="0" Value="グ"/>
+                <DiscreteObjectKeyFrame KeyTime="0:0:0.1" Value="グル"/>
+                <DiscreteObjectKeyFrame KeyTime="0:0:0.2" Value="グルー"/>
+                <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="グループ"/>
+            </ObjectAnimationUsingKeyFrames>
+            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(GradientBrush.GradientStops)[1].(GradientStop.Color)" Storyboard.TargetName="header">
+                <EasingColorKeyFrame KeyTime="0:0:0.5" Value="#FF2D8182"/>
+                <!--G:+16*3-->
+            </ColorAnimationUsingKeyFrames>
+            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(GradientBrush.GradientStops)[0].(GradientStop.Color)" Storyboard.TargetName="header">
+                <EasingColorKeyFrame KeyTime="0:0:0.5" Value="#FF0D6162"/>
+                <!--G:+16*3-->
+            </ColorAnimationUsingKeyFrames>
+            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[1].(GradientStop.Color)" Storyboard.TargetName="headerAccent">
+                <EasingColorKeyFrame KeyTime="0:0:0.5" Value="#FFFF54D4"/>
+                <!--B:+16*8-->
+            </ColorAnimationUsingKeyFrames>
+            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[0].(GradientStop.Color)" Storyboard.TargetName="headerAccent">
+                <EasingColorKeyFrame KeyTime="0:0:0.5" Value="#FFFF0383"/>
+                <!--B:+16*8-->
+            </ColorAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="AppearNextButton" Name="AppearNextButton" Completed="StoryboardCompleted">
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="nextButton">
+                <EasingPointKeyFrame KeyTime="0" Value="1,0.5"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="nextButton">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="DisappearNextButton" Name="DisappearNextButton" Completed="StoryboardCompleted">
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="nextButton">
+                <EasingPointKeyFrame KeyTime="0" Value="1,0.5"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="nextButton">
+                <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="AppearObjectsInConfig" Name="AppearObjectsInConfig">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="tableButton">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="tableButton">
+                <EasingPointKeyFrame KeyTime="0" Value="3,0.5"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="comaButton">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="comaButton">
+                <EasingPointKeyFrame KeyTime="0" Value="3,0.5"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="LINEButton">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="LINEButton">
+                <EasingPointKeyFrame KeyTime="0" Value="3,0.5"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="algorithmLabel">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="algorithmLabel">
+                <EasingPointKeyFrame KeyTime="0" Value="1,0.5"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="algorithmLabel0">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="algorithmLabel0">
+                <EasingPointKeyFrame KeyTime="0" Value="1,0.5"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="algorithmLabel1">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="algorithmLabel2">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="algorithmLabel1">
+                <EasingPointKeyFrame KeyTime="0" Value="1,0.5"/>
+            </PointAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="algorithmLabel2">
+                <EasingPointKeyFrame KeyTime="0" Value="1,0.5"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="comaListBox">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1.1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="comaListBox">
+                <EasingPointKeyFrame KeyTime="0" Value="1,0.5"/>
+            </PointAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="DisappearObjectsInConfig" Name="DisappearObjectsInConfig" Completed="StoryboardCompleted">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="tableButton">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="tableButton">
+                <EasingPointKeyFrame KeyTime="0" Value="3,0.5"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="comaButton">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="comaButton">
+                <EasingPointKeyFrame KeyTime="0" Value="3,0.5"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="LINEButton">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="LINEButton">
+                <EasingPointKeyFrame KeyTime="0" Value="3,0.5"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="algorithmLabel">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="algorithmLabel">
+                <EasingPointKeyFrame KeyTime="0" Value="1,0.5"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="algorithmLabel0">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="algorithmLabel0">
+                <EasingPointKeyFrame KeyTime="0" Value="1,0.5"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="algorithmLabel1">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="algorithmLabel2">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="algorithmLabel1">
+                <EasingPointKeyFrame KeyTime="0" Value="1,0.5"/>
+            </PointAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="algorithmLabel2">
+                <EasingPointKeyFrame KeyTime="0" Value="1,0.5"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="comaListBox">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="comaListBox">
+                <EasingPointKeyFrame KeyTime="0" Value="1,0.5"/>
+            </PointAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="TableButtonMouseEnter" Name="TableButtonMouseEnter">
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="tableButton">
+                <EasingPointKeyFrame KeyTime="0" Value="0.2,0.25"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="tableButton">
+                <EasingDoubleKeyFrame KeyTime="0" Value="1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1.1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="TableButtonMouseLeave" Name="TableButtonMouseLeave">
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="tableButton">
+                <EasingPointKeyFrame KeyTime="0" Value="0.2,0.25"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="tableButton">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="TableButtonClick" Name="TableButtonClick" Completed="StoryboardCompleted"/>
+        <Storyboard x:Key="ComaButtonMouseEnter" Name="ComaButtonMouseEnter">
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="comaButton">
+                <EasingPointKeyFrame KeyTime="0" Value="0.2,0.25"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="comaButton">
+                <EasingDoubleKeyFrame KeyTime="0" Value="1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1.1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="ComaButtonMouseLeave" Name="ComaButtonMouseLeave">
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="comaButton">
+                <EasingPointKeyFrame KeyTime="0" Value="0.2,0.25"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="comaButton">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" Storyboard.TargetName="comaButton">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="ComaButtonClick" Name="ComaButtonClick" Completed="StoryboardCompleted"/>
+        <Storyboard x:Key="LINEButtonMouseEnter" Name="LINEButtonMouseEnter">
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="LINEButton">
+                <EasingPointKeyFrame KeyTime="0" Value="0.1,0.25"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="LINEButton">
+                <EasingDoubleKeyFrame KeyTime="0" Value="1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1.1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="LINEButtonMouseLeave" Name="LINEButtonMouseLeave">
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="LINEButton">
+                <EasingPointKeyFrame KeyTime="0" Value="0.1,0.25"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="LINEButton">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="LINEButtonClick" Name="LINEButtonClick" Completed="StoryboardCompleted">
+            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)" Storyboard.TargetName="LINEButton">
+                <EasingColorKeyFrame KeyTime="0" Value="White"/>
+                <EasingColorKeyFrame KeyTime="0:0:0.2" Value="#FF30DF30"/>
+            </ColorAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="LINESendButtonMouseEnter" Name="LINESendButtonMouseEnter">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="LINESendButton">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1.1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" Storyboard.TargetName="LINESendButton">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1.1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CircleEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="LINESendButton">
+                <EasingPointKeyFrame KeyTime="0" Value="0.1,0.1"/>
+                <EasingPointKeyFrame KeyTime="0:0:0.2" Value="0.5,0.5"/>
+            </PointAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="LINESendButtonMouseLeave" Name="LineSendButtonMouseEnter">
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="LINESendButton">
+                <EasingPointKeyFrame KeyTime="0" Value="0.1,0.1"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="LINESendButton">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" Storyboard.TargetName="LINESendButton">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="LINESendButtonClick" Name="LINESendButtonClick" Completed="StoryboardCompleted">
+            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)" Storyboard.TargetName="LINESendButton">
+                <EasingColorKeyFrame KeyTime="0" Value="White"/>
+                <EasingColorKeyFrame KeyTime="0:0:0.2" Value="#FF55DD55"/>
+            </ColorAnimationUsingKeyFrames>
+        </Storyboard>
 
 
 
@@ -1228,18 +1935,6 @@
             <!--<BeginStoryboard Storyboard="{StaticResource MemberButtonMouseOver}"/>
             <BeginStoryboard Storyboard="{StaticResource MatchingButtonMouseOver}"/>-->
             <BeginStoryboard x:Name="InitialBall_BeginStoryboard" Storyboard="{StaticResource InitialBall}"/>
-        </EventTrigger>
-        <EventTrigger RoutedEvent="UIElement.MouseEnter" SourceName="comarenkunButton">
-            <RemoveStoryboard BeginStoryboardName="ComarenkunMouseLeave_BeginStoryboard1"/>
-            <BeginStoryboard x:Name="ComarenkunMouseOver_BeginStoryboard1" Storyboard="{StaticResource ComarenkunMouseOver}"/>
-        </EventTrigger>
-        <EventTrigger RoutedEvent="UIElement.MouseLeave" SourceName="comarenkunButton">
-
-            <BeginStoryboard x:Name="ComarenkunMouseLeave_BeginStoryboard1" Storyboard="{StaticResource ComarenkunMouseLeave}"/>
-        </EventTrigger>
-        <EventTrigger RoutedEvent="ButtonBase.Click" SourceName="comarenkunButton">
-
-            <BeginStoryboard x:Name="ComarenkunClicked_BeginStoryboard1" Storyboard="{StaticResource ComarenkunClicked}"/>
         </EventTrigger>
         <!--<EventTrigger RoutedEvent="UIElement.MouseLeftButtonDown">
             <BeginStoryboard x:Name="Clickeffect1_BeginStoryboard" Storyboard="{StaticResource Clickeffect1}"/>
@@ -1263,26 +1958,7 @@
         <Polygon Style="{DynamicResource BackObject5}" x:Name="backObject5" Fill="#FFFFFFFF" />
 
 
-        <Button x:Name="memberButton" Template="{DynamicResource MemberButton}" Foreground="#FFFFFF"  FontFamily="{DynamicResource 851ゴクチカ}" FontSize="70" Content="メンバー"  MouseEnter="memberButton_MouseEnter" MouseLeave="memberButton_MouseLeave" Click="memberButton_Click" Background="#FFA0E540" RenderTransformOrigin="0.29,0.2">
-            <Button.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform/>
-                    <SkewTransform/>
-                    <RotateTransform/>
-                    <TranslateTransform/>
-                </TransformGroup>
-            </Button.RenderTransform>
-        </Button>
-        <Button x:Name="matchingButton" Template="{DynamicResource MatchingButton}" Foreground="#FFFFFF" Background="#FF40E5A0" FontFamily="{StaticResource 851ゴクチカ}" FontSize="70" Content="マッチング" MouseEnter="matchingButton_MouseEnter" MouseLeave="matchingButton_MouseLeave" Click="matchingButton_Click" RenderTransformOrigin="0.5,0.5"   >
-            <Button.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform/>
-                    <SkewTransform/>
-                    <RotateTransform/>
-                    <TranslateTransform/>
-                </TransformGroup>
-            </Button.RenderTransform>
-        </Button>
+
 
 
 
@@ -1306,7 +1982,7 @@
                 </TransformGroup>
             </Button.RenderTransform>
         </Button>
-        <Button x:Name="groupOpenButton" Template="{DynamicResource GroupOpenButton}" FontFamily="{StaticResource 851ゴクチカ}" Content="開ク" Foreground="#FFF" Background="#55A" Visibility="Hidden" Click="GroupOpen_Click" MouseEnter="GroupOpen_MouseEnter" MouseLeave="GroupOpen_MouseLeave" RenderTransformOrigin="0.5,0.5">
+        <Button x:Name="groupOpenButton" Template="{DynamicResource GroupOpenButton}" FontFamily="{StaticResource 851ゴクチカ}" Content="開ク" Foreground="#FFF" Background="#E74" Visibility="Hidden" Click="GroupOpen_Click" MouseEnter="GroupOpen_MouseEnter" MouseLeave="GroupOpen_MouseLeave" RenderTransformOrigin="0.5,0.5">
             <Button.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
@@ -1316,7 +1992,7 @@
                 </TransformGroup>
             </Button.RenderTransform>
         </Button>
-        <Button x:Name="groupNameChangeButton" Template="{DynamicResource GroupNameChangeButton}" FontFamily="{StaticResource 851ゴクチカ}" Content="ナマエ" Foreground="#FFF" Background="#A0A" Visibility="Hidden" Click="GroupNameChange_Click" MouseEnter="GroupNameChange_MouseEnter" MouseLeave="GroupNameChange_MouseLeave" RenderTransformOrigin="0.5,0.5">
+        <Button x:Name="groupNameChangeButton" Template="{DynamicResource GroupNameChangeButton}" FontFamily="{StaticResource 851ゴクチカ}" Content="ナマエ" Foreground="#FFF" Visibility="Hidden" Click="GroupNameChange_Click" MouseEnter="GroupNameChange_MouseEnter" MouseLeave="GroupNameChange_MouseLeave" RenderTransformOrigin="0.5,0.5" Background="#5AA">
             <Button.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
@@ -1428,7 +2104,15 @@
             </ListBox.ItemTemplate>
         </ListBox>-->
 
-        <ListBox Name="participantMemberButtons" Visibility="Hidden" ItemContainerStyle="{StaticResource ContainerStyle}" ItemsSource="{Binding}" BorderBrush="Transparent" Background="Transparent" Height="500" Width="300" FontFamily="{StaticResource 851ゴクチカ}" FontSize="50" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="300,0,0,0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
+        <ListBox Name="participantMemberButtons" Visibility="Hidden" ItemContainerStyle="{StaticResource ContainerStyle}" ItemsSource="{Binding}" BorderBrush="Transparent" Background="Transparent" Height="500" Width="300" FontFamily="{StaticResource 851ゴクチカ}" FontSize="50" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="300,0,0,0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" RenderTransformOrigin="0.5,0.5">
+            <ListBox.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </ListBox.RenderTransform>
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid>
@@ -1439,21 +2123,118 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <Polygon x:Name="participantNamesBackground" Style="{DynamicResource ParticipantNamesBackground}"  Visibility="Hidden" Fill="#99000000" />
-        <ScrollViewer x:Name="participantNamesScrollViewer" Visibility="Hidden" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden" PreviewMouseWheel="ParticipantNamesTextBox_MouseWheel" HorizontalAlignment="Left" VerticalAlignment="Top">
-            <TextBox x:Name="participantNamesTextBox" BorderThickness="0"  FontFamily="Meiryo" Foreground="#FFF" Background="Transparent"  TextWrapping="NoWrap" IsReadOnly="True" />
+        <Polygon x:Name="participantNamesBackground" Style="{DynamicResource ParticipantNamesBackground}"  Visibility="Hidden" Fill="#99000000" RenderTransformOrigin="0.5,0.5" >
+            <Polygon.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Polygon.RenderTransform>
+        </Polygon>
+        <ScrollViewer x:Name="participantNamesScrollViewer" Visibility="Hidden" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden" PreviewMouseWheel="ParticipantNamesTextBox_MouseWheel" HorizontalAlignment="Left" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5">
+            <ScrollViewer.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </ScrollViewer.RenderTransform>
+            <TextBox x:Name="participantNamesTextBox" BorderThickness="0"  FontFamily="メイリオ" Foreground="#FFF" Background="Transparent"  TextWrapping="NoWrap" IsReadOnly="True" />
         </ScrollViewer>
 
-        <Button x:Name="nextButton" Template="{DynamicResource NextButton}" FontFamily="{StaticResource 851ゴクチカ}" Content="→1コマ目" Foreground="#FFF" Background="#053" Visibility="Hidden" MouseEnter="nextButton_MouseEnter" MouseLeave="nextButton_MouseLeave" Click="nextButton_Click"/>
+        <Button x:Name="nextButton" Template="{DynamicResource NextButton}" FontFamily="{StaticResource 851ゴクチカ}" Content="→1コマ目" Foreground="#FFF" Background="#053" Visibility="Hidden" MouseEnter="nextButton_MouseEnter" MouseLeave="nextButton_MouseLeave" Click="nextButton_Click" RenderTransformOrigin="0.5,0.5">
+            <Button.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Button.RenderTransform>
+        </Button>
 
-        <Button x:Name="tableButton" Template="{DynamicResource TableButton}" FontFamily="{StaticResource 851ゴクチカ}" Content="台数：" Foreground="#FFF" Background="#A0D530" Visibility="Hidden" MouseEnter="TableMouseEnter" MouseLeave="TableMouseLeave" Click="TableClick" MouseRightButtonUp="TableRightClick"/>
-        <Button x:Name="comaButton" Template="{DynamicResource ComaButton}" FontFamily="{StaticResource 851ゴクチカ}"  Content="コマ数：" Foreground="#FFF" Background="#30D5A0" Visibility="Hidden" MouseEnter="ComaMouseEnter" MouseLeave="ComaMouseLeave" Click="ComaClick" MouseRightButtonUp="ComaRightClick"/>
-        <Button x:Name="LINEButton" Template="{DynamicResource LINEButton}" FontFamily="{StaticResource 851ゴクチカ}" Content="LINE" Foreground="#FFF" Background="#30DF30" Visibility="Hidden" MouseEnter="LINEMouseEnter" MouseLeave="LINEMouseLeave" Click="LINEClick" />
-        <Label x:Name="algorithmLabel" Template="{DynamicResource AlgorithmLabel}" FontFamily="{StaticResource 851ゴクチカ}" Content="アルゴリズム：" Foreground="#000" Background="Transparent" Visibility="Hidden"/>
-        <Label x:Name="algorithmLabel0" Template="{DynamicResource AlgorithmLabel0}" FontFamily="{StaticResource 851ゴクチカ}" Content="遠" Foreground="#000" Background="Transparent" Visibility="Hidden"/>
-        <Label x:Name="algorithmLabel1" Template="{DynamicResource AlgorithmLabel1}" FontFamily="{StaticResource 851ゴクチカ}" Content="近" Foreground="#000" Background="Transparent" Visibility="Hidden"/>
-        <Label x:Name="algorithmLabel2" Template="{DynamicResource AlgorithmLabel2}" FontFamily="{StaticResource 851ゴクチカ}" Content="乱" Foreground="#000" Background="Transparent" Visibility="Hidden"/>
-        <ListBox Name="comaListBox" Visibility="Hidden" ItemContainerStyle="{StaticResource ContainerStyle}" ItemsSource="{Binding}" BorderBrush="Transparent" Background="Transparent" Height="500" Width="300" FontFamily="{StaticResource 851ゴクチカ}" FontSize="50" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="300,0,0,0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
+        <Button x:Name="tableButton" Template="{DynamicResource TableButton}" FontFamily="{StaticResource 851ゴクチカ}" Content="台数：" Foreground="#FFF" Background="#A0D530" Visibility="Hidden" MouseEnter="TableMouseEnter" MouseLeave="TableMouseLeave" Click="TableClick" MouseRightButtonUp="TableRightClick" RenderTransformOrigin="0.5,0.5">
+            <Button.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Button.RenderTransform>
+        </Button>
+        <Button x:Name="comaButton" Template="{DynamicResource ComaButton}" FontFamily="{StaticResource 851ゴクチカ}"  Content="コマ数：" Foreground="#FFF" Background="#30D5A0" Visibility="Hidden" MouseEnter="ComaMouseEnter" MouseLeave="ComaMouseLeave" Click="ComaClick" MouseRightButtonUp="ComaRightClick" RenderTransformOrigin="0.5,0.5">
+            <Button.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Button.RenderTransform>
+        </Button>
+        <Button x:Name="LINEButton" Template="{DynamicResource LINEButton}" FontFamily="{StaticResource 851ゴクチカ}" Content="LINE" Foreground="#FFF" Background="#30DF30" Visibility="Hidden" MouseEnter="LINEMouseEnter" MouseLeave="LINEMouseLeave" Click="LINEClick" RenderTransformOrigin="0.5,0.5" >
+            <Button.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Button.RenderTransform>
+        </Button>
+        <Label x:Name="algorithmLabel" Template="{DynamicResource AlgorithmLabel}" FontFamily="{StaticResource 851ゴクチカ}" Content="アルゴリズム：" Foreground="#000" Background="Transparent" Visibility="Hidden" RenderTransformOrigin="0.5,0.5">
+            <Label.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Label.RenderTransform>
+        </Label>
+        <Label x:Name="algorithmLabel0" Template="{DynamicResource AlgorithmLabel0}" FontFamily="{StaticResource 851ゴクチカ}" Content="遠" Foreground="#000" Background="Transparent" Visibility="Hidden" RenderTransformOrigin="0.5,0.5">
+            <Label.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Label.RenderTransform>
+        </Label>
+        <Label x:Name="algorithmLabel1" Template="{DynamicResource AlgorithmLabel1}" FontFamily="{StaticResource 851ゴクチカ}" Content="近" Foreground="#000" Background="Transparent" Visibility="Hidden" RenderTransformOrigin="0.5,0.5">
+            <Label.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Label.RenderTransform>
+        </Label>
+        <Label x:Name="algorithmLabel2" Template="{DynamicResource AlgorithmLabel2}" FontFamily="{StaticResource 851ゴクチカ}" Content="乱" Foreground="#000" Background="Transparent" Visibility="Hidden" RenderTransformOrigin="0.5,0.5">
+            <Label.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Label.RenderTransform>
+        </Label>
+        <ListBox Name="comaListBox" Visibility="Hidden" ItemContainerStyle="{StaticResource ContainerStyle}" ItemsSource="{Binding}" BorderBrush="Transparent" Background="Transparent" Height="500" Width="300" FontFamily="{StaticResource 851ゴクチカ}" FontSize="50" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="300,0,0,0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" RenderTransformOrigin="0.5,0.5">
+            <ListBox.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </ListBox.RenderTransform>
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid>
@@ -1477,6 +2258,27 @@
             </Button.RenderTransform>
         </Button>
 
+        <Button x:Name="memberButton" Template="{DynamicResource MemberButton}" Foreground="#FFFFFF"  FontFamily="{DynamicResource 851ゴクチカ}" FontSize="70" Content="データ"  MouseEnter="memberButton_MouseEnter" MouseLeave="memberButton_MouseLeave" Click="memberButton_Click" Background="#FFA0E540" RenderTransformOrigin="0.29,0.2">
+            <Button.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Button.RenderTransform>
+        </Button>
+        <Button x:Name="matchingButton" Template="{DynamicResource MatchingButton}" Foreground="#FFFFFF" Background="#FF40E5A0" FontFamily="{StaticResource 851ゴクチカ}" FontSize="70" Content="マッチング" MouseEnter="matchingButton_MouseEnter" MouseLeave="matchingButton_MouseLeave" Click="matchingButton_Click" RenderTransformOrigin="0.5,0.5"   >
+            <Button.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Button.RenderTransform>
+        </Button>
+
         <Polygon x:Name="headerAccent" Style= "{DynamicResource HeaderAccent}" IsHitTestVisible="True"  >
             <Polygon.Fill>
                 <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
@@ -1485,7 +2287,7 @@
                 </LinearGradientBrush>
             </Polygon.Fill>
         </Polygon>
-        <Label x:Name="header" Template="{DynamicResource Header}"  Content="コマれんくん" Foreground="White" FontFamily="{StaticResource 851ゴクチカ}" FontSize="30">
+        <Label x:Name="header" Template="{DynamicResource Header}"  Content="コマ練くん" Foreground="White" FontFamily="{StaticResource 851ゴクチカ}" FontSize="30">
             <Label.Background>
                 <LinearGradientBrush EndPoint="1,0" StartPoint="0,0">
                     <GradientStop Color="#FF0D3162" Offset="1"/>
@@ -1494,7 +2296,16 @@
             </Label.Background>
         </Label>
 
-        <Button x:Name="configButton" Template="{DynamicResource ConfigButton}" Foreground="#FFFFFF" Background="#FF55AA88" FontFamily="{StaticResource 851ゴクチカ}" FontSize="70" Content="オプション" Visibility="Hidden" Click="configButton_Click" MouseEnter="configButton_MouseEnter" MouseLeave="configButton_MouseLeave"/>
+        <Button x:Name="configButton" Template="{DynamicResource ConfigButton}" Foreground="#FFFFFF" Background="#FF8484FF" FontFamily="{StaticResource 851ゴクチカ}" FontSize="70" Content="オプション" Visibility="Hidden" Click="configButton_Click" MouseEnter="configButton_MouseEnter" MouseLeave="configButton_MouseLeave" RenderTransformOrigin="0.5,0.5">
+            <Button.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Button.RenderTransform>
+        </Button>
 
         <Polygon x:Name="footer" Style="{DynamicResource Footer}" Margin="0,504,0,0"  IsHitTestVisible="True" >
             <Polygon.Fill>
@@ -1533,7 +2344,7 @@
         </Ellipse>
         <Ellipse x:Name="footerCircleBlack" Style="{DynamicResource FooterCircleBlack}" Fill="#FF000000"   />
         <!--<Polygon Fill="Black" Points="-100,100 0,0 100,-100, 100,100" Margin="500,600,0,0"></Polygon>-->
-        <Button x:Name="comarenkunButton" Template="{DynamicResource ComarenkunButton}" Background="Transparent" HorizontalAlignment="Left" VerticalAlignment="Top" Cursor="Hand" RenderTransformOrigin="0.5,0.5" Margin="0,-90.667,0,0"  >
+        <Button x:Name="comarenkunButton" Template="{DynamicResource ComarenkunButton}" Background="Transparent" HorizontalAlignment="Left" VerticalAlignment="Top" Cursor="Hand" RenderTransformOrigin="0.5,0.5" Margin="0,-90.667,0,0" MouseEnter="ComarenkunButton_MouseEnter" MouseLeave="ComarenkunButton_MouseLeave" Click="ComarenkunButton_Click" >
             <Button.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
@@ -1543,9 +2354,18 @@
                 </TransformGroup>
             </Button.RenderTransform>
         </Button>
-        <Label x:Name="talkLabel" Visibility="Visible" Foreground="White" Background="Transparent" FontFamily="{StaticResource 851ゴクチカ}" FontSize="70" Content="所属選択" HorizontalAlignment="Left" VerticalAlignment="Top" IsHitTestVisible="false" />
+        <Label x:Name="talkLabel" Visibility="Visible" Foreground="White" Background="Transparent" FontFamily="メイリオ" FontSize="70" Content="所属選択" HorizontalAlignment="Left" VerticalAlignment="Top" IsHitTestVisible="false" />
 
-        <Button x:Name="LINESendButton" Template="{DynamicResource LINESendButton}" Content="→LINE" FontFamily="{StaticResource 851ゴクチカ}" Foreground="#FFF" Background="#55DD55" MouseEnter="LINESendButton_MouseEnter" MouseLeave="LINESendButton_MouseLeave" Click="LINESendButton_Click" />
+        <Button x:Name="LINESendButton" Template="{DynamicResource LINESendButton}" Content="→LINE" FontFamily="{StaticResource 851ゴクチカ}" Foreground="#FFF" Background="#55DD55" MouseEnter="LINESendButton_MouseEnter" MouseLeave="LINESendButton_MouseLeave" Click="LINESendButton_Click" RenderTransformOrigin="0.5,0.5" >
+            <Button.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Button.RenderTransform>
+        </Button>
 
         <Polygon Style="{DynamicResource InitialBackObject1}" x:Name="initialBackObject1" Fill="#FF2D5182" RenderTransformOrigin="0.5,0.5" >
             <Polygon.RenderTransform>

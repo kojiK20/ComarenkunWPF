@@ -29,10 +29,12 @@ namespace Comarenkun
         private string foreignerFilePath = "Texts/foreigners.txt";
         private string configFilePath = "Texts/config.txt";
         private string LINEtokenFilePath = "Texts/LINEtoken.txt";
+        private string talkFilePath = "Texts/talk.txt";
         StreamReader sr;//config
         StreamReader sr1;//member
         StreamReader sr2;//foreigner
         StreamReader sr3;//LINEtoken
+        StreamReader sr4;//Talk
         StreamWriter sw;
         StreamWriter sw1;
         StreamWriter sw2;
@@ -179,7 +181,11 @@ namespace Comarenkun
             {
                 if(line != "")
                 {
+                    line = line.Replace('：', ':');
                     string[] c = line.Split(':');
+                    c[1].Replace("/", "");
+                    c[1].Replace("＋", "");
+                    c[1].Replace("ー", "");
                     //名前が重複しているなら連番にする
                     c[1] = NameDuplicateCheck(names, c[1]);
                     names.Add(c[1]);
@@ -210,8 +216,13 @@ namespace Comarenkun
             {//ランクが↑↓空以外の場合空に置き換え
                 if(line != "")
                 {
+                    line = line.Replace('：', ':');
                     string[] c = line.Split(':');
 
+                    c[1].Replace("/", "");
+                    c[1].Replace("＋", "");
+                    c[1].Replace("ー", "");
+                    c[1].Replace(" ", "　");
                     //名前が重複しているなら連番にする
                     c[1] = NameDuplicateCheck(names, c[1]);
                     names.Add(c[1]);
@@ -1066,5 +1077,41 @@ namespace Comarenkun
             
             
         }
+
+        public List<string> ReadTalkFile()
+        {//セリフテキストを読み込み配列にして返す
+            if (!File.Exists(talkFilePath))
+            {//なければnull
+                return null;
+            }
+
+            sr4 = new StreamReader(talkFilePath, Encoding.GetEncoding("UTF-8"));
+
+            List<string> result = new List<string>();
+
+            string line;
+            int i = 0;
+            string[] n = { "\\n" };
+            while ((line = sr4.ReadLine()) != null && i < 100)
+            {//テキストが無くなるまで1行ずつ読む(Max100)
+                if (line != "")
+                {
+                    string res = "";
+                    //改行エスケープ文字はこちらで処理
+                    string[] l = line.Split(n, StringSplitOptions.None);
+                    foreach(string ll in l)
+                    {
+                        res = res + ll + "\n";
+                    }
+                    result.Add(res);
+                }
+                i++;
+            }
+        
+            sr4.Close();
+
+            return result;
+        }
+
     }
 }
