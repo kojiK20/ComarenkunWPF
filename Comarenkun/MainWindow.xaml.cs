@@ -161,6 +161,8 @@ namespace Comarenkun
         string DisappearObjectsInMatching1r = "DisappearObjectsInMatching1r";//逆向きに動く
         string DisappearObjectsInMatching2r = "DisappearObjectsInMatching2r";//
         string ConfigButtonClick = "ConfigButtonClick";
+        string AppearParticipantButton = "AppearParticipantButton";
+        string DisappearParticipantButton = "DisappearParticipantButton";
         string NextButtonMouseEnter = "NextButtonMouseEnter";
         string NextButtonMouseLeave = "NextButtonMouseLeave";
         string NextButtonClick = "NextButtonClick";
@@ -393,6 +395,7 @@ namespace Comarenkun
                 }
                 else if(storyChain == NextToLastComa)
                 {
+                    this.participantMemberButtons.Visibility = Visibility.Hidden;
                     this.participantNamesTextBox.Text = ParticipantNameTextBoxText(coma);
                     TextBoxSet("ParticipantNamesTextBox", this.participantNamesTextBox, participantNamesTextBoxparams);
                     this.nextButton.Content = "確\n認\n→";
@@ -486,6 +489,13 @@ namespace Comarenkun
                 Button b = this.LINESendButton;
                 b.Background = LINESendBack;
                 StoryBegin(LINESendButtonMouseLeave);
+            }
+            else if (name == DisappearParticipantButton)
+            {
+                MembersSetToListBox(preSelectedGroup.Content.ToString());
+                PolygonButtonSet("ParticipantMemberButton", null, participantMemberButtonParams, noShadow);
+                LabelSet("ParticipantRankLabel", null, participantRankLabelParams, noShadow);
+                StoryBegin(AppearParticipantButton);
             }
             
         }
@@ -897,7 +907,7 @@ namespace Comarenkun
 
         bool isGroupSelected = false;
         Button preSelectedGroup = null;//選択済みのボタン(1つのみ保持)
-        bool storyFlag = false;//InGroup
+        bool storyFlag = false;//
         private async void Group_Click(object sender, RoutedEventArgs e)
         {
             //senderに押されたボタンが格納される
@@ -970,10 +980,19 @@ namespace Comarenkun
                     participants[coma - 1] = new List<string>();
                 }
                 this.participantMemberButtons.Visibility = Visibility.Visible;
-                MembersSetToListBox(preSelectedGroup.Content.ToString());
 
-                PolygonButtonSet("ParticipantMemberButton", null, participantMemberButtonParams, noShadow);
-                LabelSet("ParticipantRankLabel", null, participantRankLabelParams, noShadow);
+                if(storyFlag)
+                {//パッと出現
+                    storyFlag = false;
+                    MembersSetToListBox(preSelectedGroup.Content.ToString());
+                    PolygonButtonSet("ParticipantMemberButton", null, participantMemberButtonParams, noShadow);
+                    LabelSet("ParticipantRankLabel", null, participantRankLabelParams, noShadow);
+                    StoryBegin(AppearParticipantButton);
+                }
+                else
+                {//シュンッとしてパッ
+                    StoryBegin(DisappearParticipantButton);//以降StoryboardCompletedに記述
+                }
             }
         }
         ContextMenu c = new ContextMenu();

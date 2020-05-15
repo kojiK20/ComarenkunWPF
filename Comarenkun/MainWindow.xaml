@@ -355,11 +355,11 @@
 
             <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsHitTestVisible)" Storyboard.TargetName="memberButton">
                 <DiscreteBooleanKeyFrame KeyTime="0" Value="False"/>
-                <DiscreteBooleanKeyFrame KeyTime="0:0:0.4" Value="True"/>
+                <DiscreteBooleanKeyFrame KeyTime="0:0:0.4" Value="False"/>
             </BooleanAnimationUsingKeyFrames>
             <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsHitTestVisible)" Storyboard.TargetName="matchingButton">
                 <DiscreteBooleanKeyFrame KeyTime="0" Value="False"/>
-                <DiscreteBooleanKeyFrame KeyTime="0:0:0.4" Value="True"/>
+                <DiscreteBooleanKeyFrame KeyTime="0:0:0.4" Value="False"/>
             </BooleanAnimationUsingKeyFrames>
             <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsHitTestVisible)" Storyboard.TargetName="window">
                 <DiscreteBooleanKeyFrame KeyTime="0" Value="True"/>
@@ -411,12 +411,12 @@
                 <EasingColorKeyFrame KeyTime="0:0:0.2" Value="#FF40E5A0"/>
             </ColorAnimationUsingKeyFrames>
             <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsHitTestVisible)" Storyboard.TargetName="memberButton">
-                <DiscreteBooleanKeyFrame KeyTime="0" Value="True"/>
-                <DiscreteBooleanKeyFrame KeyTime="0:0:0.4" Value="True"/>
+                <DiscreteBooleanKeyFrame KeyTime="0" Value="False"/>
+                <DiscreteBooleanKeyFrame KeyTime="0:0:0.4" Value="False"/>
             </BooleanAnimationUsingKeyFrames>
             <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsHitTestVisible)" Storyboard.TargetName="matchingButton">
                 <DiscreteBooleanKeyFrame KeyTime="0" Value="False"/>
-                <DiscreteBooleanKeyFrame KeyTime="0:0:0.4" Value="True"/>
+                <DiscreteBooleanKeyFrame KeyTime="0:0:0.4" Value="False"/>
             </BooleanAnimationUsingKeyFrames>
             <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsHitTestVisible)" Storyboard.TargetName="window">
                 <DiscreteBooleanKeyFrame KeyTime="0" Value="False"/>
@@ -1963,6 +1963,32 @@
                 <EasingColorKeyFrame KeyTime="0:0:0.1" Value="#FF8484FF"/>
             </ColorAnimationUsingKeyFrames>
         </Storyboard>
+        <Storyboard x:Key="AppearParticipantButton" Name="AppearParticipantButton" Completed="StoryboardCompleted">
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="participantMemberButtons">
+                <EasingPointKeyFrame KeyTime="0" Value="0.5,0"/>
+            </PointAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" Storyboard.TargetName="participantMemberButtons">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+            <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsHitTestVisible)" Storyboard.TargetName="participantMemberButtons">
+                <DiscreteBooleanKeyFrame KeyTime="0" Value="False"/>
+                <DiscreteBooleanKeyFrame KeyTime="0:0:0.1" Value="False"/>
+            </BooleanAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="DisappearParticipantButton" Name="DisappearParticipantButton" Completed="StoryboardCompleted">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" Storyboard.TargetName="participantMemberButtons">
+                <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+            <PointAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)" Storyboard.TargetName="participantMemberButtons">
+                <EasingPointKeyFrame KeyTime="0" Value="0.5,0"/>
+            </PointAnimationUsingKeyFrames>
+            <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.IsHitTestVisible)" Storyboard.TargetName="participantMemberButtons">
+                <DiscreteBooleanKeyFrame KeyTime="0" Value="False"/>
+                <DiscreteBooleanKeyFrame KeyTime="0:0:0.1" Value="False"/>
+            </BooleanAnimationUsingKeyFrames>
+        </Storyboard>
 
 
 
@@ -1972,7 +1998,6 @@
             <!--<BeginStoryboard Storyboard="{StaticResource MemberButtonMouseOver}"/>
             <BeginStoryboard Storyboard="{StaticResource MatchingButtonMouseOver}"/>-->
             <BeginStoryboard x:Name="InitialBall_BeginStoryboard" Storyboard="{StaticResource InitialBall}"/>
-            <BeginStoryboard Storyboard="{StaticResource ConfigButtonClick}"/>
         </EventTrigger>
         <!--<EventTrigger RoutedEvent="UIElement.MouseLeftButtonDown">
             <BeginStoryboard x:Name="Clickeffect1_BeginStoryboard" Storyboard="{StaticResource Clickeffect1}"/>
