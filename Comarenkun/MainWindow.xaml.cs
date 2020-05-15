@@ -73,6 +73,8 @@ namespace Comarenkun
 
         SolidColorBrush nextBack = new SolidColorBrush(Color.FromRgb(0, 85, 51));
 
+        SolidColorBrush configBack = new SolidColorBrush(Color.FromRgb(132,132,255));
+
         SolidColorBrush LINEBack = new SolidColorBrush(Color.FromRgb(48,223,48));
         SolidColorBrush LINESendBack = new SolidColorBrush(Color.FromRgb(85, 221, 85));
 
@@ -158,6 +160,7 @@ namespace Comarenkun
         string DisappearObjectsInMatching2 = "DisappearObjectsInMatching2";//participantNamesBackgroundも消す(コンフィグ/→確認/メニュー遷移時)
         string DisappearObjectsInMatching1r = "DisappearObjectsInMatching1r";//逆向きに動く
         string DisappearObjectsInMatching2r = "DisappearObjectsInMatching2r";//
+        string ConfigButtonClick = "ConfigButtonClick";
         string NextButtonMouseEnter = "NextButtonMouseEnter";
         string NextButtonMouseLeave = "NextButtonMouseLeave";
         string NextButtonClick = "NextButtonClick";
@@ -429,6 +432,7 @@ namespace Comarenkun
                     ComaSetToListBox();//LisstBoxを更新
                     MakeButtonsVisible();
 
+                    this.configButton.Background = configBack;
                     StoryBegin(AppearObjectsInConfig);
                 }
                 storyChain = "";
@@ -2086,6 +2090,7 @@ namespace Comarenkun
         {
             this.talkLabel.Content = talkInConfig;
             SetMode(config);
+            StoryBegin(ConfigButtonClick);
             StoryBegin(HeaderToConfig);
             storyChain = ToConfig;
             StoryBegin(DisappearObjectsInMatching2r);//以下StoryboardCompletedに記述
