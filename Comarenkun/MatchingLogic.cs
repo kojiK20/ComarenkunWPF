@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Collections.Generic;
+using System.Threading;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,15 +21,57 @@ namespace Comarenkun
         int resetCounter;//マッチング中に選出状況をリセットした回数．1以上なら指定回数まで組みなおす
         int bridgeCounter;//マッチング中に橋を交換した回数．1以上なら指定回数まで組みなおす
         int sameGroupCounter;//マッチング中に所属制約を破った回数．1以上なら指定回数まで組みなおす
+        int sameGroupCounterMin;
         int ignoreRankCounter;//マッチング中にランク制約を破った回数．1以上なら指定回数まで組みなおす
-        int loopCounter;//組みなおした回数
+        int groupLoopCounter;//組みなおした回数
+        int rankLoopCounter;
+        int bridgeLoopCounter;
+        int resetLoopCounter;
+        int groupMax;
+        int rankMax;
+        int bridgeMax;
+        int resetMax;
         int maxLoop;//指定回数
-        int maxBridge;//指定回数
-        int maxSameGroup;//指定回数
-        int maxIgnoreRank;//指定回数
+        int maxBridgeLoop;//指定回数
+        int maxSameGroupLoop;//指定回数
+        int maxIgnoreRankLoop;//指定回数
+        int maxResetLoop;
+
+        public async void process(int s)
+        {
+            await Task.Run(() =>
+            {//スレッドプールに進捗通知を投げる
+                window.Dispatcher.Invoke((Action)(() =>
+                {//windowスレッドのキューに投げる
+                    string ta = window.talkLabel.Content.ToString();
+                    string ok = "";
+                    string wrong = "";
+                    for (int i = 0; i < 11; i++)
+                    {
+                        if(i <= s)
+                        {
+                            ok = ok + "■";
+                        }
+                        else
+                        {
+                            wrong = wrong + "□";
+                        }
+                        
+                    }
+                    window.talkLabel.Content = ok + wrong;
+                    if(s == 5)
+                    {
+                        window.StoryBegin("ComarenkunPuruPuru");
+                    }
+                }));
+            });
+
+        }
 
         public string Matching(List<List<string>> participants, List<List<string>> increase, List<List<string>> decrease, List<string> configs)
         {//マッチングする
+            
+
             string result = "";
             List<ResultSet> set = new List<ResultSet>();
             int table = int.Parse(configs[0]);
@@ -43,6 +86,24 @@ namespace Comarenkun
                 }
                 fuga++;
             }
+            groupMax = 0;//;maxSameGroupLoop回組んだ際の最小所属被り回数，0回が発生した場合は即採用
+            rankMax = 0;
+            bridgeMax = 0;
+            resetMax = 0;
+            resetCounter = 0;//マッチング中に選出状況をリセットした回数．>resetMaxなら指定回数まで組みなおす←無駄なく選んだ際のリセットはカウントしないので，理想的にはresetMaxは0のままで組めるはず
+            bridgeCounter = 0;//これも理想的には一度も発生しない，優先度も低い
+            sameGroupCounter = 0;
+            sameGroupCounterMin = -1;
+            ignoreRankCounter = 0;//これは発生しやすいが優先度も低い
+            groupLoopCounter = -1;//組みなおした回数
+            rankLoopCounter = 0;
+            bridgeLoopCounter = 0;
+            resetLoopCounter = 0;
+            maxBridgeLoop = 10;//指定回数
+            maxIgnoreRankLoop = 50;
+            maxSameGroupLoop = 100;
+            maxResetLoop = 10000;
+
 
             FileLogic flogic = new FileLogic(window); 
             leave = 0;
@@ -79,11 +140,15 @@ namespace Comarenkun
             {//1コマ目のMemberNode集合
                 first.Add(memberList.Find(mm => mm.Name == p));
             }
+            foreach(MemberNode m in first)
+            {//1コマ目は完全グラフなので次数は計算で求まる
+                m.Degree = first.Count - 1;
+            }
             for (int i = 0; i < first.Count; i++)
             {
                 for(int ii = i + 1; ii < first.Count; ii++)
                 {
-                    if(first[i].Group != first[ii].Group || first[i].Group == "" || first[ii].Group == "")
+                    if(first[i].Group != first[ii].Group)
                     {//所属が異なる(＝このマッチングは無考慮に組んでOK)
                         edge = new Matching(first[i].Name, first[ii].Name, first[i].Rank, first[ii].Rank, true);
                     }
@@ -102,7 +167,7 @@ namespace Comarenkun
             {
                 eachMemberList.Add(new List<MemberNode>());
                 foreach(string p in participants[i])
-                {
+                {//2コマ目以降の次数は動的に定まるのでノータッチ
                     MemberNode m = memberList.Find(mm => mm.Name == p);
                     eachMemberList[i].Add(m);
                 }
@@ -117,7 +182,7 @@ namespace Comarenkun
             int patNum4 = patNum3 + add4.Length - dec4.Length;
             int patNum5 = patNum4 + add5.Length - dec5.Length;
             int table = 0;*/
-            bool duplicate = false;
+            //bool duplicate = false;
             int loopStopper = 0;//例外時に1
             /*foreach (MemberNode m in memberList)
             {
@@ -149,151 +214,224 @@ namespace Comarenkun
             }
 
             List<Matching> chosenMatchs = new List<Matching>();//選んだ枝を保存，枝のリセットとともにリセット
-            resetCounter = 0;//マッチング中に選出状況をリセットした回数．1以上なら指定回数まで組みなおす
-            bridgeCounter = 0;
-            sameGroupCounter = 0;
-            ignoreRankCounter = 0;
-            loopCounter = 0;//組みなおした回数
-            maxLoop = 1000;//指定回数
-            maxBridge = 500;
-            maxSameGroup = 100;
-            maxIgnoreRank = 50;
+            
             List<Matching> edgesOrigin = new List<Matching>(edges);//組みなおす際に使用する
             if (loopStopper == 0)//組み合わせ生成処理
             {
+                process(-1);
                 List<string> takyuChosen = new List<string>();
-                for(int i = 0; i < coma; i++)
+                for(int i = 0; i <= coma; i++)
                 {
-                    ResultSet s = new ResultSet(null,null,null);
-                    set.Add(s);
-                    if(alg[i] == "0")
+                    if( i < coma)
                     {
-                        set[i] = TopToBottom(eachMemberList[i], edges, takyuChosen, table, i, set, chosenMatchs);
-                        //result = result +  (i + 1).ToString() + "コマ目：\n" + set.Result;
-                        edges = set[i].Edges;//残っている枝
-                        takyuChosen = set[i].TakyuChosen;//多球に選ばれた人
-                    }else if(alg[i] == "1")
-                    {
-                        set[i] = Near(eachMemberList[i], edges, takyuChosen, table, i, set, chosenMatchs);
-                        //result = result +  (i + 1).ToString() + "コマ目：\n" + set.Result;
-                        edges = set[i].Edges;//残っている枝
-                        takyuChosen = set[i].TakyuChosen;//多球に選ばれた人
-                    }
-                    else
-                    {
-                        set[i] = Random(eachMemberList[i], edges, takyuChosen, table, i, set, chosenMatchs);
-                        //result = result  + (i + 1).ToString() + "コマ目：\n" + set.Result;
-                        edges = set[i].Edges;//残っている枝
-                        takyuChosen = set[i].TakyuChosen;//多球に選ばれた人
-                    }
-                    if (set[i].Result == "ERROR:台が足りませんコマ")
-                    {
-                        MessageBox.Show(set[i].Result);
-                        loopStopper = 1;
-                        break;
-                        //フラグ等を立てて処理を終了させる
-                    }
-                    
-
-                    if(i < coma - 1)
-                    {
-                        
-                        foreach(string inc in increase[i+1])
+                        ResultSet s = new ResultSet(null, null, null);
+                        set.Add(s);
+                        if (alg[i] == "0")
                         {
-                            foreach (MemberNode m in eachMemberList[i])//参加者それぞれにincreaseから枝をはる.ただもしchosenMatchs内の枝がある場合は無視
-                            {
-                                MemberNode am = memberList.Find(mm => mm.Name == inc);
-                                Matching ade = new Matching(am.Name, m.Name, am.Rank, m.Rank, am.Group != m.Group || am.Group == "" || m.Group == "");
-                                Matching ade2 = new Matching(m.Name, am.Name, m.Rank, am.Rank, am.Group != m.Group || am.Group == "" || m.Group == "");
-                                if(!chosenMatchs.Contains(ade) && !chosenMatchs.Contains(ade2))
-                                {
-                                    edges.Add(ade);
-                                }
-                            }   
+                            set[i] = TopToBottom(eachMemberList[i], edges, takyuChosen, table, i, set, chosenMatchs);
+                            //result = result +  (i + 1).ToString() + "コマ目：\n" + set.Result;
+                            edges = set[i].Edges;//残っている枝
+                            takyuChosen = set[i].TakyuChosen;//多球に選ばれた人
                         }
-                        for (int ini = 0; ini < increase[i + 1].Count; ini++)
-                        {//追加参加者どうしの枝がまだはれてないのではる
-                            string inc1 = increase[i + 1][ini];
-                            for(int inj = ini + 1; inj < increase[i + 1].Count; inj++)
+                        else if (alg[i] == "1")
+                        {
+                            set[i] = Near(eachMemberList[i], edges, takyuChosen, table, i, set, chosenMatchs);
+                            //result = result +  (i + 1).ToString() + "コマ目：\n" + set.Result;
+                            edges = set[i].Edges;//残っている枝
+                            takyuChosen = set[i].TakyuChosen;//多球に選ばれた人
+                        }
+                        else
+                        {
+                            set[i] = Random(eachMemberList[i], edges, takyuChosen, table, i, set, chosenMatchs);
+                            //result = result  + (i + 1).ToString() + "コマ目：\n" + set.Result;
+                            edges = set[i].Edges;//残っている枝
+                            takyuChosen = set[i].TakyuChosen;//多球に選ばれた人
+                        }
+                        if (set[i].Result == "ERROR:台が足りませんコマ")
+                        {
+                            MessageBox.Show(set[i].Result);
+                            loopStopper = 1;
+                            break;
+                            //フラグ等を立てて処理を終了させる
+                        }
+
+
+                        if (i < coma - 1)
+                        {
+                            MemberNode[] incL = new MemberNode[increase[i+1].Count];
+                            int increaseSize = increase[i + 1].Count;
+                            for(int inc = 0; inc < increaseSize; inc++)
+                            {//増分者のノード
+                                MemberNode m = memberList.Find(mm => mm.Name == increase[i+1][inc]);
+                                incL[inc] = m;
+                            }
+                            foreach (MemberNode am in incL)
                             {
-                                string inc2 = increase[i + 1][inj];
-                                MemberNode am1 = memberList.Find(mm => mm.Name == inc1);
-                                MemberNode am2 = memberList.Find(mm => mm.Name == inc2);
-                                Matching ade1 = new Matching(am1.Name, am2.Name, am1.Rank, am2.Rank, am1.Group != am2.Group || am1.Group == "" || am2.Group == "");
-                                Matching ade2 = new Matching(am2.Name, am1.Name, am2.Rank, am1.Rank, am1.Group != am2.Group || am1.Group == "" || am2.Group == "");
-                                if (!chosenMatchs.Contains(ade1) && !chosenMatchs.Contains(ade2))
+                                foreach (MemberNode m in eachMemberList[i])//参加者それぞれにincreaseから枝をはる.ただもしchosenMatchs内の枝がある場合は無視
                                 {
-                                    edges.Add(ade1);
+                                    Matching ade = new Matching(am.Name, m.Name, am.Rank, m.Rank, am.Group != m.Group);
+                                    Matching ade2 = new Matching(m.Name, am.Name, m.Rank, am.Rank, am.Group != m.Group);
+                                    if (!chosenMatchs.Contains(ade) && !chosenMatchs.Contains(ade2))
+                                    {
+                                        edges.Add(ade);
+                                    }
                                 }
                             }
-                        }
+                            int incLSize = incL.Length;
+                            for (int ini = 0; ini < incL.Length; ini++)
+                            {//追加参加者どうしの枝がまだはれてないのではる
+                                for (int inj = ini + 1; inj < incL.Length; inj++)
+                                {
+                                    string inc2 = increase[i + 1][inj];
+                                    MemberNode am1 = incL[ini];
+                                    MemberNode am2 = incL[inj];
+                                    Matching ade1 = new Matching(am1.Name, am2.Name, am1.Rank, am2.Rank, am1.Group != am2.Group);
+                                    Matching ade2 = new Matching(am2.Name, am1.Name, am2.Rank, am1.Rank, am1.Group != am2.Group);
+                                    if (!chosenMatchs.Contains(ade1) && !chosenMatchs.Contains(ade2))
+                                    {
+                                        edges.Add(ade1);
+                                    }
+                                }
+                            }
 
-                        foreach (string dc in decrease[i + 1])//脱退者から伸びる枝を全て消す
-                        {
-                            edges.RemoveAll(pyo => pyo.Name1 == dc || pyo.Name2 == dc);
+                            foreach (string dc in decrease[i + 1])//脱退者から伸びる枝を全て消す
+                            {
+                                edges.RemoveAll(pyo => pyo.Name1 == dc || pyo.Name2 == dc);
+                            }
                         }
-                        
                     }
-                    if (ignoreRankCounter > 0 && loopCounter < maxIgnoreRank)
+                    
+                    if ( groupLoopCounter < maxSameGroupLoop && i == coma)
+                    {//i==coma...最終コマ後
+                        //1000回の中から所属制約が破られた回数の最小値を取得
+                        if (sameGroupCounter == 0)
+                        {//所属被りが0回のままrank,bridge,reset制約を守りつつ最後まで組めた＝＞即採用
+                            process(10);
+                            break;
+                        }
+                        else if(sameGroupCounter < sameGroupCounterMin || sameGroupCounterMin < 0)//初回)
+                        {//所属被りが最小回数で組めた＝＞所属破り許容最小回数を更新
+                            sameGroupCounterMin = sameGroupCounter;
+                            
+                        }
+                        else
+                        {
+                        }
+                        //1コマ目からループする
+                        set = new List<ResultSet>();
+                        edges = new List<Matching>(edgesOrigin);
+                        chosenMatchs = new List<Matching>();
+                        takyuChosen = new List<string>();
+                        groupLoopCounter++;
+                        sameGroupCounter = 0;
+                        ignoreRankCounter = 0;
+                        bridgeCounter = 0;
+                        resetCounter = 0;
+                        i = -1;
+
+                        if(groupLoopCounter %(maxSameGroupLoop * 1/10) == 0)
+                        {
+                            process(groupLoopCounter / (maxSameGroupLoop * 1/10));
+                        }
+                    }
+                    if (groupLoopCounter >= maxSameGroupLoop && sameGroupCounter > sameGroupCounterMin && i != -1)
+                    {//1000回目以降，所属破り許容最小回数以上の所属破り回数となった場合に組みなおす
+                        //所属破り許容最小回数での組み合わせが存在することは明らかなのでもうgroupLoopCounterは更新しない
+                        set = new List<ResultSet>();
+                        edges = new List<Matching>(edgesOrigin);
+                        chosenMatchs = new List<Matching>();
+                        takyuChosen = new List<string>();
+
+                        sameGroupCounter = 0;
+                        ignoreRankCounter = 0;
+                        bridgeCounter = 0;
+                        resetCounter = 0;
+                        i = -1;
+                        //MessageBox.Show("組みなおし回数：" + loopCounter.ToString() + "\nランク制約を無視したマッチングが検出されたので組みなおしてみたコマ");
+                    }
+                    if (ignoreRankCounter > rankMax && i != -1)
                     {
                         //ランク制約が破られていれば組みなおす
                         set = new List<ResultSet>();
                         edges = new List<Matching>(edgesOrigin);
                         chosenMatchs = new List<Matching>();
                         takyuChosen = new List<string>();
-                        loopCounter++;
+                        if (rankLoopCounter > maxIgnoreRankLoop)
+                        {//ランク制約は破らざるを得ない可能性が一番高いので上限値の上昇ペースを指数的(*2^n)に速める
+                            if(rankMax == 0)
+                            {
+                                rankMax = 1;
+                            }
+                            else
+                            {
+                                rankMax = rankMax * 2;
+                            }
+                            
+                            rankLoopCounter = 0;
+                        }
+                        else
+                        {
+                            rankLoopCounter++;
+                        }
+
+                        sameGroupCounter = 0;
                         ignoreRankCounter = 0;
-                        sameGroupCounter = 0;
-                        bridgeCounter = 0;
-                        resetCounter = 0;
-                        i = -1;
-                        //MessageBox.Show("組みなおし回数：" + loopCounter.ToString() + "\nランク制約を無視したマッチングが検出されたので組みなおしてみたコマ");
-                    }
-                    else if (sameGroupCounter > 0 && loopCounter < maxSameGroup)
-                    {
-                        //所属制約が破られていれば組みなおす
-                        set = new List<ResultSet>();
-                        edges = new List<Matching>(edgesOrigin);
-                        chosenMatchs = new List<Matching>();
-                        takyuChosen = new List<string>();
-                        loopCounter++;
-                        sameGroupCounter = 0;
                         bridgeCounter = 0;
                         resetCounter = 0;
                         i = -1;
                         //MessageBox.Show("組みなおし回数：" + loopCounter.ToString() + "\n同所属間のマッチングが検出されたので組みなおしてみたコマ");
                     }
-                    else if (bridgeCounter > 0 && loopCounter < maxBridge)
+                    if (bridgeCounter > bridgeMax && i != -1)
                     {
                         //リセットされていれば組みなおす
                         set = new List<ResultSet>();
                         edges = new List<Matching>(edgesOrigin);
                         chosenMatchs = new List<Matching>();
                         takyuChosen = new List<string>();
-                        loopCounter++;
-                        //sameGroupCounter = 0;
+                        if (bridgeLoopCounter > maxBridgeLoop)
+                        {
+                            bridgeMax++;
+                            bridgeLoopCounter = 0;
+                        }
+                        else
+                        {
+                            bridgeLoopCounter++;
+                        }
+
+                        sameGroupCounter = 0;
+                        ignoreRankCounter = 0;
                         bridgeCounter = 0;
                         resetCounter = 0;
                         i = -1;
                         //MessageBox.Show("組みなおし回数：" + loopCounter.ToString() + "\n橋の交換が検出されたので組みなおしてみたコマ");
                     }
-                    else if (resetCounter > 0 && loopCounter < maxLoop)
-                    {//リセットされていれば組みなおす←絶対リセットが起こる(コマ数が多いなど)ときに，理想よりも早いリセットかどうか判別しないと時間の無駄(強制1000回ループがおきてる)
+                    if (resetCounter > resetMax && i != -1)
+                    {//リセットされていれば組みなおす←絶対リセットが起こる(コマ数が多いなど)ときに，理想よりも早いリセットかどうか判別しないと時間の無駄(強制1000回ループがおきてる,早くない理想的なリセットなら検知しない)
                         set = new List<ResultSet>();
                         edges = new List<Matching>(edgesOrigin);
                         chosenMatchs = new List<Matching>();
                         takyuChosen = new List<string>();
-                        loopCounter++;
-                        //sameGroupCounter = 0;
-                        //bridgeCounter = 0;
+                        if (resetLoopCounter > maxResetLoop)
+                        {
+                            resetMax++;
+                            resetLoopCounter = 0;
+                        }
+                        else
+                        {
+                            resetLoopCounter++;
+                        }
+
+                        sameGroupCounter = 0;
+                        ignoreRankCounter = 0;
+                        bridgeCounter = 0;
                         resetCounter = 0;
                         i = -1;
                         //MessageBox.Show("組みなおし回数：" + loopCounter.ToString() + "\nリセットが検出されたので組みなおしてみたコマ");
                     }
-                    else if (loopCounter >= maxLoop && i == coma - 1)
+                    /*else if (loopCounter >= maxLoop && i == coma - 1)
                     {
                         MessageBox.Show("あまり良くない組み合わせが出たかもしれないコマ...\n組みなおしを推奨するコマ");
-                    }
+                    }*/
 
                 }
             }
@@ -368,7 +506,7 @@ namespace Comarenkun
             }
             return degree;
         }
-        //最大の次数を返す
+        //最大の次数を返す<-使用していない
         public int MaxDegree(List<Matching> edges, List<MemberNode> nodes)
         {
             int degree = 0;//最大の次数
@@ -486,10 +624,10 @@ namespace Comarenkun
                 }
                 if(count >= 2)
                 {
-                    Matching bridge1 = new Matching(nodes[0].Name, nodes[i].Name, nodes[0].Rank, nodes[i].Rank, nodes[0].Group != nodes[i].Group || nodes[0].Group == "" || nodes[i].Group == "");
-                    Matching bridge2 = new Matching(nodes[i].Name, nodes[0].Name, nodes[i].Rank, nodes[0].Rank, nodes[0].Group != nodes[i].Group || nodes[0].Group == "" || nodes[i].Group == "");
-                    Matching neighbor1 = new Matching(nodes[0].Name, nodes[indexForResult].Name, nodes[0].Rank, nodes[indexForResult].Rank, nodes[0].Group != nodes[indexForResult].Group || nodes[0].Group == "" || nodes[indexForResult].Group == "");
-                    Matching neighbor2 = new Matching(nodes[indexForResult].Name, nodes[0].Name, nodes[indexForResult].Rank, nodes[0].Rank, nodes[0].Group != nodes[indexForResult].Group || nodes[0].Group == "" || nodes[indexForResult].Group == "");
+                    Matching bridge1 = new Matching(nodes[0].Name, nodes[i].Name, nodes[0].Rank, nodes[i].Rank, nodes[0].Group != nodes[i].Group);
+                    Matching bridge2 = new Matching(nodes[i].Name, nodes[0].Name, nodes[i].Rank, nodes[0].Rank, nodes[0].Group != nodes[i].Group);
+                    Matching neighbor1 = new Matching(nodes[0].Name, nodes[indexForResult].Name, nodes[0].Rank, nodes[indexForResult].Rank, nodes[0].Group != nodes[indexForResult].Group);
+                    Matching neighbor2 = new Matching(nodes[indexForResult].Name, nodes[0].Name, nodes[indexForResult].Rank, nodes[0].Rank, nodes[0].Group != nodes[indexForResult].Group);
                     List<Matching> result = new List<Matching>();
                     result.Add(bridge1);
                     result.Add(bridge2);
@@ -600,10 +738,10 @@ namespace Comarenkun
                                 MemberNode mm = nodes.Find(mmm => mmm.Name == m);
                                 //Matchingを作るためにexchangeのもう片方のノードを取得
                                 MemberNode em = nodes.Find(mmm => mmm.Name == bridge[2].Name2);
-                                Matching exchangeNeighbor = new Matching(em.Name, m, em.Rank, mm.Rank, em.Group != mm.Group || em.Group == "" || mm.Group == "");
+                                Matching exchangeNeighbor = new Matching(em.Name, m, em.Rank, mm.Rank, em.Group != mm.Group);
                                 MemberNode bm = nodes.Find(mmm => mmm.Name == bridge[0].Name2);
-                                Matching exchangeNeighborToBridge1 = new Matching(m, bm.Name, mm.Rank, bm.Rank, bm.Group != mm.Group || bm.Group == "" || mm.Group == "");
-                                Matching exchangeNeighborToBridge2 = new Matching(bm.Name, m, bm.Rank, mm.Rank, bm.Group != mm.Group || bm.Group == "" || mm.Group == "");
+                                Matching exchangeNeighborToBridge1 = new Matching(m, bm.Name, mm.Rank, bm.Rank, bm.Group != mm.Group);
+                                Matching exchangeNeighborToBridge2 = new Matching(bm.Name, m, bm.Rank, mm.Rank, bm.Group != mm.Group);
 
                                 string bridge2 = exchangeNeighbor.Name1 + " - " + exchangeNeighbor.Name2;
                                 string bridge3 = exchangeNeighbor.Name2 + " - " + exchangeNeighbor.Name1;
@@ -611,10 +749,18 @@ namespace Comarenkun
                                 if (set[i].Result.Contains(bridge2))
                                 {
                                     set[i].Result = set[i].Result.Replace(bridge2, exchange2);
+                                    if (!exchangeNeighborToBridge1.DifferentGroup)
+                                    {
+                                        sameGroupCounter++;
+                                    }
                                 }
                                 else
                                 {
                                     set[i].Result = set[i].Result.Replace(bridge3, exchange2);
+                                    if (!exchangeNeighborToBridge1.DifferentGroup)
+                                    {
+                                        sameGroupCounter++;
+                                    }
                                 }
 
                                 set[i].Edges.Add(exchangeNeighbor);
@@ -671,10 +817,10 @@ namespace Comarenkun
             if (takyu > 0)
             {//多球メンバを3人ずつえらぶ．既にシャッフルしてるので頭からでよい
                 List<string> current = new List<string>();
+                string[] t = new string[3];
+                int flag = 0;
                 for (int i = 0; i < takyu;)
                 {
-                    string[] t = new string[3];
-                    int flag = 0;
                     for(int ii = 0; ii < nodes.Count;)
                     {
                         if(takyuChosen.IndexOf(nodes[ii].Name) == -1)
@@ -684,23 +830,34 @@ namespace Comarenkun
                             current.Add(nodes[ii].Name);
                             flag++;
                         }
-                        if(takyuChosen.Count == nodes.Count)
-                        {//多球でに全員が選ばれたら
-                            takyuChosen = new List<string>();
-                            foreach(string s in t)
-                            {
-                                takyuChosen.Add(s);
-                            }
-                            ii = -1;
-                        }
+                        
                         if(flag == 3)
                         {
-                            i++;
+                            
                             break;
                         }
                         ii++;
                     }
-                    takyuMatchs.Add(t);
+                    if (flag < 3)
+                    {//列挙しても多球に3人選ばれていない＝＞既に多球に全員が選ばれている＝＞リセット
+                        takyuChosen = new List<string>();
+                        foreach (string s in t)
+                        {
+                            if (s != null)
+                            {
+                                takyuChosen.Add(s);
+                            }
+
+                        }
+                    }
+                    else
+                    {
+                        takyuMatchs.Add(t);
+                        t = new string[3];
+                        flag = 0;
+                        i++;
+                    }
+                    
                 }
                 foreach (string s in current)
                 {//選んだ人の枝を消す
@@ -709,17 +866,39 @@ namespace Comarenkun
                     haveEdgeNodes.RemoveAll(nn => nn.Name == s);
                 }
             }
-            
+            //リセット時用の完全グラフをloopの外で作成しておく
+            List<Matching> compEdges = new List<Matching>();
+            Matching edge = new Matching(null, null, 0, 0, false);
+            for (int j = 0; j < nodes.Count; j++)
+            {
+                for (int jj = j + 1; jj < nodes.Count; jj++)
+                {
+                    if (nodes[j].Group != nodes[jj].Group)
+                    {//所属が異なる(＝このマッチングは無考慮に組んでOK)
+                        edge = new Matching(nodes[j].Name, nodes[jj].Name, nodes[j].Rank, nodes[jj].Rank, true);
+                    }
+                    else
+                    {
+                        edge = new Matching(nodes[j].Name, nodes[jj].Name, nodes[j].Rank, nodes[jj].Rank, false);
+                    }
+                    compEdges.Add(edge);
+
+                }
+            }
+
             for (int i = 0; i < taijin;)//taijin組の対人が見つかるまで
             {
                 int ii = i;//iがforeachを抜けても変化していないならば条件を緩める
                 int minD = MinDegree(edges, nodes);//現在の枝の最小次数
-                int maxD = MaxDegree(edges, nodes);//現在の枝の最大次数
+                //int maxD = MaxDegree(edges, nodes);//現在の枝の最大次数
 
                 foreach (Matching e in edges)
                 {
-                    int d1 = Degree(edges, nodes.Find(m => m.Name == e.Name1));
-                    int d2 = Degree(edges, nodes.Find(m => m.Name == e.Name2));//枝eの両端の次数を算出
+                    MemberNode node1 = nodes.Find(m => m.Name == e.Name1);
+                    MemberNode node2 = nodes.Find(m => m.Name == e.Name2);
+
+                    int d1 = Degree(edges, node1);
+                    int d2 = Degree(edges, node2);//枝eの両端の次数を算出
                     if (d1 == minD || d2 == minD)//枝eが最小次数ならば
                     {
                         //if (NodeNumber(edges) > 3 * takyu)//選んだ枝のノードが関与する枝はすべて削除するため
@@ -758,43 +937,22 @@ namespace Comarenkun
                         //}
                     }
                 }
-            
-                /*if (ii == i)//条件の枝が見つからない(条件を緩める，多球の条件をとっぱらう)
-                {
-                    foreach (Matching e in edges)
-                    {
-                        int d1 = Degree(edges, nodes.Find(m => m.Name == e.Name1));
-                        int d2 = Degree(edges, nodes.Find(m => m.Name == e.Name2));//枝eの両端の次数を算出
-                        if (d1 == minD || d2 == minD)//枝eが最小次数ならば
-                        {
-                            if (NodeNumber(edges) > 3 * takyu)//選んだ枝のノードが関与する枝はすべて削除するため
-                            {
-                                if (e.DifferentGroup && (e.Rank1 >= midrank && e.Rank2 <= midrank) || (e.Rank1 <= midrank && e.Rank2 >= midrank))
-                                //条件(所属が違う，多球に選ばれている）に合う枝を見つけたら採用)
-                                //条件はforループごとに徐々に緩める
-                                {
-                                    edges.RemoveAll(hoge => hoge.Name1 == e.Name1 || hoge.Name2 == e.Name1
-                                                    || hoge.Name1 == e.Name2 || hoge.Name2 == e.Name2);//採用された枝の2ノードが関与する枝はすべて削除
-                                    matchs.Add(e);
-                                    i++;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }*/
+                
                 if (ii == i)//条件の枝が見つからない(条件を緩める，ランクの条件をとっぱらう)
                 {
                     foreach (Matching e in edges)
                     {
-                        int d1 = Degree(edges, nodes.Find(m => m.Name == e.Name1));
-                        int d2 = Degree(edges, nodes.Find(m => m.Name == e.Name2));//枝eの両端の次数を算出
+                        MemberNode node1 = nodes.Find(m => m.Name == e.Name1);
+                        MemberNode node2 = nodes.Find(m => m.Name == e.Name2);
+
+                        int d1 = Degree(edges, node1);
+                        int d2 = Degree(edges, node2);//枝eの両端の次数を算出
                         if (d1 == minD || d2 == minD)//枝eが最小次数ならば
                         {
                             //if (NodeNumber(edges) > 3 * takyu)//選んだ枝のノードが関与する枝はすべて削除するため
                             //{
                             if (e.DifferentGroup)
-                            //条件(所属が異なる）に合う枝を見つけたら採用)
+                            //条件(所属制約）に合う枝を見つけたら採用)
                             //条件はforループごとに徐々に緩める
                             {
                                 ignoreRankCounter++;
@@ -810,15 +968,70 @@ namespace Comarenkun
                         }
                     }
                 }
+                if (ii == i)
+                {//条件の枝が見つからない(部内or所属ナシを対象に再び探索)
+                    foreach (Matching e in edges)
+                    {
+                        MemberNode node1 = nodes.Find(m => m.Name == e.Name1);
+                        MemberNode node2 = nodes.Find(m => m.Name == e.Name2);
+
+                        int d1 = Degree(edges, node1);
+                        int d2 = Degree(edges, node2);//枝eの両端の次数を算出
+                        if (d1 == minD || d2 == minD)//枝eが最小次数ならば
+                        {
+                            //if (NodeNumber(edges) > 3 * takyu)//選んだ枝のノードが関与する枝はすべて削除するため
+                            //{
+                            if (rankOdd)
+                            {
+                                if (((e.Rank1 >= midrank && e.Rank2 <= midrank) || (e.Rank1 <= midrank && e.Rank2 >= midrank))
+                                    && (node1.Name == "" || node2.Name == ""))
+                                //条件(上位＜＝＞下位,所属が違う）に合う枝を見つけたら採用)
+                                //条件はforループごとに徐々に緩める
+                                {
+                                    edges.RemoveAll(hoge => hoge.Name1 == e.Name1 || hoge.Name2 == e.Name1
+                                                    || hoge.Name1 == e.Name2 || hoge.Name2 == e.Name2);//採用された枝の2ノードが関与する枝はすべて削除
+
+                                    haveEdgeNodes.RemoveAll(nn => nn.Name == e.Name1 || nn.Name == e.Name2);
+                                    matchs.Add(e);
+                                    i++;
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                if (((e.Rank1 >= midrank && e.Rank2 < midrank) || (e.Rank1 < midrank && e.Rank2 >= midrank))
+                                    && (node1.Name == "" || node2.Name == ""))
+                                //条件(上位＜＝＞下位,所属が違う）に合う枝を見つけたら採用)
+                                //条件はforループごとに徐々に緩める
+                                {
+                                    edges.RemoveAll(hoge => hoge.Name1 == e.Name1 || hoge.Name2 == e.Name1
+                                                    || hoge.Name1 == e.Name2 || hoge.Name2 == e.Name2);//採用された枝の2ノードが関与する枝はすべて削除
+                                    haveEdgeNodes.RemoveAll(nn => nn.Name == e.Name1 || nn.Name == e.Name2);
+                                    matchs.Add(e);
+                                    i++;
+                                    break;
+                                }
+                            }
+                            //}
+                        }
+                    }
+                }
                 if (ii == i)//条件の枝が見つからない(条件を緩める，すべてとっぱらう)
                 {
                     foreach (Matching e in edges)
                     {
-                        int d1 = Degree(edges, nodes.Find(m => m.Name == e.Name1));
-                        int d2 = Degree(edges, nodes.Find(m => m.Name == e.Name2));//枝eの両端の次数を算出
+                        MemberNode node1 = nodes.Find(m => m.Name == e.Name1);
+                        MemberNode node2 = nodes.Find(m => m.Name == e.Name2);
+
+                        int d1 = Degree(edges, node1);
+                        int d2 = Degree(edges, node2);//枝eの両端の次数を算出
                         if (d1 == minD || d2 == minD)//枝eが最小次数ならば
                         {
-                            sameGroupCounter++;
+                            if (node1.Group != "" || node2.Group != "")
+                            {
+                                sameGroupCounter++;
+                            }
+                            ignoreRankCounter++;
                             //if (NodeNumber(edges) > 3 * takyu)//選んだ枝のノードが関与する枝はすべて削除するため,枝を持つノード数=処理していない人数
                             //{
                                 //条件なし
@@ -841,37 +1054,18 @@ namespace Comarenkun
                         resetCounter++;
                     }
                     
-                    //完全グラフを作成
-                    edges = new List<Matching>();
+                    //完全グラフに置き換え
+                    edges = new List<Matching>(compEdges);
                     chosenMatchs = new List<Matching>();
-                    Matching edge = new Matching(null, null, 0, 0, false);
-                    for (int j = 0; j < nodes.Count; j++)
-                    {
-                        for (int jj = j + 1; jj < nodes.Count; jj++)
-                        {
-                            if (nodes[j].Group != nodes[jj].Group || nodes[j].Group == "" || nodes[jj].Group == "")
-                            {//所属が異なる(＝このマッチングは無考慮に組んでOK)
-                                edge = new Matching(nodes[j].Name, nodes[jj].Name, nodes[j].Rank, nodes[jj].Rank, true);
-                            }
-                            else
-                            {
-                                edge = new Matching(nodes[j].Name, nodes[jj].Name, nodes[j].Rank, nodes[jj].Rank, false);
-                            }
-                            edges.Add(edge);
+                    //originも完全グラフに更新
+                    origin = new List<Matching>(edges);
 
-                        }
-                    }
                     //このコマで既に選んだ枝の両端ノードが関与する枝を除く(同じコマで複数同じ人が出現することを防ぐため)
                     List<Matching> edgesCopy = new List<Matching>(edges);
                     foreach (Matching m in matchs)
                     {
-                        foreach (Matching e in edgesCopy)
-                        {
-                            if (e.Name1 == m.Name1 || e.Name2 == m.Name1 || e.Name1 == m.Name2 || e.Name2 == m.Name2)
-                            {
-                                edges.Remove(e);
-                            }
-                        }
+                        edges.RemoveAll(e => e.Name1 == m.Name1 || e.Name1 == m.Name2 || e.Name2 == m.Name1 || e.Name2 == m.Name2);
+
                         chosenMatchs.Add(m);
                     }
                     //多球の選出状況もリセット
@@ -1035,10 +1229,10 @@ namespace Comarenkun
                                 MemberNode mm = nodes.Find(mmm => mmm.Name == m);
                                 //Matchingを作るためにexchangeのもう片方のノードを取得
                                 MemberNode em = nodes.Find(mmm => mmm.Name == bridge[2].Name2);
-                                Matching exchangeNeighbor = new Matching(em.Name, m, em.Rank, mm.Rank, em.Group != mm.Group || em.Group == "" || mm.Group == "");
+                                Matching exchangeNeighbor = new Matching(em.Name, m, em.Rank, mm.Rank, em.Group != mm.Group);
                                 MemberNode bm = nodes.Find(mmm => mmm.Name == bridge[0].Name2);
-                                Matching exchangeNeighborToBridge1 = new Matching(m, bm.Name, mm.Rank, bm.Rank, bm.Group != mm.Group || bm.Group == "" || mm.Group == "");
-                                Matching exchangeNeighborToBridge2 = new Matching(bm.Name, m, bm.Rank, mm.Rank, bm.Group != mm.Group || bm.Group == "" || mm.Group == "");
+                                Matching exchangeNeighborToBridge1 = new Matching(m, bm.Name, mm.Rank, bm.Rank, bm.Group != mm.Group);
+                                Matching exchangeNeighborToBridge2 = new Matching(bm.Name, m, bm.Rank, mm.Rank, bm.Group != mm.Group);
 
                                 string bridge2 = exchangeNeighbor.Name1 + " - " + exchangeNeighbor.Name2;
                                 string bridge3 = exchangeNeighbor.Name2 + " - " + exchangeNeighbor.Name1;
@@ -1046,10 +1240,18 @@ namespace Comarenkun
                                 if (set[i].Result.Contains(bridge2))
                                 {
                                     set[i].Result = set[i].Result.Replace(bridge2, exchange2);
+                                    if (!exchangeNeighborToBridge1.DifferentGroup)
+                                    {
+                                        sameGroupCounter++;
+                                    }
                                 }
                                 else
                                 {
                                     set[i].Result = set[i].Result.Replace(bridge3, exchange2);
+                                    if (!exchangeNeighborToBridge1.DifferentGroup)
+                                    {
+                                        sameGroupCounter++;
+                                    }
                                 }
 
                                 set[i].Edges.Add(exchangeNeighbor);
@@ -1097,7 +1299,7 @@ namespace Comarenkun
             edges = edges.OrderBy(e => r.Next(edges.Count)).ToList();//edgesをシャッフル
             nodes = nodes.OrderBy(n => r.Next(nodes.Count)).ToList();//nodesをシャッフル
             List<Matching> origin = new List<Matching>(edges);//もとのedgesを値コピー->あとでmatchsの枝を消して返り値へ
-            List<MemberNode> haveEdgeNodes = HaveEdgeList(edges, nodes);
+            List<MemberNode> haveEdgeNodes = HaveEdgeList(edges, nodes);//開始時点で枝を持つノード，無駄なく選べたかの判定に使用 
             List<Matching> matchs = new List<Matching>();//得られたマッチングを格納->resultへ
             List<string[]> takyuMatchs = new List<string[]>();//得られた多球マッチングを格納->resultへ 
             takyuChosen = takyuChosen;//今までに多球に選ばれた人たち．↑の列挙版を加える
@@ -1106,10 +1308,10 @@ namespace Comarenkun
             if (takyu > 0)
             {//多球メンバを3人ずつえらぶ．既にシャッフルしてるので頭からでよい
                 List<string> current = new List<string>();
+                string[] t = new string[3];
+                int flag = 0;
                 for (int i = 0; i < takyu;)
                 {
-                    string[] t = new string[3];
-                    int flag = 0;
                     for (int ii = 0; ii < nodes.Count;)
                     {
                         if (takyuChosen.IndexOf(nodes[ii].Name) == -1)
@@ -1119,29 +1321,59 @@ namespace Comarenkun
                             current.Add(nodes[ii].Name);
                             flag++;
                         }
-                        if (takyuChosen.Count == nodes.Count)
-                        {
-                            takyuChosen = new List<string>();
-                            foreach (string s in t)
-                            {
-                                takyuChosen.Add(s);
-                            }
-                            ii = -1;
-                        }
+
                         if (flag == 3)
                         {
-                            i++;
+
                             break;
                         }
                         ii++;
                     }
-                    takyuMatchs.Add(t);
+                    if (flag < 3)
+                    {//列挙しても多球に3人選ばれていない＝＞既に多球に全員が選ばれている＝＞リセット
+                        takyuChosen = new List<string>();
+                        foreach (string s in t)
+                        {
+                            if (s != null)
+                            {
+                                takyuChosen.Add(s);
+                            }
+
+                        }
+                    }
+                    else
+                    {
+                        takyuMatchs.Add(t);
+                        t = new string[3];
+                        flag = 0;
+                        i++;
+                    }
+
                 }
                 foreach (string s in current)
                 {//選んだ人の枝を消す
                     edges.RemoveAll(ee => ee.Name1 == s || ee.Name2 == s);
-
+                    //nodesも消す
                     haveEdgeNodes.RemoveAll(nn => nn.Name == s);
+                }
+            }
+            //リセット時用の完全グラフをloopの外で作成しておく
+            List<Matching> compEdges = new List<Matching>();
+            Matching edge = new Matching(null, null, 0, 0, false);
+            for (int j = 0; j < nodes.Count; j++)
+            {
+                for (int jj = j + 1; jj < nodes.Count; jj++)
+                {
+                    if (nodes[j].Group != nodes[jj].Group)
+                    {//所属が異なる(＝このマッチングは無考慮に組んでOK)
+                        edge = new Matching(nodes[j].Name, nodes[jj].Name, nodes[j].Rank, nodes[jj].Rank, true);
+                    }
+                    else
+                    {
+                        edge = new Matching(nodes[j].Name, nodes[jj].Name, nodes[j].Rank, nodes[jj].Rank, false);
+                    }
+                    compEdges.Add(edge);
+
                 }
             }
 
@@ -1149,23 +1381,29 @@ namespace Comarenkun
             {
                 int ii = i;//iがforeachを抜けても変化していないならば条件を緩める
                 int minD = MinDegree(edges, nodes);//現在の枝の最小次数
-                int maxD = MaxDegree(edges, nodes);//現在の枝の最大次数
+                //int maxD = MaxDegree(edges, nodes);//現在の枝の最大次数
 
                 foreach (Matching e in edges)
                 {
-                    int d1 = Degree(edges, nodes.Find(m => m.Name == e.Name1));
-                    int d2 = Degree(edges, nodes.Find(m => m.Name == e.Name2));//枝eの両端の次数を算出
+                    MemberNode node1 = nodes.Find(m => m.Name == e.Name1);
+                    MemberNode node2 = nodes.Find(m => m.Name == e.Name2);
+
+                    int d1 = Degree(edges, node1);
+                    int d2 = Degree(edges, node2);//枝eの両端の次数を算出
                     if (d1 == minD || d2 == minD)//枝eが最小次数ならば
                     {
+                        //if (NodeNumber(edges) > 3 * takyu)//選んだ枝のノードが関与する枝はすべて削除するため
+                        //{
                         if (rankOdd)
                         {
                             if (((e.Rank1 >= midrank && e.Rank2 >= midrank) || (e.Rank1 <= midrank && e.Rank2 <= midrank))
-                            && e.DifferentGroup)
-                            //条件(近い人同士,所属が違う）に合う枝を見つけたら採用)
+                                && e.DifferentGroup)
+                            //条件(近い,所属が違う）に合う枝を見つけたら採用)
                             //条件はforループごとに徐々に緩める
                             {
                                 edges.RemoveAll(hoge => hoge.Name1 == e.Name1 || hoge.Name2 == e.Name1
                                                 || hoge.Name1 == e.Name2 || hoge.Name2 == e.Name2);//採用された枝の2ノードが関与する枝はすべて削除
+
                                 haveEdgeNodes.RemoveAll(nn => nn.Name == e.Name1 || nn.Name == e.Name2);
                                 matchs.Add(e);
                                 i++;
@@ -1175,8 +1413,8 @@ namespace Comarenkun
                         else
                         {
                             if (((e.Rank1 >= midrank && e.Rank2 >= midrank) || (e.Rank1 < midrank && e.Rank2 < midrank))
-                            && e.DifferentGroup)
-                            //条件(近い人同士,所属が違う）に合う枝を見つけたら採用)
+                                && e.DifferentGroup)
+                            //条件(近い,所属が違う）に合う枝を見つけたら採用)
                             //条件はforループごとに徐々に緩める
                             {
                                 edges.RemoveAll(hoge => hoge.Name1 == e.Name1 || hoge.Name2 == e.Name1
@@ -1187,7 +1425,7 @@ namespace Comarenkun
                                 break;
                             }
                         }
-                        
+                        //}
                     }
                 }
 
@@ -1195,12 +1433,17 @@ namespace Comarenkun
                 {
                     foreach (Matching e in edges)
                     {
-                        int d1 = Degree(edges, nodes.Find(m => m.Name == e.Name1));
-                        int d2 = Degree(edges, nodes.Find(m => m.Name == e.Name2));//枝eの両端の次数を算出
+                        MemberNode node1 = nodes.Find(m => m.Name == e.Name1);
+                        MemberNode node2 = nodes.Find(m => m.Name == e.Name2);
+
+                        int d1 = Degree(edges, node1);
+                        int d2 = Degree(edges, node2);//枝eの両端の次数を算出
                         if (d1 == minD || d2 == minD)//枝eが最小次数ならば
                         {
+                            //if (NodeNumber(edges) > 3 * takyu)//選んだ枝のノードが関与する枝はすべて削除するため
+                            //{
                             if (e.DifferentGroup)
-                            //条件(所属が異なる）に合う枝を見つけたら採用)
+                            //条件(所属制約）に合う枝を見つけたら採用)
                             //条件はforループごとに徐々に緩める
                             {
                                 ignoreRankCounter++;
@@ -1212,6 +1455,55 @@ namespace Comarenkun
                                 i++;
                                 break;
                             }
+                            //}
+                        }
+                    }
+                }
+                if (ii == i)
+                {//条件の枝が見つからない(部内or所属ナシを対象に再び探索)
+                    foreach (Matching e in edges)
+                    {
+                        MemberNode node1 = nodes.Find(m => m.Name == e.Name1);
+                        MemberNode node2 = nodes.Find(m => m.Name == e.Name2);
+
+                        int d1 = Degree(edges, node1);
+                        int d2 = Degree(edges, node2);//枝eの両端の次数を算出
+                        if (d1 == minD || d2 == minD)//枝eが最小次数ならば
+                        {
+                            //if (NodeNumber(edges) > 3 * takyu)//選んだ枝のノードが関与する枝はすべて削除するため
+                            //{
+                            if (rankOdd)
+                            {
+                                if (((e.Rank1 >= midrank && e.Rank2 >= midrank) || (e.Rank1 <= midrank && e.Rank2 <= midrank))
+                                    && (node1.Name == "" || node2.Name == ""))
+                                //条件(上位＜＝＞下位,所属が違う）に合う枝を見つけたら採用)
+                                //条件はforループごとに徐々に緩める
+                                {
+                                    edges.RemoveAll(hoge => hoge.Name1 == e.Name1 || hoge.Name2 == e.Name1
+                                                    || hoge.Name1 == e.Name2 || hoge.Name2 == e.Name2);//採用された枝の2ノードが関与する枝はすべて削除
+
+                                    haveEdgeNodes.RemoveAll(nn => nn.Name == e.Name1 || nn.Name == e.Name2);
+                                    matchs.Add(e);
+                                    i++;
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                if (((e.Rank1 >= midrank && e.Rank2 >= midrank) || (e.Rank1 < midrank && e.Rank2 < midrank))
+                                    && (node1.Name == "" || node2.Name == ""))
+                                //条件(上位＜＝＞下位,所属が違う）に合う枝を見つけたら採用)
+                                //条件はforループごとに徐々に緩める
+                                {
+                                    edges.RemoveAll(hoge => hoge.Name1 == e.Name1 || hoge.Name2 == e.Name1
+                                                    || hoge.Name1 == e.Name2 || hoge.Name2 == e.Name2);//採用された枝の2ノードが関与する枝はすべて削除
+                                    haveEdgeNodes.RemoveAll(nn => nn.Name == e.Name1 || nn.Name == e.Name2);
+                                    matchs.Add(e);
+                                    i++;
+                                    break;
+                                }
+                            }
+                            //}
                         }
                     }
                 }
@@ -1219,11 +1511,20 @@ namespace Comarenkun
                 {
                     foreach (Matching e in edges)
                     {
-                        int d1 = Degree(edges, nodes.Find(m => m.Name == e.Name1));
-                        int d2 = Degree(edges, nodes.Find(m => m.Name == e.Name2));//枝eの両端の次数を算出
+                        MemberNode node1 = nodes.Find(m => m.Name == e.Name1);
+                        MemberNode node2 = nodes.Find(m => m.Name == e.Name2);
+
+                        int d1 = Degree(edges, node1);
+                        int d2 = Degree(edges, node2);//枝eの両端の次数を算出
                         if (d1 == minD || d2 == minD)//枝eが最小次数ならば
                         {
-                            sameGroupCounter++;
+                            if (node1.Group != "" || node2.Group != "")
+                            {
+                                sameGroupCounter++;
+                            }
+                            ignoreRankCounter++;
+                            //if (NodeNumber(edges) > 3 * takyu)//選んだ枝のノードが関与する枝はすべて削除するため,枝を持つノード数=処理していない人数
+                            //{
                             //条件なし
                             edges.RemoveAll(hoge => hoge.Name1 == e.Name1 || hoge.Name2 == e.Name1
                                             || hoge.Name1 == e.Name2 || hoge.Name2 == e.Name2);//採用された枝の2ノードが関与する枝はすべて削除
@@ -1231,6 +1532,7 @@ namespace Comarenkun
                             matchs.Add(e);
                             i++;
                             break;
+                            //}
                         }
                     }
                 }
@@ -1238,42 +1540,23 @@ namespace Comarenkun
                             //次数の低いノードから選択しているのでこの状況になるのは単純に残る枝数が足りていないときだと思われる
                 {
                     //MessageBox.Show("リセットしたコマ");
-                    if(haveEdgeNodes.Count > 0)
-                    {
+                    if (haveEdgeNodes.Count > 0)
+                    {//開始時点で枝を持っていたノードが全て選択されている(Count==0)ならば無駄なく選んだうえでリセットせざるを得ないので許容
                         resetCounter++;
                     }
-                    
-                    //完全グラフを作成
-                    edges = new List<Matching>();
-                    chosenMatchs = new List<Matching>();
-                    Matching edge = new Matching(null, null, 0, 0, false);
-                    for (int j = 0; j < nodes.Count; j++)
-                    {
-                        for (int jj = j + 1; jj < nodes.Count; jj++)
-                        {
-                            if (nodes[j].Group != nodes[jj].Group || nodes[j].Group == "" || nodes[jj].Group == "")
-                            {//所属が異なる(＝このマッチングは無考慮に組んでOK)
-                                edge = new Matching(nodes[j].Name, nodes[jj].Name, nodes[j].Rank, nodes[jj].Rank, true);
-                            }
-                            else
-                            {
-                                edge = new Matching(nodes[j].Name, nodes[jj].Name, nodes[j].Rank, nodes[jj].Rank, false);
-                            }
-                            edges.Add(edge);
 
-                        }
-                    }
+                    //完全グラフに置き換え
+                    edges = new List<Matching>(compEdges);
+                    chosenMatchs = new List<Matching>();
+                    //originも完全グラフに更新
+                    origin = new List<Matching>(edges);
+
                     //このコマで既に選んだ枝の両端ノードが関与する枝を除く(同じコマで複数同じ人が出現することを防ぐため)
                     List<Matching> edgesCopy = new List<Matching>(edges);
                     foreach (Matching m in matchs)
                     {
-                        foreach (Matching e in edgesCopy)
-                        {
-                            if (e.Name1 == m.Name1 || e.Name2 == m.Name1 || e.Name1 == m.Name2 || e.Name2 == m.Name2)
-                            {
-                                edges.Remove(e);
-                            }
-                        }
+                        edges.RemoveAll(e => e.Name1 == m.Name1 || e.Name1 == m.Name2 || e.Name2 == m.Name1 || e.Name2 == m.Name2);
+
                         chosenMatchs.Add(m);
                     }
                     //多球の選出状況もリセット
@@ -1305,6 +1588,24 @@ namespace Comarenkun
             }
             else
             {
+                /*if (nodes.Count % 3 != 0)
+                {
+                    throw new System.ArgumentException("残った多球用ノードが3の倍数になってない", "original");
+                }
+                else//多球メンバを3人ずつえらぶ．既にシャッフルしてるので頭からでよい
+                {
+                    for (int i = 0; i < nodes.Count / 3; i = i++)
+                    {
+                        string[] t = new string[] { nodes[0].Name, nodes[1].Name, nodes[2].Name };
+                        takyuMatchs.Add(t);
+                        foreach (string n in t)
+                        {
+                            takyuChosen.Add(n);
+                        }
+                        nodes.RemoveRange(0, 3);
+                    }
+                }*/
+
                 //返り値処理
                 foreach (Matching m in matchs)
                 {
@@ -1418,10 +1719,10 @@ namespace Comarenkun
                                 MemberNode mm = nodes.Find(mmm => mmm.Name == m);
                                 //Matchingを作るためにexchangeのもう片方のノードを取得
                                 MemberNode em = nodes.Find(mmm => mmm.Name == bridge[2].Name2);
-                                Matching exchangeNeighbor = new Matching(em.Name, m, em.Rank, mm.Rank, em.Group != mm.Group || em.Group == "" || mm.Group == "");
+                                Matching exchangeNeighbor = new Matching(em.Name, m, em.Rank, mm.Rank, em.Group != mm.Group);
                                 MemberNode bm = nodes.Find(mmm => mmm.Name == bridge[0].Name2);
-                                Matching exchangeNeighborToBridge1 = new Matching(m, bm.Name, mm.Rank, bm.Rank, bm.Group != mm.Group || bm.Group == "" || mm.Group == "");
-                                Matching exchangeNeighborToBridge2 = new Matching(bm.Name, m, bm.Rank, mm.Rank, bm.Group != mm.Group || bm.Group == "" || mm.Group == "");
+                                Matching exchangeNeighborToBridge1 = new Matching(m, bm.Name, mm.Rank, bm.Rank, bm.Group != mm.Group);
+                                Matching exchangeNeighborToBridge2 = new Matching(bm.Name, m, bm.Rank, mm.Rank, bm.Group != mm.Group);
 
                                 string bridge2 = exchangeNeighbor.Name1 + " - " + exchangeNeighbor.Name2;
                                 string bridge3 = exchangeNeighbor.Name2 + " - " + exchangeNeighbor.Name1;
@@ -1429,10 +1730,18 @@ namespace Comarenkun
                                 if (set[i].Result.Contains(bridge2))
                                 {
                                     set[i].Result = set[i].Result.Replace(bridge2, exchange2);
+                                    if (!exchangeNeighborToBridge1.DifferentGroup)
+                                    {
+                                        sameGroupCounter++;
+                                    }
                                 }
                                 else
                                 {
                                     set[i].Result = set[i].Result.Replace(bridge3, exchange2);
+                                    if (!exchangeNeighborToBridge1.DifferentGroup)
+                                    {
+                                        sameGroupCounter++;
+                                    }
                                 }
 
                                 set[i].Edges.Add(exchangeNeighbor);
@@ -1444,7 +1753,7 @@ namespace Comarenkun
                                 break;
                             }
                             else
-                            {//諦めてこのまま進み，たぶんリセットする
+                            {//諦めてリセットする
                                 //MessageBox.Show("諦めて非連結のまま進行したコマ");
                                 break;
                             }
@@ -1456,6 +1765,23 @@ namespace Comarenkun
             }
 
             string result = "";
+            //まずランクの中央値を求める
+            List<int> ranks = new List<int>();//中央値算出のため
+            int midrank = -1;//ランクの中央値
+            foreach (MemberNode s in nodes)
+            {
+                ranks.Add(s.Rank);
+            }
+            ranks.Sort();
+            bool rankOdd = ranks.Count % 2 == 1;
+            if (rankOdd)
+            {
+                midrank = ranks[(ranks.Count + 1) / 2 - 1];
+            }
+            else
+            {
+                midrank = ranks[ranks.Count / 2];
+            }
 
             //枝をtaijin本選んだら，残り3takyu個のノードを選ぶ
             //Rank1>=midrank&&Rank2<=midrank || Rank1<=midrank&&Rank2>=midrankを満たす枝を，次数が低いものからランダムに抽出
@@ -1463,7 +1789,7 @@ namespace Comarenkun
             edges = edges.OrderBy(e => r.Next(edges.Count)).ToList();//edgesをシャッフル
             nodes = nodes.OrderBy(n => r.Next(nodes.Count)).ToList();//nodesをシャッフル
             List<Matching> origin = new List<Matching>(edges);//もとのedgesを値コピー->あとでmatchsの枝を消して返り値へ
-            List<MemberNode> haveEdgeNodes = HaveEdgeList(edges, nodes);
+            List<MemberNode> haveEdgeNodes = HaveEdgeList(edges, nodes);//開始時点で枝を持つノード，無駄なく選べたかの判定に使用 
             List<Matching> matchs = new List<Matching>();//得られたマッチングを格納->resultへ
             List<string[]> takyuMatchs = new List<string[]>();//得られた多球マッチングを格納->resultへ 
             takyuChosen = takyuChosen;//今までに多球に選ばれた人たち．↑の列挙版を加える
@@ -1472,10 +1798,10 @@ namespace Comarenkun
             if (takyu > 0)
             {//多球メンバを3人ずつえらぶ．既にシャッフルしてるので頭からでよい
                 List<string> current = new List<string>();
+                string[] t = new string[3];
+                int flag = 0;
                 for (int i = 0; i < takyu;)
                 {
-                    string[] t = new string[3];
-                    int flag = 0;
                     for (int ii = 0; ii < nodes.Count;)
                     {
                         if (takyuChosen.IndexOf(nodes[ii].Name) == -1)
@@ -1485,29 +1811,59 @@ namespace Comarenkun
                             current.Add(nodes[ii].Name);
                             flag++;
                         }
-                        if (takyuChosen.Count == nodes.Count)
-                        {
-                            takyuChosen = new List<string>();
-                            foreach (string s in t)
-                            {
-                                takyuChosen.Add(s);
-                            }
-                            ii = -1;
-                        }
+
                         if (flag == 3)
                         {
-                            i++;
+
                             break;
                         }
                         ii++;
                     }
-                    takyuMatchs.Add(t);
+                    if (flag < 3)
+                    {//列挙しても多球に3人選ばれていない＝＞既に多球に全員が選ばれている＝＞リセット
+                        takyuChosen = new List<string>();
+                        foreach (string s in t)
+                        {
+                            if (s != null)
+                            {
+                                takyuChosen.Add(s);
+                            }
+
+                        }
+                    }
+                    else
+                    {
+                        takyuMatchs.Add(t);
+                        t = new string[3];
+                        flag = 0;
+                        i++;
+                    }
+
                 }
                 foreach (string s in current)
                 {//選んだ人の枝を消す
                     edges.RemoveAll(ee => ee.Name1 == s || ee.Name2 == s);
-
+                    //nodesも消す
                     haveEdgeNodes.RemoveAll(nn => nn.Name == s);
+                }
+            }
+            //リセット時用の完全グラフをloopの外で作成しておく
+            List<Matching> compEdges = new List<Matching>();
+            Matching edge = new Matching(null, null, 0, 0, false);
+            for (int j = 0; j < nodes.Count; j++)
+            {
+                for (int jj = j + 1; jj < nodes.Count; jj++)
+                {
+                    if (nodes[j].Group != nodes[jj].Group)
+                    {//所属が異なる(＝このマッチングは無考慮に組んでOK)
+                        edge = new Matching(nodes[j].Name, nodes[jj].Name, nodes[j].Rank, nodes[jj].Rank, true);
+                    }
+                    else
+                    {
+                        edge = new Matching(nodes[j].Name, nodes[jj].Name, nodes[j].Rank, nodes[jj].Rank, false);
+                    }
+                    compEdges.Add(edge);
+
                 }
             }
 
@@ -1515,16 +1871,21 @@ namespace Comarenkun
             {
                 int ii = i;//iがforeachを抜けても変化していないならば条件を緩める
                 int minD = MinDegree(edges, nodes);//現在の枝の最小次数
-                int maxD = MaxDegree(edges, nodes);//現在の枝の最大次数
+                                                   //int maxD = MaxDegree(edges, nodes);//現在の枝の最大次数
 
                 foreach (Matching e in edges)
                 {
-                    int d1 = Degree(edges, nodes.Find(m => m.Name == e.Name1));
-                    int d2 = Degree(edges, nodes.Find(m => m.Name == e.Name2));//枝eの両端の次数を算出
+                    MemberNode node1 = nodes.Find(m => m.Name == e.Name1);
+                    MemberNode node2 = nodes.Find(m => m.Name == e.Name2);
+
+                    int d1 = Degree(edges, node1);
+                    int d2 = Degree(edges, node2);//枝eの両端の次数を算出
                     if (d1 == minD || d2 == minD)//枝eが最小次数ならば
                     {
+                        //if (NodeNumber(edges) > 3 * takyu)//選んだ枝のノードが関与する枝はすべて削除するため
+                        //{
                         if (e.DifferentGroup)
-                        //条件(所属が違う）に合う枝を見つけたら採用)
+                        //条件(所属制約）に合う枝を見つけたら採用)
                         //条件はforループごとに徐々に緩める
                         {
                             edges.RemoveAll(hoge => hoge.Name1 == e.Name1 || hoge.Name2 == e.Name1
@@ -1534,17 +1895,55 @@ namespace Comarenkun
                             i++;
                             break;
                         }
+                        //}
+                    }
+                }
+
+                if (ii == i)
+                {//条件の枝が見つからない(部内or所属ナシを対象に再び探索)
+                    foreach (Matching e in edges)
+                    {
+                        MemberNode node1 = nodes.Find(m => m.Name == e.Name1);
+                        MemberNode node2 = nodes.Find(m => m.Name == e.Name2);
+
+                        int d1 = Degree(edges, node1);
+                        int d2 = Degree(edges, node2);//枝eの両端の次数を算出
+                        if (d1 == minD || d2 == minD)//枝eが最小次数ならば
+                        {
+                            //if (NodeNumber(edges) > 3 * takyu)//選んだ枝のノードが関与する枝はすべて削除するため
+                            //{
+                            if ((node1.Name == "" || node2.Name == ""))
+                            //条件(所属制約）に合う枝を見つけたら採用)
+                            //条件はforループごとに徐々に緩める
+                            {
+                                edges.RemoveAll(hoge => hoge.Name1 == e.Name1 || hoge.Name2 == e.Name1
+                                                || hoge.Name1 == e.Name2 || hoge.Name2 == e.Name2);//採用された枝の2ノードが関与する枝はすべて削除
+                                haveEdgeNodes.RemoveAll(nn => nn.Name == e.Name1 || nn.Name == e.Name2);
+                                matchs.Add(e);
+                                i++;
+                                break;
+                            }
+                            //}
+                        }
                     }
                 }
                 if (ii == i)//条件の枝が見つからない(条件を緩める，すべてとっぱらう)
                 {
                     foreach (Matching e in edges)
                     {
-                        int d1 = Degree(edges, nodes.Find(m => m.Name == e.Name1));
-                        int d2 = Degree(edges, nodes.Find(m => m.Name == e.Name2));//枝eの両端の次数を算出
+                        MemberNode node1 = nodes.Find(m => m.Name == e.Name1);
+                        MemberNode node2 = nodes.Find(m => m.Name == e.Name2);
+
+                        int d1 = Degree(edges, node1);
+                        int d2 = Degree(edges, node2);//枝eの両端の次数を算出
                         if (d1 == minD || d2 == minD)//枝eが最小次数ならば
                         {
-                            sameGroupCounter++;
+                            if (node1.Group != "" || node2.Group != "")
+                            {
+                                sameGroupCounter++;
+                            }
+                            //if (NodeNumber(edges) > 3 * takyu)//選んだ枝のノードが関与する枝はすべて削除するため,枝を持つノード数=処理していない人数
+                            //{
                             //条件なし
                             edges.RemoveAll(hoge => hoge.Name1 == e.Name1 || hoge.Name2 == e.Name1
                                             || hoge.Name1 == e.Name2 || hoge.Name2 == e.Name2);//採用された枝の2ノードが関与する枝はすべて削除
@@ -1552,6 +1951,7 @@ namespace Comarenkun
                             matchs.Add(e);
                             i++;
                             break;
+                            //}
                         }
                     }
                 }
@@ -1559,42 +1959,23 @@ namespace Comarenkun
                             //次数の低いノードから選択しているのでこの状況になるのは単純に残る枝数が足りていないときだと思われる
                 {
                     //MessageBox.Show("リセットしたコマ");
-                    if(haveEdgeNodes.Count > 0)
-                    {
+                    if (haveEdgeNodes.Count > 0)
+                    {//開始時点で枝を持っていたノードが全て選択されている(Count==0)ならば無駄なく選んだうえでリセットせざるを得ないので許容
                         resetCounter++;
                     }
-                    
-                    //完全グラフを作成
-                    edges = new List<Matching>();
-                    chosenMatchs = new List<Matching>();
-                    Matching edge = new Matching(null, null, 0, 0, false);
-                    for (int j = 0; j < nodes.Count; j++)
-                    {
-                        for (int jj = j + 1; jj < nodes.Count; jj++)
-                        {
-                            if (nodes[j].Group != nodes[jj].Group || nodes[j].Group == "" || nodes[jj].Group == "")
-                            {//所属が異なる(＝このマッチングは無考慮に組んでOK)
-                                edge = new Matching(nodes[j].Name, nodes[jj].Name, nodes[j].Rank, nodes[jj].Rank, true);
-                            }
-                            else
-                            {
-                                edge = new Matching(nodes[j].Name, nodes[jj].Name, nodes[j].Rank, nodes[jj].Rank, false);
-                            }
-                            edges.Add(edge);
 
-                        }
-                    }
+                    //完全グラフに置き換え
+                    edges = new List<Matching>(compEdges);
+                    chosenMatchs = new List<Matching>();
+                    //originも完全グラフに更新
+                    origin = new List<Matching>(edges);
+
                     //このコマで既に選んだ枝の両端ノードが関与する枝を除く(同じコマで複数同じ人が出現することを防ぐため)
                     List<Matching> edgesCopy = new List<Matching>(edges);
                     foreach (Matching m in matchs)
                     {
-                        foreach (Matching e in edgesCopy)
-                        {
-                            if (e.Name1 == m.Name1 || e.Name2 == m.Name1 || e.Name1 == m.Name2 || e.Name2 == m.Name2)
-                            {
-                                edges.Remove(e);
-                            }
-                        }
+                        edges.RemoveAll(e => e.Name1 == m.Name1 || e.Name1 == m.Name2 || e.Name2 == m.Name1 || e.Name2 == m.Name2);
+
                         chosenMatchs.Add(m);
                     }
                     //多球の選出状況もリセット
@@ -1626,6 +2007,24 @@ namespace Comarenkun
             }
             else
             {
+                /*if (nodes.Count % 3 != 0)
+                {
+                    throw new System.ArgumentException("残った多球用ノードが3の倍数になってない", "original");
+                }
+                else//多球メンバを3人ずつえらぶ．既にシャッフルしてるので頭からでよい
+                {
+                    for (int i = 0; i < nodes.Count / 3; i = i++)
+                    {
+                        string[] t = new string[] { nodes[0].Name, nodes[1].Name, nodes[2].Name };
+                        takyuMatchs.Add(t);
+                        foreach (string n in t)
+                        {
+                            takyuChosen.Add(n);
+                        }
+                        nodes.RemoveRange(0, 3);
+                    }
+                }*/
+
                 //返り値処理
                 foreach (Matching m in matchs)
                 {
@@ -1649,6 +2048,7 @@ namespace Comarenkun
         public int Rank { set; get; }
         public string Name { set; get; }
         public string Group { set; get; }//部内者は"",外部参加者で所属分けする場合は末尾3文字を読みアルファベットを格納
+        public int Degree { set; get; }
 
         public MemberNode(int Rank, string Name, string Group)
         {

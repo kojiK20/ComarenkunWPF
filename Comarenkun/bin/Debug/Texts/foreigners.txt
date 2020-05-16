@@ -1,10 +1,6 @@
-:sample2:
-ª:high:test
-ª:high2:test
-«:low:test
-«:low2:test
-:mid:test
-:mid2:test
-ª:high3:test
-«:low3:test
-:i2:
+:sample2:•”“à'
+ª:A:‘å•¶š
+«:a3:
+:a2:
+«:B:‘å•¶š
+:C:‘å•¶š

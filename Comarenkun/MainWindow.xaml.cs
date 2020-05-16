@@ -106,7 +106,7 @@ namespace Comarenkun
         string talkOnCer = "参加者の確認をするコマ";
         string talkInCer = "このメンバーで\nマッチングしていいコマか？";
         string talkOnGo = "マッチングするコマ！";
-        string talkOnOkawari = "もう一度マッチングするコマ";
+        string talkOnOkawari = "もう一度マッチングするコマ？";
         string talkOnLINESend = "LINEに結果を送信できるコマ";
 
 
@@ -185,6 +185,7 @@ namespace Comarenkun
         string ComarenkunMouseOver = "ComarenkunMouseOver";
         string ComarenkunMouseLeave = "ComarenkunMouseLeave";
         string ComarenkunClick = "ComarenkunClicked";
+        string ComarenkunPuruPuru = "ComarenkunPuruPuru";
 
         string storyChain = "";
         string ToMenuInGroup = "ToMenuInGroup";
@@ -197,6 +198,7 @@ namespace Comarenkun
         string NextInGo = "NextInGo";
         string NextToLastComa = "NextToLastComa";
         string ToConfig = "ToConfig";
+        string PuruPuru = "PuruPuru";
 
         private void StoryboardCompleted(object sender, EventArgs e)
         {
@@ -496,6 +498,10 @@ namespace Comarenkun
                 PolygonButtonSet("ParticipantMemberButton", null, participantMemberButtonParams, noShadow);
                 LabelSet("ParticipantRankLabel", null, participantRankLabelParams, noShadow);
                 StoryBegin(AppearParticipantButton);
+            }
+            else if(name == ComarenkunPuruPuru && storyChain == PuruPuru)
+            {
+                StoryBegin(ComarenkunPuruPuru);
             }
             
         }
@@ -1949,7 +1955,7 @@ namespace Comarenkun
             
         }
         string tmpResult;
-        private void nextButton_Click(object sender, RoutedEventArgs e)
+        private async void nextButton_Click(object sender, RoutedEventArgs e)
         {
             StoryStop(NextButtonMouseEnter);
             StoryBegin(NextButtonClick);
@@ -1982,8 +1988,23 @@ namespace Comarenkun
             {//ParticipantNamesTextBoxのContentに組み合わせ結果を記述する．
                 try
                 {
-                    
-                    string result = mlogic.Matching(participants, increase, decrease, configs);//マッチングする
+                    //別スレッドでマッチングする
+                    this.toMenuButton.IsHitTestVisible = false;
+                    this.nextButton.IsHitTestVisible = false;
+                    this.LINESendButton.IsHitTestVisible = false;
+                    storyChain = PuruPuru;
+                    StoryStop(ComarenkunMouseLeave);
+                    StoryBegin(ComarenkunMouseOver);
+
+                    string result = await Task.Run(() => mlogic.Matching(participants, increase, decrease, configs));
+                    storyChain = "";
+                    StoryStop(ComarenkunPuruPuru);
+                    this.toMenuButton.IsHitTestVisible = true;
+                    this.nextButton.IsHitTestVisible = true;
+                    this.LINESendButton.IsHitTestVisible = true;
+                    StoryStop(ComarenkunMouseOver);
+                    StoryBegin(ComarenkunClick);
+
                     if (result != "ERROR")
                     {
                         tmpResult = result;
@@ -2028,10 +2049,14 @@ namespace Comarenkun
             }
             else if (configs[1] != coma.ToString())
             {
-                foreach (string s in participants[coma - 2])
+                if(participants[coma - 1].Count == 0)
                 {
-                    participants[coma - 1].Add(s);
+                    foreach (string s in participants[coma - 2])
+                    {
+                        participants[coma - 1].Add(s);
+                    }
                 }
+                
                 storyChain = Next;
                 StoryBegin(DisappearObjectsInMatching1r);//以下はStoryboardCompletedに記述
                 
@@ -2053,9 +2078,12 @@ namespace Comarenkun
             }
             else
             {
-                foreach (string s in participants[coma - 2])
+                if (participants[coma - 1].Count == 0)
                 {
-                    participants[coma - 1].Add(s);
+                    foreach (string s in participants[coma - 2])
+                    {
+                        participants[coma - 1].Add(s);
+                    }
                 }
                 storyChain = NextToLastComa;
                 StoryBegin(DisappearObjectsInMatching1r);//以下はStoryboardCompletedに記述
@@ -2207,7 +2235,7 @@ namespace Comarenkun
             StoryStop(ComaButtonMouseEnter);
             StoryBegin(ComaButtonMouseEnter);
 
-            if(int.Parse(configs[1]) < 200)
+            if(int.Parse(configs[1]) < 20)
             {
                 flogic.PlusComa();
                 configs = flogic.ReadConfigFile();
@@ -2522,10 +2550,10 @@ namespace Comarenkun
                     
                 }
                 
-                for (int i = coma; i < int.Parse(configs[1]); i++)
-                {//コマの参加者情報をリセット
-                    participants[i].Clear();
-                }
+                //for (int i = coma; i < int.Parse(configs[1]); i++)
+                //{//コマの参加者情報をリセット
+                //    participants[i].Clear();
+                //}
 
                 if(c == "オ\nカ\nワ\nリ")
                 {
@@ -2533,6 +2561,8 @@ namespace Comarenkun
 
                     storyChain = ToMenuInMatchingInOkawari;
                     StoryBegin(DisappearObjectsInMatching1);//以下，StoryboardCompletedに記述
+                    StoryBegin(ComarenkunMouseLeave);
+                    
                 }
                 else if(coma == int.Parse(configs[1]))
                 {

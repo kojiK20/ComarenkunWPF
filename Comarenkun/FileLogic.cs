@@ -95,9 +95,9 @@ namespace Comarenkun
                             if (c.Length > 2 || !int.TryParse(c[1], out piyo) || c[0] != "coma")
                             {//形式がおかしいのでエラー
                                 throw new IndexOutOfRangeException();
-                            }else if(int.Parse(c[1]) > 50)
-                            {//max50コマ
-                                c[1] = "50";
+                            }else if(int.Parse(c[1]) > 20)
+                            {//max20コマ
+                                c[1] = "20";
                             }
                             result.Add(c[1]);
                             fuga++;
@@ -177,6 +177,7 @@ namespace Comarenkun
             
             string line;
             List<string> names = new List<string>();
+            
             while ((line = sr1.ReadLine()) != null)
             {
                 if(line != "")
@@ -188,6 +189,7 @@ namespace Comarenkun
                     c[1].Replace("ー", "");
                     //名前が重複しているなら連番にする
                     c[1] = NameDuplicateCheck(names, c[1]);
+                    c[2] = "";
                     names.Add(c[1]);
 
                     int i;
@@ -225,8 +227,15 @@ namespace Comarenkun
                     c[1].Replace(" ", "　");
                     //名前が重複しているなら連番にする
                     c[1] = NameDuplicateCheck(names, c[1]);
+                    if(c[2] == "所属ナシ")
+                    {
+                        c[2] = "";
+                    }else if(c[2] == "部内")
+                    {
+                        c[2] = "部内'";
+                    }
                     names.Add(c[1]);
-
+                    
                     if (c[0] != "↑" && c[0] != "↓" && c[0] != "")
                     {
                         s2 = s2 + ":" + c[1] + ":" + c[2] + "\n";
@@ -472,7 +481,7 @@ namespace Comarenkun
                 sw1 = new StreamWriter(memberFilePath, true, Encoding.GetEncoding("Shift_JIS"));
                 try
                 {
-                    sw1.WriteLine("\n" + rank + ":" + name + ":" + group + "\n");
+                    sw1.WriteLine("\n" + rank + ":" + name + ":" + "\n");
                 }
                 finally
                 {
@@ -484,7 +493,15 @@ namespace Comarenkun
                 sw2 = new StreamWriter(foreignerFilePath, true, Encoding.GetEncoding("Shift_JIS"));
                 try
                 {
-                    sw2.WriteLine("\n" + rank + ":" + name + ":" + group + "\n");
+                    if(group == "所属ナシ")
+                    {
+                        sw2.WriteLine("\n" + rank + ":" + name + ":" + "\n");
+                    }
+                    else
+                    {
+                        sw2.WriteLine("\n" + rank + ":" + name + ":" + group + "\n");
+                    }
+                    
                 }
                 finally
                 {

@@ -1,8 +1,8 @@
 table:10
-coma:5
+coma:6
 0
 0
 0
 0
 0
-
+0
