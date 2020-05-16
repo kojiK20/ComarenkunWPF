@@ -81,4 +81,6 @@ Comarenkun.exeと同ディレクトリにあるText/configs.txtおよびTexts/LI
 
 最後に「GO!」ボタンを押すことで組み合わせが出力されます．LINE Notifyアクセストークンを登録している場合，右上の「LINE」ボタンからLINEグループに結果を通知できます．
 
+# 使用素材
+フォント：851ゴチカクット (8:51:22 pm 様，http://pm85122.onamae.jp/85122font.html)
 
