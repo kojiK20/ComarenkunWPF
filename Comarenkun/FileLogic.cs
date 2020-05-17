@@ -54,7 +54,7 @@ namespace Comarenkun
             if (!File.Exists("Texts/config.txt"))
             {
                 //File.Create("Texts/members.txt");
-                sw = new StreamWriter(configFilePath, false, Encoding.GetEncoding("Shift_JIS"));
+                sw = new StreamWriter(configFilePath, false, Encoding.GetEncoding("UTF-8"));
                 sw.WriteLine("table:10\ncoma:5\n1\n1\n2\n1\n0");
                 sw.Close();
             }
@@ -64,7 +64,7 @@ namespace Comarenkun
         {//configテキストを読み込み配列にして返す
             CreateIfNotExistsConfig();
             //ReWriteIfNotRightConfig();
-            sr = new StreamReader(configFilePath, Encoding.GetEncoding("Shift_JIS"));
+            sr = new StreamReader(configFilePath, Encoding.GetEncoding("UTF-8"));
 
             List<string> result = new List<string>();//台数,コマ数,各コマのアルゴリズム(0 or 1 or 2)
             string line;
@@ -135,10 +135,10 @@ namespace Comarenkun
                         break;
                     }
                 }
-                sw = new StreamWriter(configFilePath, false, Encoding.GetEncoding("Shift_JIS"));
+                sw = new StreamWriter(configFilePath, false, Encoding.GetEncoding("UTF-8"));
                 sw.WriteLine("table:10\ncoma:5\n1\n1\n2\n1\n0");
                 sw.Close();
-                MessageBox.Show("Comarenkun/Texts/config.txtの形式が不正です．\n" + path + "にコピーして新たにconfig.txtを作成しました．");
+                MessageBox.Show("Texts/config.txtを正常に読み込めませんでした．\n" + path + "にコピーして新たにconfig.txtを作成しました．\n記述が不正か，文字コードがUTF-8ではなかった可能性があります．");
                 return ReadConfigFile();//再帰
             }
             
@@ -156,104 +156,125 @@ namespace Comarenkun
             if (!File.Exists("Texts/members.txt"))
             {
                 //File.Create("Texts/members.txt");
-                sw1 = new StreamWriter(memberFilePath, false, Encoding.GetEncoding("Shift_JIS"));
+                sw1 = new StreamWriter(memberFilePath, false, Encoding.GetEncoding("UTF-8"));
                 sw1.WriteLine("1:sample:");
                 sw1.Close();
             }
             if (!File.Exists("Texts/foreigners.txt"))
             {
                 //File.Create("Texts/foreigners.txt");
-                sw2 = new StreamWriter(foreignerFilePath, false, Encoding.GetEncoding("Shift_JIS"));
+                sw2 = new StreamWriter(foreignerFilePath, false, Encoding.GetEncoding("UTF-8"));
                 sw2.WriteLine(":sample:");
                 sw2.Close();
             }
         }
         public void ReWriteIfNotRight()
         {//ランクが整数値あるいは↑↓空以外のものは0もしくは空に置き換える
-            sr1 = new StreamReader(memberFilePath, Encoding.GetEncoding("Shift_JIS"));
-            sr2 = new StreamReader(foreignerFilePath, Encoding.GetEncoding("Shift_JIS"));
+            sr1 = new StreamReader(memberFilePath, Encoding.GetEncoding("UTF-8"));
+            sr2 = new StreamReader(foreignerFilePath, Encoding.GetEncoding("UTF-8"));
             string s1 = "";// sr1.ReadToEnd();
             string s2 = "";// sr2.ReadToEnd();
-            
+
             string line;
             List<string> names = new List<string>();
-            
-            while ((line = sr1.ReadLine()) != null)
+
+
+            try
             {
-                if(line != "")
+                while ((line = sr1.ReadLine()) != null)
                 {
-                    line = line.Replace('：', ':');
-                    string[] c = line.Split(':');
-                    c[1].Replace("/", "");
-                    c[1].Replace("＋", "");
-                    c[1].Replace("ー", "");
-                    //名前が重複しているなら連番にする
-                    c[1] = NameDuplicateCheck(names, c[1]);
-                    c[2] = "";
-                    names.Add(c[1]);
-
-                    int i;
-                    if (int.TryParse(c[0], out i) == false)
-                    {//ランクが整数値以外の場合0に置き換え,名前や所属が置き換えられてはいけないので1行ずつやる
-                        s1 = s1 + "0:" + c[1] + ":" + c[2] + "\n";
-                    }
-                    else if(int.Parse(c[0]) < 0)
+                    if (line != "")
                     {
-                        s1 = s1 + "0:" + c[1] + ":" + c[2] + "\n";
-                    }
-                    else if (int.Parse(c[0]) > 1000)
-                    {
-                        s1 = s1 + "1000:" + c[1] + ":" + c[2] + "\n";
-                    }
-                    else
-                    {
-                        s1 = s1 + c[0] + ":" + c[1] + ":" + c[2] + "\n";
-                    }
-                    
-                }
-            }
-            sr1.Close();
-            //names = new List<string>();
-            while((line = sr2.ReadLine()) != null)
-            {//ランクが↑↓空以外の場合空に置き換え
-                if(line != "")
-                {
-                    line = line.Replace('：', ':');
-                    string[] c = line.Split(':');
-
-                    c[1].Replace("/", "");
-                    c[1].Replace("＋", "");
-                    c[1].Replace("ー", "");
-                    c[1].Replace(" ", "　");
-                    //名前が重複しているなら連番にする
-                    c[1] = NameDuplicateCheck(names, c[1]);
-                    if(c[2] == "所属ナシ")
-                    {
+                        line = line.Replace('：', ':');
+                        string[] c = line.Split(':');
+                        c[1].Replace("/", "");
+                        c[1].Replace("＋", "");
+                        c[1].Replace("ー", "");
+                        //名前が重複しているなら連番にする
+                        c[1] = NameDuplicateCheck(names, c[1]);
                         c[2] = "";
-                    }else if(c[2] == "部内")
-                    {
-                        c[2] = "部内'";
+                        names.Add(c[1]);
+
+                        int i;
+                        if (int.TryParse(c[0], out i) == false)
+                        {//ランクが整数値以外の場合0に置き換え,名前や所属が置き換えられてはいけないので1行ずつやる
+                            s1 = s1 + "0:" + c[1] + ":" + c[2] + "\n";
+                        }
+                        else if (int.Parse(c[0]) < 0)
+                        {
+                            s1 = s1 + "0:" + c[1] + ":" + c[2] + "\n";
+                        }
+                        else if (int.Parse(c[0]) > 1000)
+                        {
+                            s1 = s1 + "1000:" + c[1] + ":" + c[2] + "\n";
+                        }
+                        else
+                        {
+                            s1 = s1 + c[0] + ":" + c[1] + ":" + c[2] + "\n";
+                        }
+
                     }
-                    names.Add(c[1]);
-                    
-                    if (c[0] != "↑" && c[0] != "↓" && c[0] != "")
-                    {
-                        s2 = s2 + ":" + c[1] + ":" + c[2] + "\n";
-                    }
-                    else
-                    {
-                        s2 = s2 + c[0] + ":" + c[1] + ":" + c[2] + "\n";
-                    }
-                }  
+                }
+                sr1.Close();
+                sw1 = new StreamWriter(memberFilePath, false, Encoding.GetEncoding("UTF-8"));
+                sw1.Write(s1);
+                sw1.Close();
             }
-            //上書き保存
-            sr2.Close();
-            sw1 = new StreamWriter(memberFilePath, false, Encoding.GetEncoding("Shift_JIS"));
-            sw2 = new StreamWriter(foreignerFilePath, false, Encoding.GetEncoding("Shift_JIS"));
-            sw1.Write(s1);
-            sw2.Write(s2);
-            sw1.Close();
-            sw2.Close();
+            catch
+            {//ここで読めないならどうせその後でも読めないのでここでは何もしない
+                sr1.Close();
+            }
+            
+            try
+            {
+
+
+                //names = new List<string>();
+                while ((line = sr2.ReadLine()) != null)
+                {//ランクが↑↓空以外の場合空に置き換え
+                    if (line != "")
+                    {
+                        line = line.Replace('：', ':');
+                        string[] c = line.Split(':');
+
+                        c[1].Replace("/", "");
+                        c[1].Replace("＋", "");
+                        c[1].Replace("ー", "");
+                        c[1].Replace(" ", "　");
+                        //名前が重複しているなら連番にする
+                        c[1] = NameDuplicateCheck(names, c[1]);
+                        if (c[2] == "所属ナシ")
+                        {
+                            c[2] = "";
+                        }
+                        else if (c[2] == "部内")
+                        {
+                            c[2] = "部内'";
+                        }
+                        names.Add(c[1]);
+
+                        if (c[0] != "↑" && c[0] != "↓" && c[0] != "")
+                        {
+                            s2 = s2 + ":" + c[1] + ":" + c[2] + "\n";
+                        }
+                        else
+                        {
+                            s2 = s2 + c[0] + ":" + c[1] + ":" + c[2] + "\n";
+                        }
+                    }
+                }
+                //上書き保存
+                sr2.Close();
+                sw2 = new StreamWriter(foreignerFilePath, false, Encoding.GetEncoding("UTF-8"));
+                sw2.Write(s2);
+                sw2.Close();
+            }
+            catch
+            {//ここで読めないならどうせその後でも読めないのでここでは何もしない
+                sr2.Close();
+            }
+            
+            
         }
         public string NameDuplicateCheck(List<string> names, string name)
         {//名前が重複してたら連番にした名前を返す
@@ -282,12 +303,10 @@ namespace Comarenkun
         {//メンバテキストを読み込み配列にして返す
             CreateIfNotExists();
             ReWriteIfNotRight();
-
-            sr1 = new StreamReader(memberFilePath, Encoding.GetEncoding("Shift_JIS"));
-            sr2 = new StreamReader(foreignerFilePath, Encoding.GetEncoding("Shift_JIS"));
-
             List<string[]> result1 = new List<string[]>();
             List<string[]> result2 = new List<string[]>();
+            sr1 = new StreamReader(memberFilePath, Encoding.GetEncoding("UTF-8"));
+            sr2 = new StreamReader(foreignerFilePath, Encoding.GetEncoding("UTF-8"));
             string line;
             try
             {
@@ -318,20 +337,21 @@ namespace Comarenkun
                     else if (File.Exists("Texts/members_copy.txt"))
                     {
                         path = "members_copy" + i.ToString() + ".txt";
-                        File.Copy(memberFilePath, "Texts/" + path);
+                        File.Copy(memberFilePath, "Texts/" + path, true);
                         break;
                     }
                     else
                     {
                         path = "members_copy.txt";
-                        File.Copy(memberFilePath, "Texts/" + path);
+                        File.Copy(memberFilePath, "Texts/" + path, true);
                         break;
                     }
                 }
-                sw1 = new StreamWriter(memberFilePath, false, Encoding.GetEncoding("Shift_JIS"));
+                sw1 = new StreamWriter(memberFilePath, false, Encoding.GetEncoding("UTF-8"));
                 sw1.WriteLine("1:sample:");
                 sw1.Close();
-                MessageBox.Show("Comarenkun/Texts/members.txtの形式が不正です．\n" + path + "にコピーして新たにmembers.txtを作成しました．");
+                
+                MessageBox.Show("Texts/members.txtを正常に読み込めませんでした\n" + path + "にコピーして新たにmembers.txtを作成しました．\n記述が不正か，文字コードがUTF-8ではなかった可能性があります．");
                 return ReadMemberFile();//再帰
             }
             //ソートしておく
@@ -385,10 +405,10 @@ namespace Comarenkun
                         break;
                     }
                 }
-                sw2 = new StreamWriter(foreignerFilePath, false, Encoding.GetEncoding("Shift_JIS"));
+                sw2 = new StreamWriter(foreignerFilePath, false, Encoding.GetEncoding("UTF-8"));
                 sw2.WriteLine(":sample:");
                 sw2.Close();
-                MessageBox.Show("Comarenkun/Texts/foreigners.txtの形式が不正です．\n" + path + "にコピーして新たにforeigners.txtを作成しました．");
+                MessageBox.Show("Texts/foreigners.txtを正常に読み込めませんでした．\n" + path + "にコピーして新たにforeigners.txtを作成しました．\n記述が不正か，文字コードがUTF-8ではなかった可能性があります．");
                 return ReadMemberFile();//再帰
             }
             //ソートしておく
@@ -478,7 +498,7 @@ namespace Comarenkun
         {
             if(group == "部内")
             {//所属が部内ならmembers.txtに書く(所属は""に)
-                sw1 = new StreamWriter(memberFilePath, true, Encoding.GetEncoding("Shift_JIS"));
+                sw1 = new StreamWriter(memberFilePath, true, Encoding.GetEncoding("UTF-8"));
                 try
                 {
                     sw1.WriteLine("\n" + rank + ":" + name + ":" + "\n");
@@ -490,7 +510,7 @@ namespace Comarenkun
             }
             else
             {//foreigners.txtに書く
-                sw2 = new StreamWriter(foreignerFilePath, true, Encoding.GetEncoding("Shift_JIS"));
+                sw2 = new StreamWriter(foreignerFilePath, true, Encoding.GetEncoding("UTF-8"));
                 try
                 {
                     if(group == "所属ナシ")
@@ -513,7 +533,7 @@ namespace Comarenkun
         {//nameはmembername
             if(group == "部内")
             {//mmebers.txt
-                sr1 = new StreamReader(memberFilePath, Encoding.GetEncoding("Shift_JIS"));
+                sr1 = new StreamReader(memberFilePath, Encoding.GetEncoding("UTF-8"));
                 string s = "";
                 string line;
                 while ((line = sr1.ReadLine()) != null)
@@ -531,14 +551,14 @@ namespace Comarenkun
                     }
                 }
                 sr1.Close();
-                sw1 = new StreamWriter(memberFilePath, false, Encoding.GetEncoding("Shift_JIS"));
+                sw1 = new StreamWriter(memberFilePath, false, Encoding.GetEncoding("UTF-8"));
                 //上書き保存
                 sw1.Write(s);
                 sw1.Close();
             }
             else
             {//foreigners.txt
-                sr2 = new StreamReader(foreignerFilePath, Encoding.GetEncoding("Shift_JIS"));
+                sr2 = new StreamReader(foreignerFilePath, Encoding.GetEncoding("UTF-8"));
                 string s = "";
                 string line;
                 while ((line = sr2.ReadLine()) != null)
@@ -556,7 +576,7 @@ namespace Comarenkun
                     }
                 }
                 sr2.Close();
-                sw2 = new StreamWriter(foreignerFilePath, false, Encoding.GetEncoding("Shift_JIS"));
+                sw2 = new StreamWriter(foreignerFilePath, false, Encoding.GetEncoding("UTF-8"));
                 //上書き保存
                 sw2.Write(s);
                 sw2.Close();
@@ -566,7 +586,7 @@ namespace Comarenkun
         {
             if(group == "部内")
             {//members.txt
-                sr1 = new StreamReader(memberFilePath, Encoding.GetEncoding("Shift_JIS"));
+                sr1 = new StreamReader(memberFilePath, Encoding.GetEncoding("UTF-8"));
                 string s = "";
                 string line;
                 while ((line = sr1.ReadLine()) != null)
@@ -585,12 +605,12 @@ namespace Comarenkun
                     }
                 }
                 sr1.Close();
-                sw1 = new StreamWriter(memberFilePath, false, Encoding.GetEncoding("Shift_JIS"));
+                sw1 = new StreamWriter(memberFilePath, false, Encoding.GetEncoding("UTF-8"));
                 sw1.Write(s);
                 sw1.Close();
             }else
             {//foreigners.txt
-                sr2 = new StreamReader(foreignerFilePath, Encoding.GetEncoding("Shift_JIS"));
+                sr2 = new StreamReader(foreignerFilePath, Encoding.GetEncoding("UTF-8"));
                 string s = "";
                 string line;
                 while ((line = sr2.ReadLine()) != null)
@@ -609,7 +629,7 @@ namespace Comarenkun
                     }
                 }
                 sr2.Close();
-                sw2 = new StreamWriter(foreignerFilePath, false, Encoding.GetEncoding("Shift_JIS"));
+                sw2 = new StreamWriter(foreignerFilePath, false, Encoding.GetEncoding("UTF-8"));
                 sw2.Write(s);
                 sw2.Close();
             }
@@ -618,7 +638,7 @@ namespace Comarenkun
         {
             if (group == "部内")
             {//数字を1上げる
-                sr1 = new StreamReader(memberFilePath, Encoding.GetEncoding("Shift_JIS"));
+                sr1 = new StreamReader(memberFilePath, Encoding.GetEncoding("UTF-8"));
                 string s = "";
                 string line;
                 while ((line = sr1.ReadLine()) != null)
@@ -645,13 +665,13 @@ namespace Comarenkun
                     }
                 }
                 sr1.Close();
-                sw1 = new StreamWriter(memberFilePath, false, Encoding.GetEncoding("Shift_JIS"));
+                sw1 = new StreamWriter(memberFilePath, false, Encoding.GetEncoding("UTF-8"));
                 sw1.Write(s);
                 sw1.Close();
             }
             else
             {//↑→""→↓の順
-                sr2 = new StreamReader(foreignerFilePath, Encoding.GetEncoding("Shift_JIS"));
+                sr2 = new StreamReader(foreignerFilePath, Encoding.GetEncoding("UTF-8"));
                 string s = "";
                 string line;
                 while ((line = sr2.ReadLine()) != null)
@@ -682,7 +702,7 @@ namespace Comarenkun
                     }
                 }
                 sr2.Close();
-                sw2 = new StreamWriter(foreignerFilePath, false, Encoding.GetEncoding("Shift_JIS"));
+                sw2 = new StreamWriter(foreignerFilePath, false, Encoding.GetEncoding("UTF-8"));
                 sw2.Write(s);
                 sw2.Close();
             }
@@ -691,7 +711,7 @@ namespace Comarenkun
         {
             if (group == "部内")
             {//数字を1下げる
-                sr1 = new StreamReader(memberFilePath, Encoding.GetEncoding("Shift_JIS"));
+                sr1 = new StreamReader(memberFilePath, Encoding.GetEncoding("UTF-8"));
                 string s = "";
                 string line;
                 while ((line = sr1.ReadLine()) != null)
@@ -717,13 +737,13 @@ namespace Comarenkun
                     }
                 }
                 sr1.Close();
-                sw1 = new StreamWriter(memberFilePath, false, Encoding.GetEncoding("Shift_JIS"));
+                sw1 = new StreamWriter(memberFilePath, false, Encoding.GetEncoding("UTF-8"));
                 sw1.Write(s);
                 sw1.Close();
             }
             else
             {//↓→""→↑の順
-                sr2 = new StreamReader(foreignerFilePath, Encoding.GetEncoding("Shift_JIS"));
+                sr2 = new StreamReader(foreignerFilePath, Encoding.GetEncoding("UTF-8"));
                 string s = "";
                 string line;
                 while ((line = sr2.ReadLine()) != null)
@@ -754,7 +774,7 @@ namespace Comarenkun
                     }
                 }
                 sr2.Close();
-                sw2 = new StreamWriter(foreignerFilePath, false, Encoding.GetEncoding("Shift_JIS"));
+                sw2 = new StreamWriter(foreignerFilePath, false, Encoding.GetEncoding("UTF-8"));
                 sw2.Write(s);
                 sw2.Close();
             }
@@ -780,7 +800,7 @@ namespace Comarenkun
         }
         public void ChangeGroup(string pre, string name)
         {//所属名をnameでおきかえ,部内は書き換え不可なのでforeignersのみでよい
-            sr2 = new StreamReader(foreignerFilePath, Encoding.GetEncoding("Shift_JIS"));
+            sr2 = new StreamReader(foreignerFilePath, Encoding.GetEncoding("UTF-8"));
             string s = "";
             string line;
             while ((line = sr2.ReadLine()) != null)
@@ -799,14 +819,14 @@ namespace Comarenkun
                 }             
             }
             sr2.Close();
-            sw2 = new StreamWriter(foreignerFilePath, false, Encoding.GetEncoding("Shift_JIS"));
+            sw2 = new StreamWriter(foreignerFilePath, false, Encoding.GetEncoding("UTF-8"));
             sw2.Write(s);
             sw2.Close();
         }
 
         public void AddGroup(string name)
         {
-            sw2 = new StreamWriter(foreignerFilePath, true, Encoding.GetEncoding("Shift_JIS"));
+            sw2 = new StreamWriter(foreignerFilePath, true, Encoding.GetEncoding("UTF-8"));
             try
             {
                 sw2.WriteLine("\n:sample:" + name);
@@ -818,7 +838,7 @@ namespace Comarenkun
         }
         public void DeleteGroup(string name)
         {//nameの所属を空文字に置き換えて所属ナシにする
-            sr2 = new StreamReader(foreignerFilePath, Encoding.GetEncoding("Shift_JIS"));
+            sr2 = new StreamReader(foreignerFilePath, Encoding.GetEncoding("UTF-8"));
             string s = "";
             string line;
             while ((line = sr2.ReadLine()) != null)
@@ -851,7 +871,7 @@ namespace Comarenkun
                 }
             }
             sr2.Close();
-            sw2 = new StreamWriter(foreignerFilePath, false, Encoding.GetEncoding("Shift_JIS"));
+            sw2 = new StreamWriter(foreignerFilePath, false, Encoding.GetEncoding("UTF-8"));
             //上書き保存
             sw2.Write(s);
             sw2.Close();
@@ -862,7 +882,7 @@ namespace Comarenkun
             string[] t = tag.Split(':');
             int coma = int.Parse(t[0]);
             int set = int.Parse(t[1]);
-            sr = new StreamReader(configFilePath, Encoding.GetEncoding("Shift_JIS"));
+            sr = new StreamReader(configFilePath, Encoding.GetEncoding("UTF-8"));
             string s = "";
             string line;
             int i = -1;
@@ -890,13 +910,13 @@ namespace Comarenkun
                 }
             }
             sr.Close();
-            sw = new StreamWriter(configFilePath, false, Encoding.GetEncoding("Shift_JIS"));
+            sw = new StreamWriter(configFilePath, false, Encoding.GetEncoding("UTF-8"));
             sw.Write(s);
             sw.Close();
         }
         public void PlusTable()
         {
-            sr = new StreamReader(configFilePath, Encoding.GetEncoding("Shift_JIS"));
+            sr = new StreamReader(configFilePath, Encoding.GetEncoding("UTF-8"));
             string s = "";
             string line;
             int i = -1;
@@ -925,13 +945,13 @@ namespace Comarenkun
                 }
             }
             sr.Close();
-            sw = new StreamWriter(configFilePath, false, Encoding.GetEncoding("Shift_JIS"));
+            sw = new StreamWriter(configFilePath, false, Encoding.GetEncoding("UTF-8"));
             sw.Write(s);
             sw.Close();
         }
         public void MinusTable()
         {
-            sr = new StreamReader(configFilePath, Encoding.GetEncoding("Shift_JIS"));
+            sr = new StreamReader(configFilePath, Encoding.GetEncoding("UTF-8"));
             string s = "";
             string line;
             int i = -1;
@@ -960,13 +980,13 @@ namespace Comarenkun
                 }
             }
             sr.Close();
-            sw = new StreamWriter(configFilePath, false, Encoding.GetEncoding("Shift_JIS"));
+            sw = new StreamWriter(configFilePath, false, Encoding.GetEncoding("UTF-8"));
             sw.Write(s);
             sw.Close();
         }
         public void PlusComa()
         {
-            sr = new StreamReader(configFilePath, Encoding.GetEncoding("Shift_JIS"));
+            sr = new StreamReader(configFilePath, Encoding.GetEncoding("UTF-8"));
             string s = "";
             string line;
             int i = -1;
@@ -992,7 +1012,7 @@ namespace Comarenkun
                 //末尾に0を足す
                 s = s + line + "\n0\n";
                 sr.Close();
-                sw = new StreamWriter(configFilePath, false, Encoding.GetEncoding("Shift_JIS"));
+                sw = new StreamWriter(configFilePath, false, Encoding.GetEncoding("UTF-8"));
                 sw.Write(s);
                 sw.Close();
             }
@@ -1000,7 +1020,7 @@ namespace Comarenkun
         }
         public void MinusComa()
         {
-            sr = new StreamReader(configFilePath, Encoding.GetEncoding("Shift_JIS"));
+            sr = new StreamReader(configFilePath, Encoding.GetEncoding("UTF-8"));
             string s = "";
             string line;
             int i = -1;
@@ -1025,7 +1045,7 @@ namespace Comarenkun
                 line = (sr.ReadToEnd()).TrimEnd();
                 s = s + line.Remove(line.Length - 1);//末尾一文字削除
                 sr.Close();
-                sw = new StreamWriter(configFilePath, false, Encoding.GetEncoding("Shift_JIS"));
+                sw = new StreamWriter(configFilePath, false, Encoding.GetEncoding("UTF-8"));
                 sw.Write(s);
                 sw.Close();
             }
@@ -1037,7 +1057,7 @@ namespace Comarenkun
                 Directory.CreateDirectory("Texts");
             }
             //ファイルがどんな状況でも上書き
-            sw3 = new StreamWriter(LINEtokenFilePath, false, Encoding.GetEncoding("Shift_JIS"));
+            sw3 = new StreamWriter(LINEtokenFilePath, false, Encoding.GetEncoding("UTF-8"));
             sw3.WriteLine(token);
             sw3.Close();
         }
@@ -1049,7 +1069,7 @@ namespace Comarenkun
                 return false;
             }
 
-            sr3 = new StreamReader(LINEtokenFilePath, Encoding.GetEncoding("Shift_JIS"));
+            sr3 = new StreamReader(LINEtokenFilePath, Encoding.GetEncoding("UTF-8"));
 
             List<string> tokens = new List<string>();
             string line;
@@ -1114,25 +1134,33 @@ namespace Comarenkun
             string line;
             int i = 0;
             string[] n = { "\\n" };
-            while ((line = sr4.ReadLine()) != null && i < 100)
-            {//テキストが無くなるまで1行ずつ読む(Max100)
-                if (line != "")
-                {
-                    string res = "";
-                    //改行エスケープ文字はこちらで処理
-                    string[] l = line.Split(n, StringSplitOptions.None);
-                    foreach(string ll in l)
+            try
+            {
+                while ((line = sr4.ReadLine()) != null && i < 100)
+                {//テキストが無くなるまで1行ずつ読む(Max100)
+                    if (line != "")
                     {
-                        res = res + ll + "\n";
+                        string res = "";
+                        //改行エスケープ文字はこちらで処理
+                        string[] l = line.Split(n, StringSplitOptions.None);
+                        foreach (string ll in l)
+                        {
+                            res = res + ll + "\n";
+                        }
+                        result.Add(res);
                     }
-                    result.Add(res);
+                    i++;
                 }
-                i++;
-            }
-        
-            sr4.Close();
 
-            return result;
+                sr4.Close();
+
+                return result;
+            }
+            catch
+            {
+                return null;
+            }
+            
         }
 
     }

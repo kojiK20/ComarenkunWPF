@@ -37,6 +37,9 @@ namespace Comarenkun
         int maxIgnoreRankLoop;//指定回数
         int maxResetLoop;
 
+        bool noForeigners = false;//部外者が誰もいない->true
+        bool purupuru = false;
+
         public async void process(int s)
         {
             await Task.Run(() =>
@@ -59,9 +62,13 @@ namespace Comarenkun
                         
                     }
                     window.talkLabel.Content = ok + wrong;
-                    if(s == 5)
-                    {
-                        window.StoryBegin("ComarenkunPuruPuru");
+                    if(s > 3)
+                    {//progressバー>=4でプルプルしはじめる
+                        if (!purupuru)
+                        {
+                            window.StoryBegin("ComarenkunPuruPuru");
+                            purupuru = true;
+                        }     
                     }
                 }));
             });
@@ -113,6 +120,9 @@ namespace Comarenkun
             int r;
             string n;
             string g;
+            int foreignersCounter = 0;
+            int progressPerComa = 0;
+            int comaPerProgress = 0;
             for(int i = 0; i < participants.Count; i++)
             {//memberListに参加者全員のNodeをつっこむ
                 foreach(string inc in increase[i])
@@ -122,11 +132,27 @@ namespace Comarenkun
                     {
                         m.Group = "";
                     }
+                    else
+                    {
+                        foreignersCounter++;
+                    }
                     if(memberList.IndexOf(m) == -1)
                     {
                         memberList.Add(m);
                     }
-                    
+                }
+            }
+            if(foreignersCounter == 0)
+            {
+                noForeigners = true;
+                
+                if(coma < 10)
+                {//progressPerComa(1コマ進めば何progressするか)を計算
+                    progressPerComa = 10 / coma;
+                }
+                else
+                {//comaPerProgress(何コマ進めば1progressするか)を計算
+                    comaPerProgress = coma / 10;
                 }
             }
 
@@ -219,9 +245,29 @@ namespace Comarenkun
             if (loopStopper == 0)//組み合わせ生成処理
             {
                 process(-1);
+                int progress = 0;
                 List<string> takyuChosen = new List<string>();
                 for(int i = 0; i <= coma; i++)
                 {
+                    if (noForeigners)
+                    {//部外者がいない場合のプログレスバー(所属制約が破られることがないので到達コマ数で決定)
+                        if(progressPerComa > 0)
+                        {//コマ数が10以下
+                            if(i > progress)
+                            {
+                                process(progress * progressPerComa);
+                                progress++;
+                            }
+                        }
+                        else if(comaPerProgress > 0)
+                        {//コマ数が10以上
+                            if(coma / comaPerProgress > progress)
+                            {
+                                process(progress);
+                                progress++;
+                            }
+                        }
+                    }
                     if( i < coma)
                     {
                         ResultSet s = new ResultSet(null, null, null);
@@ -305,7 +351,7 @@ namespace Comarenkun
                     {//i==coma...最終コマ後
                         //1000回の中から所属制約が破られた回数の最小値を取得
                         if (sameGroupCounter == 0)
-                        {//所属被りが0回のままrank,bridge,reset制約を守りつつ最後まで組めた＝＞即採用
+                        {//所属被りが0回のままrank,bridge,reset制約を守りつつ最後まで組めたor所属が部内か所属ナシのみ＝＞即採用
                             process(10);
                             break;
                         }
@@ -442,6 +488,7 @@ namespace Comarenkun
             }
             else//例外
             {
+                purupuru = false;
                 return "ERROR";
             }
 
@@ -449,6 +496,7 @@ namespace Comarenkun
             {
                 result = result + (i+1).ToString() + "コマ目：\n" + set[i].Result;
             }
+            purupuru = false;
             return result;
         }
         public bool haveSameGroup(List<Matching> edges, string name)
